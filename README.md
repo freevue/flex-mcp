@@ -31,6 +31,6 @@ pnpm build:extension
 (cd apps/chrome-extension/dist && zip -qrFS ../../../.artifacts/flex-chrome-extension.zip .)
 ```
 
-두 앱은 따로 빌드할 수 있습니다. 원격 연결 구조는 [아키텍처](ARCHITECTURE.md)에서 봅니다. 구현할 함수의 입력과 출력은 [유틸 계약](UTILITIES.md)에서 봅니다.
+두 앱은 따로 빌드할 수 있습니다. 원격 연결 구조는 [아키텍처](ARCHITECTURE.md)에서 봅니다. 운영 범위와 실제 조회 조건은 [서비스 정책](SERVICE_POLICY.md)에서 봅니다. [기능 목록](docs/features/README.md)은 투두와 함수 문서를 연결합니다.
 
 작업 목록은 [GitHub 투두](https://github.com/freevue/flex-mcp/issues?q=is%3Aissue+label%3Atodo)에서 봅니다. 작업 절차는 [투두 운영](WORKFLOW.md)에 있습니다. 코드 변경 전에는 [로컬 개발 규칙](.agent/rules/GEMINI.md)과 [공개 저장소 보안 기준](SECURITY.md)을 읽습니다.

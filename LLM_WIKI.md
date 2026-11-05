@@ -12,8 +12,10 @@ LLM Wiki는 확인한 프로젝트 지식을 정리하고 다시 찾는 방식�
 | --- | --- |
 | 설치, 빌드, 패키지 | [README](README.md) |
 | 현재 동작과 원격 연결 설계 | [아키텍처](ARCHITECTURE.md) |
+| 첫 운영 범위, 실조회 조건, 보안과 배포 정책 | [서비스 정책](SERVICE_POLICY.md) |
 | MCP 도구 이름, 입력, 로컬 연결 | [MCP 서버 사용 안내](apps/mcp-server/README.md) |
-| 함수별 책임과 서버·확장 메시지 | [유틸 계약](UTILITIES.md) |
+| 투두별 기능, 메시지 계약, 기능 테스트 케이스 | [기능 목록](docs/features/README.md) |
+| 함수별 구현 위치, 이름, 매개변수와 단위 테스트 케이스 | [유틸 계약](UTILITIES.md) |
 
 ## 읽고 갱신하기
 
