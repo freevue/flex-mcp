@@ -1,0 +1,10 @@
+{
+  "manifest_version": 3,
+  "name": "flex MCP 브라우저 연결",
+  "version": "0.1.0",
+  "description": "flex MCP와 Chrome을 연결하기 위한 개발용 확장입니다.",
+  "background": {
+    "service_worker": "service-worker.js",
+    "type": "module"
+  }
+}

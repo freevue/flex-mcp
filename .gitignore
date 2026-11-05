@@ -1,0 +1,10 @@
+node_modules/
+dist/
+/.artifacts/
+/.local/
+.env*
+*.pem
+*.key
+*.p12
+*.har
+.DS_Store

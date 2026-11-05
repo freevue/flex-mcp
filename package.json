@@ -1,0 +1,21 @@
+{
+  "name": "flex-mcp",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "sideEffects": false,
+  "engines": { "node": ">=24" },
+  "workspaces": ["apps/mcp-server", "apps/chrome-extension"],
+  "scripts": {
+    "start": "npm run dev --workspace @flex-mcp/server",
+    "build": "npm run build --workspaces",
+    "build:mcp": "npm run build --workspace @flex-mcp/server",
+    "build:extension": "npm run build --workspace @flex-mcp/chrome-extension",
+    "check": "npm run check --workspaces",
+    "test": "npm test --workspaces --if-present"
+  },
+  "devDependencies": {
+    "@types/node": "^24.19.2",
+    "typescript": "~6.0.3"
+  }
+}
