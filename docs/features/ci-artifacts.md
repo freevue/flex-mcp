@@ -9,13 +9,13 @@ CI는 저장소의 변경을 자동으로 검사합니다. PR과 기본 브랜�
 1. 저장소 루트에서 `pnpm install --frozen-lockfile`을 실행합니다.
 2. `pnpm check`와 `pnpm test`를 실행합니다. 테스트에는 합성 데이터만 넣습니다.
 3. 서버와 확장을 각각 빌드합니다. 서버 패키지와 확장 ZIP을 각각 만듭니다.
-4. [공개 산출물 검사](../utilities/verify-public-artifact.md)로 두 파일의 내용과 경로를 확인합니다.
+4. `pnpm package:public`에서 [공개 산출물 검사](../utilities/verify-public-artifact.md)로 두 파일의 내용과 경로를 확인합니다.
 
-잠금 파일이 맞지 않거나 테스트가 실패하면 검사를 실패로 처리합니다. 금지 파일이 섞여도 실패로 처리합니다. 공개 CI에 실제 계정이나 운영 접근 정보를 넣지 않습니다. CI에서 실제 배포를 시작하지 않습니다. [GitHub Actions 보안 가이드](https://docs.github.com/en/actions/reference/security/secure-use)를 참고합니다.
+잠금 파일이 맞지 않거나 테스트가 실패하면 검사를 실패로 처리합니다. 금지 파일이나 링크가 섞여도 실패로 처리합니다. 압축 목록 검사와 별도로, 커밋 전에 공개 파일 내용도 확인합니다. 공개 CI에 실제 계정이나 운영 접근 정보를 넣지 않습니다. CI에서 실제 배포를 시작하지 않습니다. [GitHub Actions 보안 가이드](https://docs.github.com/en/actions/reference/security/secure-use)를 참고합니다.
 
 ## 테스트 케이스
 
-기능의 여러 단계가 함께 동작하는지 확인합니다. 기존 테스트로 표시한 경우를 제외하면 모두 예정입니다.
+GitHub Actions에서 아래 항목을 확인합니다. 두 앱의 빌드와 산출물 검사는 로컬에서 먼저 확인했습니다. [로컬 패키징](../../scripts/packagePublicArtifacts.ts)과 [금지 파일 검사](../../scripts/verifyPublicArtifact.test.ts)를 참고합니다.
 
 | TC | 확인 범위 | 준비와 실행 | 기대 결과 |
 | --- | --- | --- | --- |

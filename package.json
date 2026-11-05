@@ -5,14 +5,17 @@
   "type": "module",
   "sideEffects": false,
   "packageManager": "pnpm@11.25.0",
-  "engines": { "node": ">=24" },
+  "engines": {
+    "node": ">=24"
+  },
   "scripts": {
     "start": "pnpm --filter @flex-mcp/server run dev",
     "build": "pnpm -r run build",
     "build:mcp": "pnpm --filter @flex-mcp/server run build",
     "build:extension": "pnpm --filter @flex-mcp/chrome-extension run build",
-    "check": "pnpm -r run check",
-    "test": "pnpm -r run --if-present test"
+    "check": "tsc -p tsconfig.scripts.json && pnpm -r run check",
+    "test": "node --test scripts/verifyPublicArtifact.test.ts && pnpm -r run --if-present test",
+    "package:public": "pnpm build:extension && node scripts/packagePublicArtifacts.ts"
   },
   "devDependencies": {
     "@types/node": "^24.19.2",

@@ -5,7 +5,7 @@ flex의 본인 연차, 일정, 근무 시간을 조회하는 프로젝트입니�
 | 앱 | 현재 상태 | 독립 빌드 |
 | --- | --- | --- |
 | [MCP 서버](apps/mcp-server/README.md) | 로컬에서 도구 목록과 입력을 확인할 수 있습니다. 실제 조회는 연결하지 않았습니다. | `pnpm build:mcp` → `apps/mcp-server/dist/` |
-| [Chrome 확장](apps/chrome-extension/manifest.json) | Manifest V3와 TypeScript 서비스 워커 빌드 | `pnpm build:extension` → `apps/chrome-extension/dist/` |
+| [Chrome 확장](apps/chrome-extension/manifest.json) | 조회와 중계 로직을 합성 데이터로 확인했습니다. 실제 탭과 서버에는 연결하지 않습니다. | `pnpm build:extension` → `apps/chrome-extension/dist/` |
 
 ## 개발 환경
 
@@ -22,13 +22,15 @@ pnpm build
 
 ## 배포 산출물 준비
 
+`pnpm package:public`은 서버 패키지와 확장 ZIP을 새 `.artifacts/public-*` 디렉터리에 만듭니다. 각 압축 파일의 경로와 필수 파일을 검사합니다. 이 명령에는 `tar`, `zip`, `unzip`이 필요합니다. [자동 검사 설정](.github/workflows/check.yml)도 같은 명령을 사용합니다.
+
 - MCP 서버: 루트에서 `mkdir -p .artifacts`를 실행합니다. `pnpm --dir apps/mcp-server pack --pack-destination "$PWD/.artifacts"`로 서버 패키지를 만듭니다. 배포 환경에서 Node.js 24와 런타임 의존성을 설치합니다.
 - Chrome 확장: `pnpm build:extension`을 실행합니다. `chrome://extensions`에서 개발자 모드를 켭니다. `apps/chrome-extension/dist/`를 압축을 푼 확장으로 로드합니다. ZIP이 필요하면 아래 명령을 실행합니다. [Chrome 확장 패키지 안내](https://developer.chrome.com/docs/extensions/reference/manifest)
 
 ```sh
 mkdir -p .artifacts
 pnpm build:extension
-(cd apps/chrome-extension/dist && zip -qrFS ../../../.artifacts/flex-chrome-extension.zip .)
+(cd apps/chrome-extension/dist && zip -qDryFS ../../../.artifacts/flex-chrome-extension.zip .)
 ```
 
 두 앱은 따로 빌드할 수 있습니다. 원격 연결 구조는 [아키텍처](ARCHITECTURE.md)에서 봅니다. 운영 범위와 실제 조회 조건은 [서비스 정책](SERVICE_POLICY.md)에서 봅니다. [기능 목록](docs/features/README.md)은 투두와 함수 문서를 연결합니다.
