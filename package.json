@@ -4,15 +4,15 @@
   "private": true,
   "type": "module",
   "sideEffects": false,
+  "packageManager": "pnpm@11.25.0",
   "engines": { "node": ">=24" },
-  "workspaces": ["apps/mcp-server", "apps/chrome-extension"],
   "scripts": {
-    "start": "npm run dev --workspace @flex-mcp/server",
-    "build": "npm run build --workspaces",
-    "build:mcp": "npm run build --workspace @flex-mcp/server",
-    "build:extension": "npm run build --workspace @flex-mcp/chrome-extension",
-    "check": "npm run check --workspaces",
-    "test": "npm test --workspaces --if-present"
+    "start": "pnpm --filter @flex-mcp/server run dev",
+    "build": "pnpm -r run build",
+    "build:mcp": "pnpm --filter @flex-mcp/server run build",
+    "build:extension": "pnpm --filter @flex-mcp/chrome-extension run build",
+    "check": "pnpm -r run check",
+    "test": "pnpm -r run --if-present test"
   },
   "devDependencies": {
     "@types/node": "^24.19.2",

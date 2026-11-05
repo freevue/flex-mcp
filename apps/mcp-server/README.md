@@ -12,7 +12,7 @@
 
 ## 연결하기
 
-Node.js 24 이상이 필요합니다. 모노레포 루트에서 `npm ci`를 실행합니다. `npm run build:mcp`로 서버를 빌드합니다.
+Node.js 24와 루트 `package.json`에 지정한 pnpm 버전이 필요합니다. 모노레포 루트에서 `pnpm install --frozen-lockfile`을 실행합니다. `pnpm build:mcp`로 서버를 빌드합니다.
 
 Codex에서 사용하려면 모노레포 루트에서 아래 명령을 실행합니다. 데스크톱 앱이 열려 있으면 등록 후 다시 시작합니다. [OpenAI 공식 MCP 설정 문서](https://learn.chatgpt.com/docs/extend/mcp#connect-codex-to-an-mcp-server)
 
@@ -33,4 +33,4 @@ codex mcp add flex -- "$(command -v node)" "$PWD/apps/mcp-server/dist/index.js"
 }
 ```
 
-기존 `src/index.ts` 경로로 등록한 MCP 클라이언트도 서버를 실행할 수 있습니다. 루트에서 `npm run check`로 타입을 검사합니다. `npm test`로 날짜 범위와 미연결 상태를 검사합니다.
+기존 `src/index.ts` 경로로 등록한 MCP 클라이언트도 서버를 실행할 수 있습니다. 루트에서 `pnpm check`로 타입을 검사합니다. `pnpm test`로 날짜 범위와 미연결 상태를 검사합니다.

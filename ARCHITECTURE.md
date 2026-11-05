@@ -1,6 +1,6 @@
 # flex MCP 아키텍처
 
-[개발 환경](README.md) · [MCP 도구 계약](apps/mcp-server/README.md) · [유틸 계약](UTILITIES.md) · [개발 규칙](.agent/rules/GEMINI.md)
+[LLM Wiki](LLM_WIKI.md) · [개발 환경](README.md) · [MCP 도구 계약](apps/mcp-server/README.md) · [유틸 계약](UTILITIES.md) · [개발 규칙](.agent/rules/GEMINI.md)
 
 ## 현재 동작
 

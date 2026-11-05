@@ -1,0 +1,22 @@
+# flex MCP LLM Wiki
+
+LLM Wiki는 확인한 프로젝트 지식을 정리하고 다시 찾는 방식입니다. 이 문서에서 필요한 정본으로 이동합니다. 정본은 해당 주제를 관리하는 문서입니다.
+
+| 계층 | 어디서 확인하는가 |
+| --- | --- |
+| 1. 원천 | [서버 코드](apps/mcp-server/src/), [서버 테스트](apps/mcp-server/test/), [확장 코드](apps/chrome-extension/src/), [워크스페이스 설정](pnpm-workspace.yaml), [GitHub 투두](https://github.com/freevue/flex-mcp/issues?q=is%3Aissue+label%3Atodo)에서 구현과 검증 근거를 확인합니다. |
+| 2. 지식 | 아래 정본에서 실행법, 구조, 도구와 함수 계약을 확인합니다. |
+| 3. 규칙 | [AGENTS.md](AGENTS.md)는 에이전트 진입점입니다. [개발 규칙](.agent/rules/GEMINI.md), [투두 운영](WORKFLOW.md), [공개 저장소 보안 기준](SECURITY.md)에 작업 절차를 둡니다. |
+
+| 찾는 내용 | 정본 |
+| --- | --- |
+| 설치, 빌드, 패키지 | [README](README.md) |
+| 현재 동작과 원격 연결 설계 | [아키텍처](ARCHITECTURE.md) |
+| MCP 도구 이름, 입력, 로컬 연결 | [MCP 서버 사용 안내](apps/mcp-server/README.md) |
+| 함수별 책임과 서버·확장 메시지 | [유틸 계약](UTILITIES.md) |
+
+## 읽고 갱신하기
+
+1. 개발 규칙을 읽고 이 문서에서 작업과 관련된 정본을 찾습니다.
+2. 코드, 테스트 또는 투두에서 바뀐 사실을 확인합니다. 확인한 내용과 근거 링크를 해당 정본에 적습니다.
+3. 변경 후 문서와 코드가 같은 내용을 설명하는지 확인합니다. 깨진 링크를 고칩니다. 구현, 실제 조회, 배포는 확인한 범위만 기록합니다.

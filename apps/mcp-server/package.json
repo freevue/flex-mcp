@@ -14,7 +14,7 @@
     "build": "tsc -p tsconfig.build.json",
     "check": "tsc -p tsconfig.json",
     "test": "node --test",
-    "prepack": "npm run build"
+    "prepack": "pnpm run build"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.32.2",

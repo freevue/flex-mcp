@@ -1,6 +1,6 @@
 # flex MCP 유틸 계약
 
-[아키텍처](ARCHITECTURE.md) · [도구 입력](apps/mcp-server/README.md) · [개발 규칙](.agent/rules/GEMINI.md) · [작업 목록](WORKFLOW.md)
+[LLM Wiki](LLM_WIKI.md) · [아키텍처](ARCHITECTURE.md) · [도구 입력](apps/mcp-server/README.md) · [개발 규칙](.agent/rules/GEMINI.md) · [작업 목록](WORKFLOW.md)
 
 유틸은 한 가지 일을 맡는 함수입니다. 아래 표의 파일명은 구현할 위치입니다. `dates.ts`의 함수와 로컬 도구 등록만 현재 동작합니다.
 
