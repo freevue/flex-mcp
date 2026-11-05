@@ -7,7 +7,7 @@
 | 항목 | 내용 |
 | --- | --- |
 | 구현 위치 | `apps/mcp-server/src/access/revokeAccess.ts` |
-| 상태 | 구현 예정 |
+| 상태 | 구현 |
 | 출력 | 대상의 새 조회를 막고 대기 중인 결과를 폐기합니다. 다른 에이전트의 권한은 그대로 둡니다. |
 | 실패 | 소유자가 아니거나 해제 대상을 확인할 수 없으면 상태를 바꾸지 않습니다. |
 
@@ -30,6 +30,6 @@ declare function revokeAccess(owner: VerifiedOwnerIdentity | null, target: Revoc
 
 | TC | 준비와 입력 | 기대 결과 | 상태 |
 | --- | --- | --- | --- |
-| TC-U-REVOKE-ACCESS-01 | 소유자가 조회 중인 에이전트 하나의 권한을 해제합니다. | 해당 에이전트의 새 요청을 거부합니다. 대기 결과는 보내지 않습니다. 다른 에이전트는 유지합니다. | 예정 |
-| TC-U-REVOKE-ACCESS-02 | 소유자가 두 에이전트가 쓰는 프로필 연결을 해제합니다. | 두 에이전트의 새 조회를 막습니다. 대기 중인 두 결과도 폐기합니다. | 예정 |
-| TC-U-REVOKE-ACCESS-03 | 소유자가 아니거나 해제 대상을 확인할 수 없습니다. | `ACCESS_DENIED`를 반환합니다. 접근 상태와 대기 요청을 바꾸지 않습니다. | 예정 |
+| TC-U-REVOKE-ACCESS-01 | 소유자가 조회 중인 에이전트 하나의 권한을 해제합니다. | 해당 에이전트의 새 요청을 거부합니다. 대기 결과는 보내지 않습니다. 다른 에이전트는 유지합니다. | [로컬 테스트](../../apps/mcp-server/test/relay.test.ts) |
+| TC-U-REVOKE-ACCESS-02 | 소유자가 두 에이전트가 쓰는 프로필 연결을 해제합니다. | 두 에이전트의 새 조회를 막습니다. 대기 중인 두 결과도 폐기합니다. | [로컬 테스트](../../apps/mcp-server/test/relay.test.ts) |
+| TC-U-REVOKE-ACCESS-03 | 소유자가 아니거나 해제 대상을 확인할 수 없습니다. | `ACCESS_DENIED`를 반환합니다. 접근 상태와 대기 요청을 바꾸지 않습니다. | [로컬 테스트](../../apps/mcp-server/test/relay.test.ts) |

@@ -7,7 +7,7 @@
 | 항목 | 내용 |
 | --- | --- |
 | 구현 위치 | `apps/mcp-server/src/access/resolveBrowserBinding.ts` |
-| 상태 | 구현 예정 |
+| 상태 | 구현 |
 | 출력 | 허용한 Chrome 프로필 하나입니다. |
 | 실패 | 연결 관계가 없거나 해제됐으면 접근을 거부합니다. 프로필이 허용됐지만 브라우저가 꺼진 상태는 중계 함수가 구분합니다. |
 
@@ -28,6 +28,6 @@ declare function resolveBrowserBinding(caller: AuthorizedCaller, access: AccessS
 
 | TC | 준비와 입력 | 기대 결과 | 상태 |
 | --- | --- | --- | --- |
-| TC-U-RESOLVE-BROWSER-BINDING-01 | 허용된 에이전트의 프로필 연결 관계가 하나 있습니다. | 서버가 등록한 프로필만 반환합니다. | 예정 |
-| TC-U-RESOLVE-BROWSER-BINDING-02 | 이전 권한 확인 뒤 프로필 연결 관계를 해제했습니다. | `ACCESS_DENIED`를 반환합니다. | 예정 |
-| TC-U-RESOLVE-BROWSER-BINDING-03 | 프로필 연결 관계는 유효하지만 Chrome이 꺼졌습니다. | 연결 관계를 반환합니다. `BROWSER_OFFLINE`은 중계가 판단합니다. | 예정 |
+| TC-U-RESOLVE-BROWSER-BINDING-01 | 허용된 에이전트의 프로필 연결 관계가 하나 있습니다. | 서버가 등록한 프로필만 반환합니다. | [로컬 테스트](../../apps/mcp-server/test/relay.test.ts) |
+| TC-U-RESOLVE-BROWSER-BINDING-02 | 이전 권한 확인 뒤 프로필 연결 관계를 해제했습니다. | `ACCESS_DENIED`를 반환합니다. | [로컬 테스트](../../apps/mcp-server/test/relay.test.ts) |
+| TC-U-RESOLVE-BROWSER-BINDING-03 | 프로필 연결 관계는 유효하지만 Chrome이 꺼졌습니다. | 연결 관계를 반환합니다. `BROWSER_OFFLINE`은 중계가 판단합니다. | [로컬 테스트](../../apps/mcp-server/test/relay.test.ts) |

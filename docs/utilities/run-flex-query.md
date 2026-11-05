@@ -7,7 +7,7 @@
 | 항목 | 내용 |
 | --- | --- |
 | 구현 위치 | `apps/chrome-extension/src/flex/runFlexQuery.ts` |
-| 상태 | 구현 예정 |
+| 상태 | 구현 |
 | 출력 | 연차, 일정, 근무 시간 중 해당 도구의 결과입니다. flex 내부 식별자를 제거합니다. |
 | 실패 | 현재 계정이 연결 계정과 다르면 `FLEX_ACCOUNT_MISMATCH`입니다. 사용자가 연결을 해제하거나 조회 중 대상이 바뀌면 결과를 반환하지 않습니다. |
 
@@ -30,7 +30,7 @@ declare function runFlexQuery(context: FlexPageContext, query: FlexQuery, bindin
 
 | TC | 준비와 입력 | 기대 결과 | 상태 |
 | --- | --- | --- | --- |
-| TC-U-RUN-FLEX-QUERY-01 | 현재 계정과 연결한 계정이 같습니다. 세 조회 종류를 각각 호출합니다. | 종류마다 지정한 읽기 함수 하나만 실행합니다. 결과에 내부 식별자를 넣지 않습니다. | 예정 |
-| TC-U-RUN-FLEX-QUERY-02 | 현재 flex 계정이 연결 당시 계정과 다릅니다. | `FLEX_ACCOUNT_MISMATCH`를 반환합니다. 도구 조회는 시작하지 않습니다. | 예정 |
-| TC-U-RUN-FLEX-QUERY-03 | 계정 확인이 `FLEX_REAUTH_REQUIRED`로 실패합니다. | 같은 오류를 반환합니다. 도구 조회는 시작하지 않습니다. | 예정 |
-| TC-U-RUN-FLEX-QUERY-04 | 읽는 동안 계정이 바뀌거나 연결이 해제됩니다. | 완료된 응답이 있더라도 결과를 반환하지 않습니다. | 예정 |
+| TC-U-RUN-FLEX-QUERY-01 | 현재 계정과 연결한 계정이 같습니다. 세 조회 종류를 각각 호출합니다. | 종류마다 지정한 읽기 함수 하나만 실행합니다. 결과에 내부 식별자를 넣지 않습니다. | [로컬 테스트](../../apps/mcp-server/test/query-integration.test.ts) |
+| TC-U-RUN-FLEX-QUERY-02 | 현재 flex 계정이 연결 당시 계정과 다릅니다. | `FLEX_ACCOUNT_MISMATCH`를 반환합니다. 도구 조회는 시작하지 않습니다. | [로컬 테스트](../../apps/chrome-extension/test/flex.test.ts) |
+| TC-U-RUN-FLEX-QUERY-03 | 계정 확인이 `FLEX_REAUTH_REQUIRED`로 실패합니다. | 같은 오류를 반환합니다. 도구 조회는 시작하지 않습니다. | [로컬 테스트](../../apps/chrome-extension/test/flex.test.ts) |
+| TC-U-RUN-FLEX-QUERY-04 | 읽는 동안 계정이 바뀌거나 연결이 해제됩니다. | 완료된 응답이 있더라도 결과를 반환하지 않습니다. | [로컬 테스트](../../apps/chrome-extension/test/flex.test.ts) |

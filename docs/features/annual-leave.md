@@ -20,11 +20,11 @@
 
 ## 테스트 케이스
 
-기능의 여러 단계가 함께 동작하는지 확인합니다. 기존 테스트로 표시한 경우를 제외하면 모두 예정입니다.
+연결한 테스트는 로컬에서 확인했습니다. Chrome이나 원격 환경이 필요한 항목은 예정입니다.
 
 | TC | 확인 범위 | 준비와 실행 | 기대 결과 |
 | --- | --- | --- | --- |
-| TC-F-ANNUAL-LEAVE-01 | 합성 연결 | 기간 없이 연차 도구를 호출합니다. 연결한 계정의 합성 응답은 잔여량과 사용 가능량이 다릅니다. | 연차 조회 하나만 실행합니다. 두 잔액을 분리하고 정한 필드만 반환합니다. |
-| TC-F-ANNUAL-LEAVE-02 | 합성 연결 | 잔액 0, 명시한 기록 없음, 필수 값 누락을 각각 보냅니다. | 0은 성공입니다. 나머지는 `FLEX_NO_RECORDS`와 `FLEX_READ_FAILED`로 구분합니다. |
+| TC-F-ANNUAL-LEAVE-01 | 합성 연결 · [로컬 테스트](../../apps/mcp-server/test/query-integration.test.ts) | 기간 없이 연차 도구를 호출합니다. 연결한 계정의 합성 응답은 잔여량과 사용 가능량이 다릅니다. | 연차 조회 하나만 실행합니다. 두 잔액을 분리하고 정한 필드만 반환합니다. |
+| TC-F-ANNUAL-LEAVE-02 | 합성 연결 · [로컬 테스트](../../apps/chrome-extension/test/flex.test.ts) | 잔액 0, 명시한 기록 없음, 필수 값 누락을 각각 보냅니다. | 0은 성공입니다. 나머지는 `FLEX_NO_RECORDS`와 `FLEX_READ_FAILED`로 구분합니다. |
 | TC-F-ANNUAL-LEAVE-03 | Chrome | 승인된 프로필의 flex 화면과 같은 계정에서 연차 도구를 한 번 호출합니다. | 잔여량과 사용 가능량이 화면과 각각 일치합니다. 실제 값은 공개 기록에 남기지 않습니다. |
 | TC-F-ANNUAL-LEAVE-04 | Chrome | flex 탭을 닫은 상태와 다시 로그인해야 하는 상태에서 각각 조회합니다. | `FLEX_TAB_UNAVAILABLE`과 `FLEX_REAUTH_REQUIRED`를 구분합니다. |

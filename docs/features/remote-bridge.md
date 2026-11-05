@@ -33,18 +33,20 @@
 
 ## 연결과 검증
 
+로컬 테스트는 연결을 대신하는 입력으로 요청과 응답을 전달합니다. 운영 Streamable HTTP, WSS 접속 신원 확인과 Chrome 서비스 워커 연결은 아직 설정하지 않았습니다.
+
 확장은 [연결 함수](../utilities/connect-bridge.md)로 연결합니다. 서버는 [브라우저 연결을 등록](../utilities/attach-browser-bridge.md)합니다. 서버는 [조회 전달](../utilities/forward-flex-query.md)에서 호출자와 연결을 확인합니다. 양쪽은 [요청 검사](../utilities/parse-bridge-request.md)와 [응답 검사](../utilities/parse-bridge-reply.md)를 사용합니다. 확장은 [탭 전달 함수](../utilities/dispatch-to-flex-tab.md)로 패키지에 포함된 코드를 실행합니다.
 
 합성 연결에서 두 에이전트의 요청을 섞어 보냅니다. 같은 연결과 요청 ID의 결과만 반환하는지 확인합니다. 만료, 중복, 이전 연결에서 온 응답은 무시합니다. 연결이 끊기면 대기 요청을 종료합니다. 다시 연결한 뒤 예전 조회가 실행되지 않는지 확인합니다.
 
 ## 테스트 케이스
 
-기능의 여러 단계가 함께 동작하는지 확인합니다. 기존 테스트로 표시한 경우를 제외하면 모두 예정입니다.
+연결한 테스트는 로컬에서 확인했습니다. Chrome이나 원격 환경이 필요한 항목은 예정입니다.
 
 | TC | 확인 범위 | 준비와 실행 | 기대 결과 |
 | --- | --- | --- | --- |
-| TC-F-REMOTE-BRIDGE-01 | 합성 연결 | 허용된 두 에이전트가 동시에 연차를 요청합니다. 나중 요청의 응답을 먼저 보냅니다. | 각 응답이 같은 요청 ID를 기다리는 에이전트에게만 돌아갑니다. |
-| TC-F-REMOTE-BRIDGE-02 | 합성 연결 | 연결 끊김과 연결 유지 상태의 시간 초과를 각각 재현합니다. | `BROWSER_OFFLINE`과 `QUERY_TIMEOUT`을 구분합니다. 종료한 요청의 결과는 보내지 않습니다. |
-| TC-F-REMOTE-BRIDGE-03 | 합성 연결 | 연결을 교체한 뒤 이전 연결의 응답과 중복 응답을 보냅니다. | 이전 연결의 응답을 버립니다. 유효한 응답은 한 번만 전달합니다. |
-| TC-F-REMOTE-BRIDGE-04 | 합성 연결 | 임의 주소나 사번을 담은 요청과 다른 도구 형식의 응답을 보냅니다. | 형식이 틀린 메시지를 거부합니다. 잘못된 요청은 Chrome 조회를 시작하지 않습니다. |
+| TC-F-REMOTE-BRIDGE-01 | 합성 연결 · [로컬 테스트](../../apps/mcp-server/test/relay.test.ts) | 허용된 두 에이전트가 동시에 연차를 요청합니다. 나중 요청의 응답을 먼저 보냅니다. | 각 응답이 같은 요청 ID를 기다리는 에이전트에게만 돌아갑니다. |
+| TC-F-REMOTE-BRIDGE-02 | 합성 연결 · [로컬 테스트](../../apps/mcp-server/test/relay.test.ts) | 연결 끊김과 연결 유지 상태의 시간 초과를 각각 재현합니다. | `BROWSER_OFFLINE`과 `QUERY_TIMEOUT`을 구분합니다. 종료한 요청의 결과는 보내지 않습니다. |
+| TC-F-REMOTE-BRIDGE-03 | 합성 연결 · [로컬 테스트](../../apps/mcp-server/test/relay.test.ts) | 연결을 교체한 뒤 이전 연결의 응답과 중복 응답을 보냅니다. | 이전 연결의 응답을 버립니다. 유효한 응답은 한 번만 전달합니다. |
+| TC-F-REMOTE-BRIDGE-04 | 합성 연결 · [확장 테스트](../../apps/chrome-extension/test/bridge.test.ts), [서버 테스트](../../apps/mcp-server/test/relay.test.ts) | 임의 주소나 사번을 담은 요청과 다른 도구 형식의 응답을 보냅니다. | 형식이 틀린 메시지를 거부합니다. 잘못된 요청은 Chrome 조회를 시작하지 않습니다. |
 | TC-F-REMOTE-BRIDGE-05 | 원격 검증 | 허용한 두 에이전트가 같은 Chrome 프로필에 원격 연차 조회를 요청합니다. | 각 에이전트는 자신의 요청 결과만 받습니다. 확장은 재연결 뒤 예전 조회를 다시 실행하지 않습니다. |
