@@ -7,7 +7,7 @@
 | 항목 | 내용 |
 | --- | --- |
 | 구현 위치 | `apps/chrome-extension/src/bridge/connectBridge.ts` |
-| 상태 | 구현 예정 |
+| 상태 | 구현 |
 | 출력 | 연결 상태와 연결 종료 동작입니다. 재연결은 현재 설정에서만 진행합니다. |
 | 실패 | 사용자가 연결을 해제하면 재연결을 멈춥니다. 연결이 끊겨도 이전 조회를 다시 실행하지 않습니다. |
 
@@ -29,6 +29,6 @@ declare function connectBridge(config: BridgeConfig, onRequest: (request: Bridge
 | TC | 준비와 입력 | 기대 결과 | 상태 |
 | --- | --- | --- | --- |
 | TC-U-CONNECT-BRIDGE-01 | 승인한 주소로 연결한 뒤 형식이 맞는 새 요청 하나를 받습니다. | 연결 상태를 갱신하고 `onRequest`를 한 번 호출합니다. | 예정 |
-| TC-U-CONNECT-BRIDGE-02 | 연결은 열렸지만 받은 메시지에 허용되지 않은 필드가 있습니다. | 메시지를 거부합니다. `onRequest`를 호출하지 않습니다. | 예정 |
-| TC-U-CONNECT-BRIDGE-03 | 조회 처리 중 연결을 끊은 뒤 새 연결을 엽니다. | 이전 연결의 요청을 중단합니다. 다시 실행하거나 이전 결과를 전송하지 않습니다. | 예정 |
-| TC-U-CONNECT-BRIDGE-04 | 재연결 대기 중 사용자가 연결을 종료합니다. | 예약한 재연결을 중단합니다. | 예정 |
+| TC-U-CONNECT-BRIDGE-02 | 연결은 열렸지만 받은 메시지에 허용되지 않은 필드가 있습니다. | 메시지를 거부합니다. `onRequest`를 호출하지 않습니다. | [로컬 테스트](../../apps/chrome-extension/test/bridge.test.ts) |
+| TC-U-CONNECT-BRIDGE-03 | 조회 처리 중 연결을 끊은 뒤 새 연결을 엽니다. | 이전 연결의 요청을 중단합니다. 다시 실행하거나 이전 결과를 전송하지 않습니다. | [로컬 테스트](../../apps/chrome-extension/test/bridge.test.ts) |
+| TC-U-CONNECT-BRIDGE-04 | 재연결 대기 중 사용자가 연결을 종료합니다. | 예약한 재연결을 중단합니다. | [로컬 테스트](../../apps/chrome-extension/test/bridge.test.ts) |

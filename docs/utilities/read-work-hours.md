@@ -7,7 +7,7 @@
 | 항목 | 내용 |
 | --- | --- |
 | 구현 위치 | `apps/chrome-extension/src/flex/readWorkHours.ts` |
-| 상태 | 구현 예정 |
+| 상태 | 구현 |
 | 출력 | [근무 집계](../features/work-hours.md)에 정한 다섯 값과 조회 기간입니다. 값은 분 단위입니다. |
 | 실패 | 0분은 정상 수치입니다. 기록 없음은 `FLEX_NO_RECORDS`입니다. 필수 집계가 없거나 요청이 실패하면 `FLEX_READ_FAILED`입니다. |
 
@@ -30,6 +30,6 @@ declare function readWorkHours(context: FlexPageContext, user: BrowserUser, rang
 
 | TC | 준비와 입력 | 기대 결과 | 상태 |
 | --- | --- | --- | --- |
-| TC-U-READ-WORK-HOURS-01 | 합성 집계의 실제 근무는 60분, 인정 근무는 45분, 연장 근무는 0분입니다. | 다섯 집계와 기간을 반환합니다. 서로 다른 값과 0분을 그대로 유지합니다. | 예정 |
-| TC-U-READ-WORK-HOURS-02 | 응답에 기록이 없다고 명시돼 있습니다. | `FLEX_NO_RECORDS`를 반환합니다. | 예정 |
-| TC-U-READ-WORK-HOURS-03 | 시작과 종료 시각은 있지만 필수 집계가 없습니다. | `FLEX_READ_FAILED`를 반환합니다. 집계 값을 계산하거나 0으로 채우지 않습니다. | 예정 |
+| TC-U-READ-WORK-HOURS-01 | 합성 집계의 실제 근무는 60분, 인정 근무는 45분, 연장 근무는 0분입니다. | 다섯 집계와 기간을 반환합니다. 서로 다른 값과 0분을 그대로 유지합니다. | [로컬 테스트](../../apps/chrome-extension/test/flex.test.ts) |
+| TC-U-READ-WORK-HOURS-02 | 응답에 기록이 없다고 명시돼 있습니다. | `FLEX_NO_RECORDS`를 반환합니다. | [로컬 테스트](../../apps/chrome-extension/test/flex.test.ts) |
+| TC-U-READ-WORK-HOURS-03 | 시작과 종료 시각은 있지만 필수 집계가 없습니다. | `FLEX_READ_FAILED`를 반환합니다. 집계 값을 계산하거나 0으로 채우지 않습니다. | [로컬 테스트](../../apps/chrome-extension/test/flex.test.ts) |

@@ -30,7 +30,7 @@ declare function resolveRange(input: Partial<DateRange>, fallback: DateRange): D
 | --- | --- | --- | --- |
 | TC-U-RESOLVE-RANGE-01 | 입력 기간은 `2027-01-01`부터 `2027-01-31`까지입니다. | 같은 시작일과 종료일을 반환합니다. | 기존 테스트 |
 | TC-U-RESOLVE-RANGE-02 | 입력 기간은 `2027-01-01`부터 `2027-02-01`까지입니다. | 오류를 던집니다. 오류 문구에 `최대 31일`이 들어갑니다. | 기존 테스트 |
-| TC-U-RESOLVE-RANGE-03 | `input`에 날짜가 없고 `fallback`에는 유효한 두 날짜가 있습니다. | 기본 기간을 반환합니다. | 예정 |
-| TC-U-RESOLVE-RANGE-04 | 두 날짜가 모두 `2027-01-01`입니다. | 하루인 기간을 반환합니다. | 예정 |
+| TC-U-RESOLVE-RANGE-03 | `input`에 날짜가 없고 `fallback`에는 유효한 두 날짜가 있습니다. | 기본 기간을 반환합니다. | [로컬 테스트](../../apps/mcp-server/test/dates.test.ts) |
+| TC-U-RESOLVE-RANGE-04 | 두 날짜가 모두 `2027-01-01`입니다. | 하루인 기간을 반환합니다. | [로컬 테스트](../../apps/mcp-server/test/dates.test.ts) |
 | TC-U-RESOLVE-RANGE-05 | `input`에 `from`만 지정합니다. | `시작일과 종료일을 함께 지정하세요.` 오류를 던집니다. | 기존 테스트 · MCP 경유 |
-| TC-U-RESOLVE-RANGE-06 | `from`이 `2027-01-02`, `to`가 `2027-01-01`입니다. | `종료일은 시작일과 같거나 그 이후여야 합니다.` 오류를 던집니다. | 예정 |
+| TC-U-RESOLVE-RANGE-06 | `from`이 `2027-01-02`, `to`가 `2027-01-01`입니다. | `종료일은 시작일과 같거나 그 이후여야 합니다.` 오류를 던집니다. | [로컬 테스트](../../apps/mcp-server/test/dates.test.ts) |

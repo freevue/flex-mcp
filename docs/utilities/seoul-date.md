@@ -28,5 +28,5 @@ declare function seoulDate(now?: Date): string;
 | TC | 준비와 입력 | 기대 결과 | 상태 |
 | --- | --- | --- | --- |
 | TC-U-SEOUL-DATE-01 | `now`는 `2026-12-31T15:00:00Z`입니다. | `2027-01-01`을 반환합니다. | 기존 테스트 |
-| TC-U-SEOUL-DATE-02 | `now`는 `2026-12-31T14:59:59Z`입니다. | `2026-12-31`을 반환합니다. | 예정 |
-| TC-U-SEOUL-DATE-03 | 현재 시각을 `2027-01-01T15:00:00Z`로 고정하고 `now`를 생략합니다. | `2027-01-02`를 반환합니다. | 예정 |
+| TC-U-SEOUL-DATE-02 | `now`는 `2026-12-31T14:59:59Z`입니다. | `2026-12-31`을 반환합니다. | [로컬 테스트](../../apps/mcp-server/test/dates.test.ts) |
+| TC-U-SEOUL-DATE-03 | 현재 시각을 `2027-01-01T15:00:00Z`로 고정하고 `now`를 생략합니다. | `2027-01-02`를 반환합니다. | [로컬 테스트](../../apps/mcp-server/test/dates.test.ts) |

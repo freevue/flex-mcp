@@ -7,7 +7,7 @@
 | 항목 | 내용 |
 | --- | --- |
 | 구현 위치 | `apps/chrome-extension/src/flex/readCurrentUser.ts` |
-| 상태 | 구현 예정 |
+| 상태 | 구현 |
 | 출력 | 확장 안에서 비교할 현재 사용자 식별자입니다. 서버와 로그에는 보내지 않습니다. |
 | 실패 | flex가 로그인을 요구하면 `FLEX_REAUTH_REQUIRED`를 반환합니다. 계정 응답의 형태를 알 수 없으면 `FLEX_READ_FAILED`를 반환합니다. |
 
@@ -28,6 +28,6 @@ declare function readCurrentUser(context: FlexPageContext, signal: AbortSignal):
 
 | TC | 준비와 입력 | 기대 결과 | 상태 |
 | --- | --- | --- | --- |
-| TC-U-READ-CURRENT-USER-01 | 합성 응답에 현재 계정 식별자와 표시 이름이 있습니다. | 계정 비교에 필요한 `BrowserUser`만 반환합니다. | 예정 |
-| TC-U-READ-CURRENT-USER-02 | flex가 다시 로그인을 요구합니다. | `FLEX_REAUTH_REQUIRED`를 반환합니다. | 예정 |
-| TC-U-READ-CURRENT-USER-03 | 로그인 요구 없이 필수 계정 식별자가 빠져 있습니다. | `FLEX_READ_FAILED`를 반환합니다. 로그인 만료로 표시하지 않습니다. | 예정 |
+| TC-U-READ-CURRENT-USER-01 | 합성 응답에 현재 계정 식별자와 표시 이름이 있습니다. | 계정 비교에 필요한 `BrowserUser`만 반환합니다. | [로컬 테스트](../../apps/chrome-extension/test/flex.test.ts) |
+| TC-U-READ-CURRENT-USER-02 | flex가 다시 로그인을 요구합니다. | `FLEX_REAUTH_REQUIRED`를 반환합니다. | [로컬 테스트](../../apps/chrome-extension/test/flex.test.ts) |
+| TC-U-READ-CURRENT-USER-03 | 로그인 요구 없이 필수 계정 식별자가 빠져 있습니다. | `FLEX_READ_FAILED`를 반환합니다. 로그인 만료로 표시하지 않습니다. | [로컬 테스트](../../apps/chrome-extension/test/flex.test.ts) |

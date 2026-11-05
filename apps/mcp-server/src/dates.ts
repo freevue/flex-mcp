@@ -1,6 +1,9 @@
-export const timezone = "Asia/Seoul";
+import { isDate, timezone } from "../../../shared/index.ts";
+import type { DateRange } from "../../../shared/index.ts";
+import { shiftDate } from "../../../shared/shiftDate.ts";
 
-export type DateRange = { from: string; to: string };
+export { shiftDate, timezone };
+export type { DateRange };
 type OptionalRange = Partial<DateRange>;
 
 export function seoulDate(now = new Date()) {
@@ -12,17 +15,12 @@ export function seoulDate(now = new Date()) {
   }).format(now);
 }
 
-export function shiftDate(date: string, days: number) {
-  const utcDate = new Date(`${date}T00:00:00Z`);
-  utcDate.setUTCDate(utcDate.getUTCDate() + days);
-  return utcDate.toISOString().slice(0, 10);
-}
-
 export function resolveRange(input: OptionalRange, fallback: DateRange): DateRange {
   const { from, to } = input;
   if (from === undefined && to === undefined) return fallback;
   if (from === undefined || to === undefined) throw new Error("시작일과 종료일을 함께 지정하세요.");
+  if (!isDate(from) || !isDate(to)) throw new Error("조회 날짜는 YYYY-MM-DD 형식이어야 합니다.");
   if (from > to) throw new Error("종료일은 시작일과 같거나 그 이후여야 합니다.");
-  if (to > shiftDate(from, 30)) throw new Error("한 번에 최대 31일을 조회할 수 있습니다.");
+  if (Date.parse(to) - Date.parse(from) > 30 * 86_400_000) throw new Error("한 번에 최대 31일을 조회할 수 있습니다.");
   return { from, to };
 }
