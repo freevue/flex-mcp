@@ -36,10 +36,15 @@ pnpm flex:remote
 
 각 Chrome의 확장 옵션을 여세요. 서버 주소와 그 프로필의 등록 코드를 입력하세요. 두 프로필에 서로 다른 등록 ID와 연결 상태가 표시되는지 확인하세요.
 
-각 에이전트에서 같은 `/mcp` 주소를 설정하세요. 사용자별 `Authorization: Bearer <key>` 헤더를 넣으세요. 헤더를 설정할 수 없는 클라이언트에는 이 검증 설정을 사용할 수 없습니다. 직접 호출하려면 아래처럼 해당 키를 환경 변수로 전달하세요.
+각 에이전트에서 같은 `/mcp` 주소를 설정하세요. 사용자별 `Authorization: Bearer <key>` 헤더를 넣으세요. 헤더를 설정할 수 없는 클라이언트에는 이 검증 설정을 사용할 수 없습니다. 직접 호출하려면 아래 명령을 실행하세요. 첫 줄이 표시되면 해당 사용자의 에이전트 키를 입력하세요.
 
 ```sh
+printf '에이전트 키: '
+IFS= read -rs FLEX_AGENT_KEY
+printf '\n'
+export FLEX_AGENT_KEY
 pnpm --filter @flex-mcp/server run demo:query
+unset FLEX_AGENT_KEY
 ```
 
 이 명령은 `FLEX_PUBLIC_URL`과 `FLEX_AGENT_KEY`를 읽고 `flex_get_schedule`을 호출합니다. 응답의 합성 일정 제목에 등록 ID 앞부분이 표시됩니다. 조회 명령은 키를 출력하지 않습니다.
