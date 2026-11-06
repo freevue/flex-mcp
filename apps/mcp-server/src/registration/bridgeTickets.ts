@@ -9,14 +9,15 @@ export function verifyDeviceKey(database: StateDatabase, key: string): BrowserBi
   ).get(secretDigest(key)));
 }
 
-export function issueBridgeTicket(database: StateDatabase, deviceKey: string, now = Date.now()): string | null {
+export function issueBridgeTicket(database: StateDatabase, deviceKey: string, now = Date.now(), channelOnly = false): string | null {
   if (!isSecret(deviceKey)) return null;
   const ticket = createSecret();
   const { changes } = database.prepare(`
     INSERT INTO tickets(digest, binding_id, expires_at)
     SELECT ?, binding_id, ? FROM bindings WHERE digest = ?
+      AND (? = 0 OR binding_id IN (SELECT binding_id FROM channel_connections))
     ON CONFLICT(binding_id) DO UPDATE SET digest = excluded.digest, expires_at = excluded.expires_at
-  `).run(secretDigest(ticket), now + 30_000, secretDigest(deviceKey));
+  `).run(secretDigest(ticket), now + 30_000, secretDigest(deviceKey), Number(channelOnly));
   return changes ? ticket : null;
 }
 

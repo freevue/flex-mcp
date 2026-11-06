@@ -24,7 +24,7 @@ export function renderApprovalCode(code: string): HTMLElement {
   panel.append(
     textElement("h2", "승인 대기"),
     textElement("code", code, "approval-code"),
-    textElement("p", "기존 에이전트 대화에 이 코드를 보내고 연결 승인을 요청하세요."),
+    textElement("p", "MCP 클라이언트 대화에 이 코드를 보내고 연결 승인을 요청하세요."),
     popupButton("코드 복사", "copy", true),
   );
   return panel;

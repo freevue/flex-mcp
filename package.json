@@ -19,8 +19,7 @@
     "flex:admin": "pnpm --filter @flex-mcp/server run admin",
     "flex:remote": "pnpm --filter @flex-mcp/server run remote",
     "check:worker": "tsc -p apps/mcp-server/tsconfig.worker.json",
-    "build:worker": "wrangler deploy --env production --dry-run --outdir .artifacts/worker-production",
-    "flex:worker-agent": "node apps/mcp-server/worker/generateAgent.ts"
+    "build:worker": "wrangler deploy --env production --dry-run --outdir .artifacts/worker-production"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "5.20261104.1",

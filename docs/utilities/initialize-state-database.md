@@ -2,7 +2,7 @@
 
 [Workers 구현](../mcp/worker-implementation.md) · [소스](../../apps/mcp-server/src/registration/stateDatabase.ts)
 
-에이전트, 승인 요청, Chrome 등록과 접속권 테이블을 준비합니다. 기존 테이블을 지우지 않습니다.
+승인 요청, 연결 키 해시, Chrome 등록과 접속권 테이블을 준비합니다. 이전 테이블은 보존합니다.
 
 ```typescript
 declare function initializeStateDatabase(database: StateDatabase): void;

@@ -10,7 +10,7 @@ declare function loadNolsuDates(policyId: string, month: string): readonly strin
 
 | 매개변수 | 타입 | 설명 |
 | --- | --- | --- |
-| `policyId` | `string` | 서버가 인증된 사용자에게 연결한 정책 ID입니다. |
+| `policyId` | `string` | 서버가 해당 채널에 연결할 정책 ID입니다. |
 | `month` | `string` | 한국 시간의 YYYY-MM입니다. |
 
 | TC | 입력과 조건 | 기대 결과 |

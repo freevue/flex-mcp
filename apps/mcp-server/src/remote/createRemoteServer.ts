@@ -3,19 +3,20 @@ import type { IncomingMessage, Server, ServerResponse } from "node:http";
 import type { DatabaseSync } from "node:sqlite";
 import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
 import { WebSocketServer } from "ws";
+import { isExtensionOrigin } from "../../../../shared/index.ts";
 import type { RelayContext } from "../bridge/index.ts";
-import { createCallerMcpServer } from "../createCallerMcpServer.ts";
-import { approveDevicePairing, createAccessState, verifyAgentKey } from "../registration/index.ts";
+import { createPairedMcpServer } from "../createPairedMcpServer.ts";
+import { createAccessState } from "../registration/index.ts";
 import { authenticateBrowserSocket, reconcileBrowserAccess } from "./browserSocket.ts";
-import { readBearer, readJson, sendJson } from "./http.ts";
+import { readJson, sendJson } from "./http.ts";
 import { handleRegistration } from "./registrationHttp.ts";
 
-export type RemoteConfiguration = { origin: string; extensionOrigins: ReadonlySet<string> };
-const registrationPaths = new Set(["/bridge/pair", "/bridge/pair/start", "/bridge/pair/claim", "/bridge/ticket", "/bridge/unpair"]);
+export type RemoteConfiguration = { origin: string };
+const registrationPaths = new Set(["/bridge/pair/start", "/bridge/pair/claim", "/bridge/ticket", "/bridge/unpair"]);
 
 export function createRemoteServer(configuration: RemoteConfiguration, database: DatabaseSync): Server {
   const relay: RelayContext = {
-    access: createAccessState(database),
+    access: createAccessState(database, true),
     registry: { active: new Map(), pending: new Map() },
     timeoutMs: 8_000,
     maxPending: 32,
@@ -27,18 +28,16 @@ export function createRemoteServer(configuration: RemoteConfiguration, database:
     if (request.headers.origin !== undefined && request.headers.origin !== configuration.origin) {
       return sendJson(response, 403, { error: "ORIGIN_DENIED" });
     }
-    const identity = verifyAgentKey(database, readBearer(request));
-    if (!identity) {
-      response.setHeader("WWW-Authenticate", 'Bearer realm="flex-demo"');
-      return sendJson(response, 401, { error: "INVALID_AGENT_KEY" });
+    if (request.method !== "POST") {
+      response.setHeader("Allow", "POST");
+      return sendJson(response, 405, { error: "METHOD_NOT_ALLOWED" });
     }
-
-    const parsed = request.method === "POST" ? await readJson(request, 64 * 1024) : undefined;
-    if (request.method === "POST" && parsed === undefined) {
+    const parsed = await readJson(request, 64 * 1024);
+    if (parsed === undefined) {
       response.setHeader("Connection", "close");
       return sendJson(response, 400, { error: "INVALID_MCP_REQUEST" });
     }
-    const mcp = createCallerMcpServer(identity, relay, undefined, true, code => approveDevicePairing(database, identity, code));
+    const mcp = createPairedMcpServer(database, relay);
     const transport = new StreamableHTTPServerTransport({ sessionIdGenerator: undefined, enableJsonResponse: true });
     response.setHeader("Cache-Control", "no-store");
     response.once("close", () => { void mcp.close().catch(() => {}); });
@@ -49,11 +48,7 @@ export function createRemoteServer(configuration: RemoteConfiguration, database:
   async function handle(request: IncomingMessage, response: ServerResponse): Promise<void> {
     if (request.url === "/mcp") return handleMcp(request, response);
     if (!registrationPaths.has(request.url ?? "")) return sendJson(response, 404, { error: "NOT_FOUND" });
-    const origin = request.headers.origin;
-    const devicePairing = request.url === "/bridge/pair/start" || request.url === "/bridge/pair/claim";
-    if ((devicePairing || origin !== undefined) && !configuration.extensionOrigins.has(origin ?? "")) {
-      return sendJson(response, 403, { error: "ORIGIN_DENIED" });
-    }
+    if (!isExtensionOrigin(request.headers.origin)) return sendJson(response, 403, { error: "ORIGIN_DENIED" });
     return handleRegistration(request, response, database, relay);
   }
 
@@ -65,7 +60,7 @@ export function createRemoteServer(configuration: RemoteConfiguration, database:
   });
   server.maxConnections = 128;
   server.on("upgrade", (request, socket, head) => {
-    if (request.url !== "/bridge" || !configuration.extensionOrigins.has(request.headers.origin ?? "")) {
+    if (request.url !== "/bridge" || !isExtensionOrigin(request.headers.origin)) {
       socket.end("HTTP/1.1 403 Forbidden\r\nConnection: close\r\nContent-Length: 0\r\n\r\n");
       return;
     }

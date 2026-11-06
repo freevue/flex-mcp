@@ -10,7 +10,7 @@ declare function createMcpServer(handlers?: ToolHandlers, now?: () => Date, synt
 
 | 매개변수 | 타입 | 설명 |
 | --- | --- | --- |
-| `handlers` | `ToolHandlers` | 선택입니다. 조회, 소켓 상태와 승인 함수를 담습니다. |
+| `handlers` | `ToolHandlers` | 선택입니다. 조회, 소켓 상태와 승인 함수를 담습니다. `channelPairing: true`이면 조회와 상태 도구에 연결 키가 필요합니다. |
 | `now` | `() => Date` | 선택입니다. 기본값은 현재 시각을 읽는 함수입니다. |
 | `synthetic` | `boolean` | 선택입니다. 기본값은 false입니다. true이면 성공한 조회에 synthetic: true를 붙입니다. |
 

@@ -67,4 +67,4 @@
 | `ServiceReadinessInput` | 필수 설정 여부, 운영 중단 여부, 승인된 브라우저 연결 여부입니다. |
 | `ServiceReadiness` | 서버의 `acceptsRequests`와 운영자용 `browserOnline`을 구분합니다. 서버가 요청을 받을 수 있어도 브라우저 조회가 가능하다는 뜻은 아닙니다. |
 
-Workers의 `WorkerEnv`와 `WorkerCaller`는 [예정 함수 문서](mcp/workers/README.md)에서 설명합니다. 현재 Node 타입과 구분합니다.
+Workers의 `WorkerEnvironment`는 `BRIDGE` 바인딩과 선택 항목 `FLEX_PUBLIC_ORIGIN`을 담습니다. 도구는 연결 키로 채널을 찾습니다. [Workers 구현](mcp/worker-implementation.md)을 참고하세요.

@@ -36,7 +36,7 @@ async function updatePopup(command: PopupCommand): Promise<PopupSnapshot> {
   }
 
   if (command === "popup-issue-code" && control?.state() !== "online" && !pending) {
-    pending = await requestDevicePairing(settings.origin);
+    pending = await requestDevicePairing(settings.origin, next?.deviceKey);
     await chrome.storage.session.set({ devicePairing: pending });
   }
   if (pending && Date.now() - lastClaimAt >= 2_000) {

@@ -2,7 +2,7 @@
 
 [유틸 목록](../../UTILITIES.md) · [공유 연결 흐름](../features/shared-connection-flow.md)
 
-서버가 사용자별로 현재 권한과 등록을 찾도록 연결합니다.
+서버가 현재 조회 권한과 등록을 찾도록 연결합니다.
 
 | 항목 | 내용 |
 | --- | --- |
@@ -12,12 +12,13 @@
 ## 함수 계약
 
 ```typescript
-declare function createAccessState(database: StateDatabase): AccessState;
+declare function createAccessState(database: StateDatabase, channelOnly?: boolean): AccessState;
 ```
 
 | 매개변수 | 타입 | 설명 |
 | --- | --- | --- |
 | `database` | `StateDatabase` | 연결 상태를 저장한 SQLite 데이터베이스입니다. |
+| `channelOnly` | `boolean` | 선택입니다. true이면 새 연결 키로 등록한 채널만 조회합니다. 원격 서버는 true를 사용합니다. 기본값은 false입니다. |
 
 ## 확인할 경우
 

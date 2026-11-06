@@ -5,12 +5,12 @@
 상태: 구현 예정. 한 사용자와 현재 등록으로만 오늘, 월 누적, 월 전체 목표를 조회합니다. 월 전체와 구간 합이 같을 때만 놀수 목표를 뺍니다. 등록과 권한이 달라지면 요약 전체를 버립니다.
 
 ```typescript
-declare function getWorkerWorkSummary(identity: WorkerCaller, now: Date): Promise<Outcome<WorkSummaryResult, WorkerFailure>>;
+declare function getWorkerWorkSummary(connectionKey: string, now: Date): Promise<Outcome<WorkSummaryResult, WorkerFailure>>;
 ```
 
 | 매개변수 | 타입 | 설명 |
 | --- | --- | --- |
-| `identity` | `WorkerCaller` | Worker에서 확인한 호출자와 읽기 권한입니다. |
+| `connectionKey` | `string` | 코드 승인에서 받은 해당 채널의 연결 키입니다. |
 | `now` | `Date` | 오늘과 이번 달을 결정할 기준 시각입니다. |
 
 | TC | 입력과 조건 | 기대 결과 |

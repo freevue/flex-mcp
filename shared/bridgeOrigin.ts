@@ -6,3 +6,7 @@ export function parseBridgeOrigin(value: string): URL | null {
   if (url.protocol === "https:" || (url.protocol === "http:" && url.hostname === "127.0.0.1")) return url;
   return null;
 }
+
+export function isExtensionOrigin(value: string | null | undefined): boolean {
+  return typeof value === "string" && /^chrome-extension:\/\/[a-p]{32}$/.test(value);
+}

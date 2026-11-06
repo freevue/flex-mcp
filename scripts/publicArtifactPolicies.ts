@@ -2,7 +2,7 @@ import type { PublicArtifactPolicy } from "./verifyPublicArtifact.ts";
 
 const shared = ["bridgeOrigin", "contracts", "index", "shiftDate", "validation"].map(name => `shared/${name}.js`);
 const server = [
-  "index", "dates", "createMcpServer", "createCallerMcpServer",
+  "index", "dates", "createMcpServer", "createCallerMcpServer", "createPairedMcpServer",
   "access/authorizeMcpCaller", "access/index", "access/resolveBrowserBinding", "access/revokeAccess", "access/types",
   "bridge/attachBrowserBridge", "bridge/forwardFlexQuery", "bridge/index", "bridge/parseBridgeReply", "bridge/types",
   "operations/index", "operations/getServiceReadiness", "operations/getBrowserConnectionStatus",

@@ -2,20 +2,20 @@
 
 [개발 문서](../../docs/mcp/README.md) · [함수별 계약](../../docs/mcp/functions.md) · [개발 명령](../../docs/mcp/development.md) · [Cloudflare Workers 설계](../../docs/mcp/cloudflare-workers.md)
 
-공개 서버에는 Node 검증용 실행 파일과 Workers 합성 검증용 진입점이 있습니다. `stdio`는 도구 입력을 검사하는 로컬 실행 방식입니다. 원격 Node 서버는 합성 데이터로 등록과 조회를 검증합니다. Cloudflare Workers는 운영 배포 대상입니다. Workers에서 합성 연결을 확인했습니다. OAuth와 실제 Flex 조회는 별도로 연결해야 합니다.
+공개 서버에는 Node 검증용 실행 파일과 Workers 합성 검증용 진입점이 있습니다. `stdio`는 도구 입력을 검사하는 로컬 실행 방식입니다. 원격 Node 서버는 합성 데이터로 등록과 조회를 검증합니다. Cloudflare Workers는 운영 배포 대상입니다. 원격 서버는 사전 등록 없이 MCP 초기화와 도구 목록을 제공합니다. 실제 Flex 조회는 별도 작업입니다.
 
 ## 도구
 
 | 도구 | 입력과 동작 |
 | --- | --- |
-| [`flex_get_annual_leave`](../../docs/mcp/tools/flex-get-annual-leave.md) | 인자 없이 본인 연차 잔여량과 사용 가능량을 읽습니다. |
+| [`flex_get_annual_leave`](../../docs/mcp/tools/flex-get-annual-leave.md) | 연결 키에 해당하는 채널의 연차 잔여량과 사용 가능량을 읽습니다. |
 | [`flex_get_schedule`](../../docs/mcp/tools/flex-get-schedule.md) | 날짜 두 개를 선택할 수 있습니다. 기본값은 한국 시간 오늘부터 7일입니다. |
 | [`flex_get_work_hours`](../../docs/mcp/tools/flex-get-work-hours.md) | 날짜 두 개를 선택할 수 있습니다. 기본값은 이번 달 1일부터 오늘까지입니다. |
-| [`flex_get_socket_status`](../../docs/mcp/tools/flex-get-socket-status.md) | 인자 없이 본인 Chrome 등록과 소켓만 확인합니다. |
-| [`flex_approve_connection`](../../docs/mcp/tools/flex-approve-connection.md) | 팝업의 `approvalCode`를 받습니다. 승인 권한이 필요합니다. |
+| [`flex_get_socket_status`](../../docs/mcp/tools/flex-get-socket-status.md) | 연결 키에 해당하는 Chrome 등록과 소켓만 확인합니다. |
+| [`flex_approve_connection`](../../docs/mcp/tools/flex-approve-connection.md) | 팝업의 `approvalCode`를 받아 연결 키를 반환합니다. |
 | [`flex_get_work_summary`](../../docs/mcp/tools/flex-get-work-summary.md) | 인자 없이 이번 달 근무와 놀수 반영 전후의 남은 시간을 읽습니다. 현재는 본인 PC MCP에만 있습니다. |
 
-기간을 직접 지정할 때는 `from`과 `to`를 함께 보냅니다. 두 날짜를 포함해 최대 31일입니다. 날짜는 한국 시간(`Asia/Seoul`)입니다. 각 도구의 문서에서 필드, 오류와 테스트 케이스를 확인합니다.
+원격 조회와 소켓 상태 도구에는 승인에서 받은 `connectionKey`를 넣습니다. 기간을 직접 지정할 때는 `from`과 `to`를 함께 보냅니다. 두 날짜를 포함해 최대 31일입니다. 날짜는 한국 시간(`Asia/Seoul`)입니다. 각 도구의 문서에서 필드, 오류와 테스트 케이스를 확인합니다.
 
 ## 로컬 실행과 검사
 
@@ -38,8 +38,8 @@ codex mcp add flex -- "$(command -v node)" "$PWD/apps/mcp-server/dist/index.js"
 
 ## 원격 연결과 배포
 
-Node 합성 검증에서는 `pnpm flex:remote`를 실행합니다. [두 Chrome 프로필 검증](../../docs/features/shared-connection-check.md)에서 키 발급, 팝업 승인, 조회와 연결 해제를 확인합니다. 합성 모드의 결과에는 `synthetic: true`가 있습니다.
+Node 합성 검증에서는 `pnpm flex:remote`를 실행합니다. [두 Chrome 프로필 검증](../../docs/features/shared-connection-check.md)에서 팝업 코드 승인, 조회와 연결 해제를 확인합니다. 합성 모드의 결과에는 `synthetic: true`가 있습니다.
 
-Node 패키지의 원격 서버는 `node dist/apps/mcp-server/src/remote/start.js`로 실행합니다. 키 발급은 `node dist/apps/mcp-server/src/registration/admin.js`로 실행합니다. 두 명령에 같은 `FLEX_STATE_FILE`을 설정합니다.
+Node 패키지의 원격 서버는 `node dist/apps/mcp-server/src/remote/start.js`로 실행합니다. `FLEX_STATE_FILE`에 로컬 상태 파일을 지정합니다.
 
 Workers 운영 MCP 주소는 `https://flex-mcp.freevue.dev/mcp`입니다. Workers를 운영할 때는 [배포 설계](../../docs/mcp/cloudflare-workers.md)를 따릅니다. [배포 절차](../../docs/mcp/workers-release.md)에 따라 검증합니다.

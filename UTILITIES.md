@@ -16,16 +16,16 @@ TC는 테스트 케이스입니다. `TC-U`는 함수 하나의 입력과 결과�
 
 도구별 결과는 각 기능 문서에 있습니다. 요청과 응답 형식, 오류 코드는 [원격 중계](docs/features/remote-bridge.md)에 있습니다. 두 앱이 사용하는 메시지 계약은 [공통 코드](shared/index.ts)에서 관리합니다. 각 앱의 산출물에는 필요한 코드를 포함합니다.
 
-`issuePairingCode`, `redeemPairingCode`와 `pairBrowser`는 이전 호환 API에서 운영자 발급 코드를 씁니다. 새 팝업은 [확장이 시작하는 승인 흐름](docs/features/browser-pairing.md)을 씁니다.
+팝업은 [확장이 시작하는 승인 흐름](docs/features/browser-pairing.md)을 씁니다. 이전 키 발급 함수는 현재 원격 경로에서 사용하지 않습니다.
 
 | 공유 연결 등록과 인증 | 유틸 문서 |
 | --- | --- |
-| 서버와 공통 코드 | [`parseBridgeOrigin`](docs/utilities/parse-bridge-origin.md), [`issueAgentKey`](docs/utilities/issue-agent-key.md), [`verifyAgentKey`](docs/utilities/verify-agent-key.md), [`issuePairingCode`](docs/utilities/issue-pairing-code.md), [`redeemPairingCode`](docs/utilities/redeem-pairing-code.md), [`verifyDeviceKey`](docs/utilities/verify-device-key.md), [`issueBridgeTicket`](docs/utilities/issue-bridge-ticket.md), [`consumeBridgeTicket`](docs/utilities/consume-bridge-ticket.md), [`createAccessState`](docs/utilities/create-access-state.md), [`createRemoteServer`](docs/utilities/create-remote-server.md) |
-| Chrome 등록 | [`pairBrowser`](docs/utilities/pair-browser.md), [`requestBridgeTicket`](docs/utilities/request-bridge-ticket.md), [`unpairBrowser`](docs/utilities/unpair-browser.md) |
+| 서버와 공통 코드 | [`parseBridgeOrigin`](docs/utilities/parse-bridge-origin.md), [`isExtensionOrigin`](docs/utilities/is-extension-origin.md), [`createPairedMcpServer`](docs/utilities/create-paired-mcp-server.md), [`verifyDeviceKey`](docs/utilities/verify-device-key.md), [`issueBridgeTicket`](docs/utilities/issue-bridge-ticket.md), [`consumeBridgeTicket`](docs/utilities/consume-bridge-ticket.md), [`createAccessState`](docs/utilities/create-access-state.md), [`createRemoteServer`](docs/utilities/create-remote-server.md) |
+| Chrome 등록 | [`requestDevicePairing`](docs/utilities/request-device-pairing.md), [`requestBridgeTicket`](docs/utilities/request-bridge-ticket.md), [`unpairBrowser`](docs/utilities/unpair-browser.md) |
 
 소켓 등록과 검사: [`openStateDatabase`](docs/utilities/open-state-database.md), [`authenticateBrowserSocket`](docs/utilities/authenticate-browser-socket.md), [`reconcileBrowserAccess`](docs/utilities/reconcile-browser-access.md), [`createSyntheticReply`](docs/utilities/create-synthetic-reply.md).
 
-| 팝업과 에이전트 승인 | 유틸 문서 |
+| 팝업과 MCP 승인 | 유틸 문서 |
 | --- | --- |
 | `startDevicePairing` | [함수 계약](docs/utilities/start-device-pairing.md) |
 | `approveDevicePairing` | [함수 계약](docs/utilities/approve-device-pairing.md) |

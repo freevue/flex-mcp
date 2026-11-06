@@ -31,6 +31,13 @@ export function initializeStateDatabase(database: StateDatabase): void {
     CREATE TABLE IF NOT EXISTS bindings (
       binding_id TEXT PRIMARY KEY, owner_id TEXT NOT NULL UNIQUE, digest TEXT NOT NULL UNIQUE
     );
+    CREATE TABLE IF NOT EXISTS channel_pairing (
+      request_digest TEXT PRIMARY KEY, code_digest TEXT NOT NULL UNIQUE, expires_at INTEGER NOT NULL,
+      connection_digest TEXT, replaces_binding_id TEXT
+    );
+    CREATE TABLE IF NOT EXISTS channel_connections (
+      digest TEXT PRIMARY KEY, binding_id TEXT NOT NULL UNIQUE REFERENCES bindings(binding_id) ON DELETE CASCADE
+    );
     CREATE TABLE IF NOT EXISTS tickets (
       digest TEXT PRIMARY KEY, binding_id TEXT NOT NULL UNIQUE, expires_at INTEGER NOT NULL,
       FOREIGN KEY (binding_id) REFERENCES bindings(binding_id) ON DELETE CASCADE

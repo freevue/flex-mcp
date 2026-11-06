@@ -20,8 +20,9 @@ async function postPairing(origin: string, path: string, headers: HeadersInit = 
   return reply.json();
 }
 
-export async function requestDevicePairing(origin: string): Promise<DevicePairingStart> {
-  const started = readDevicePairingStart(await postPairing(origin, "/bridge/pair/start"));
+export async function requestDevicePairing(origin: string, deviceKey?: string): Promise<DevicePairingStart> {
+  const headers = deviceKey ? { Authorization: `Bearer ${deviceKey}` } : undefined;
+  const started = readDevicePairingStart(await postPairing(origin, "/bridge/pair/start", headers));
   if (!started) throw new Error("승인 코드를 확인할 수 없습니다.");
   return started;
 }

@@ -17,11 +17,11 @@ declare function createRemoteServer(configuration: RemoteConfiguration, database
 
 | 매개변수 | 타입 | 설명 |
 | --- | --- | --- |
-| `configuration` | `RemoteConfiguration` | 공개 서버 주소와 허용한 확장 ID입니다. |
+| `configuration` | `RemoteConfiguration` | MCP 요청의 출처를 확인할 공개 서버 주소입니다. |
 | `database` | `DatabaseSync` | 연결 상태를 저장한 SQLite 데이터베이스입니다. |
 
 ## 확인할 경우
 
-`TC-U-CREATE-REMOTE-SERVER-01`: 허용한 확장만 소켓을 열고 서로 다른 사용자 요청을 분리합니다. [직접 검증 절차](../features/shared-connection-check.md)에서 연결 흐름도 확인합니다.
+`TC-U-CREATE-REMOTE-SERVER-01`: 접속권을 가진 확장만 조회용 소켓을 엽니다. 서로 다른 채널의 요청을 분리합니다. [직접 검증 절차](../features/shared-connection-check.md)에서 연결 흐름도 확인합니다.
 
 [자동 검사](../../apps/mcp-server/test/shared-remote.test.ts)에서 관련 조건을 확인합니다.

@@ -6,7 +6,7 @@
 
 | 역할 | 함수 |
 | --- | --- |
-| 도구 생성 | [createMcpServer](../utilities/create-mcp-server.md), [createCallerMcpServer](../utilities/create-caller-mcp-server.md) |
+| 도구 생성 | [createMcpServer](../utilities/create-mcp-server.md), [createPairedMcpServer](../utilities/create-paired-mcp-server.md), [createCallerMcpServer](../utilities/create-caller-mcp-server.md) |
 | 입력과 응답 | [buildRange](../utilities/build-range.md), [reply](../utilities/reply.md), [errorReply](../utilities/error-reply.md), [successReply](../utilities/success-reply.md) |
 | 한국 날짜 | [seoulDate](../utilities/seoul-date.md), [shiftDate](../utilities/shift-date.md), [resolveRange](../utilities/resolve-range.md) |
 | 호출자 권한 | [authorizeMcpCaller](../utilities/authorize-mcp-caller.md), [resolveBrowserBinding](../utilities/resolve-browser-binding.md), [revokeAccess](../utilities/revoke-access.md) |
@@ -17,12 +17,13 @@
 | Node 등록과 소켓 인증 | [handleRegistration](../utilities/handle-registration.md), [authenticateBrowserSocket](../utilities/authenticate-browser-socket.md), [decode](../utilities/decode-socket-message.md), [reconcileBrowserAccess](../utilities/reconcile-browser-access.md) |
 | 초기 승인 | [startDevicePairing](../utilities/start-device-pairing.md), [approveDevicePairing](../utilities/approve-device-pairing.md), [claimDevicePairing](../utilities/claim-device-pairing.md) |
 | 등록 교체와 기존 호환 | [replaceBrowserRegistration](../utilities/replace-browser-registration.md), [issuePairingCode](../utilities/issue-pairing-code.md), [redeemPairingCode](../utilities/redeem-pairing-code.md) |
-| 에이전트와 확장 키 | [issueAgentKey](../utilities/issue-agent-key.md), [verifyAgentKey](../utilities/verify-agent-key.md), [verifyDeviceKey](../utilities/verify-device-key.md), [issueBridgeTicket](../utilities/issue-bridge-ticket.md), [consumeBridgeTicket](../utilities/consume-bridge-ticket.md) |
+| 이전 키 도구 | [issueAgentKey](../utilities/issue-agent-key.md), [verifyAgentKey](../utilities/verify-agent-key.md) |
+| 확장 키와 접속권 | [verifyDeviceKey](../utilities/verify-device-key.md), [issueBridgeTicket](../utilities/issue-bridge-ticket.md), [consumeBridgeTicket](../utilities/consume-bridge-ticket.md) |
 | 저장과 비공개 값 | [openStateDatabase](../utilities/open-state-database.md), [createAccessState](../utilities/create-access-state.md), [asBrowserBinding](../utilities/as-browser-binding.md), [requireOwnerId](../utilities/require-owner-id.md), [createSecret](../utilities/create-secret.md), [secretDigest](../utilities/secret-digest.md), [isSecret](../utilities/is-secret.md) |
 | 결과 표현 | [success](../utilities/success.md), [failure](../utilities/failure.md) |
 | 공통 입력 검사 | [isRecord](../utilities/is-record.md), [hasKeys](../utilities/has-keys.md), [isDate](../utilities/is-date.md), [isTime](../utilities/is-time.md), [isDateRange](../utilities/is-date-range.md), [isQuery](../utilities/is-query.md), [isRequestId](../utilities/is-request-id.md) |
 | 공통 결과 검사 | [isLeaveBalance](../utilities/is-leave-balance.md), [isScheduleEvent](../utilities/is-schedule-event.md), [isWorkTotals](../utilities/is-work-totals.md), [isExpectedRange](../utilities/is-expected-range.md) |
-| 출처와 주소 | [parseUrl](../utilities/parse-url.md), [isFlexUrl](../utilities/is-flex-url.md), [parseBridgeOrigin](../utilities/parse-bridge-origin.md) |
+| 출처와 주소 | [parseUrl](../utilities/parse-url.md), [isFlexUrl](../utilities/is-flex-url.md), [parseBridgeOrigin](../utilities/parse-bridge-origin.md), [isExtensionOrigin](../utilities/is-extension-origin.md) |
 | 확장에서 실행 | [parseBridgeRequest](../utilities/parse-bridge-request.md), [dispatchToFlexTab](../utilities/dispatch-to-flex-tab.md), [runFlexQuery](../utilities/run-flex-query.md), [createSyntheticReply](../utilities/create-synthetic-reply.md) |
 | 놀수 계산 | [calculateWorkSummary](../utilities/calculate-work-summary.md), [근무 요약 도구와 로컬 호출 흐름](tools/flex-get-work-summary.md) |
 | 공개 산출물 | [verifyPublicArtifact](../utilities/verify-public-artifact.md) |

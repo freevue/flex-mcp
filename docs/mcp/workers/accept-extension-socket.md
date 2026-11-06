@@ -14,5 +14,5 @@ declare function acceptExtensionSocket(request: Request): Promise<Response>;
 
 | TC | 입력과 조건 | 기대 결과 |
 | --- | --- | --- |
-| TC-W-ACCEPT-EXTENSION-SOCKET-01 | 전환 헤더가 없거나 출처가 허용 목록에 없습니다. | 소켓을 열지 않습니다. |
+| TC-W-ACCEPT-EXTENSION-SOCKET-01 | 전환 헤더가 없거나 출처가 Chrome 확장 형식이 아닙니다. | 소켓을 열지 않습니다. |
 | TC-W-ACCEPT-EXTENSION-SOCKET-02 | 전환 뒤 5초 안에 인증하지 않습니다. | 대기 소켓을 닫습니다. |

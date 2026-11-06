@@ -2,10 +2,10 @@
 
 [서버 함수 목록](../mcp/functions.md) · [구현](../../apps/mcp-server/src/remote/registrationHttp.ts)
 
-등록 시작과 수령, 기존 등록 코드, 접속권 발급, 등록 해제를 처리합니다. 호출 전에 상위 라우터가 확장 출처와 경로를 확인합니다.
+등록 시작과 수령, 접속권 발급, 등록 해제를 처리합니다. 호출 전에 상위 라우터가 확장 출처와 경로를 확인합니다.
 
 ```typescript
-declare function handleRegistration(request: IncomingMessage, response: ServerResponse, database: DatabaseSync, relay: RelayContext): Promise<void>;
+declare function handleRegistration(request: IncomingMessage, response: ServerResponse, database: DatabaseSync, relay: RelayContext): void;
 ```
 
 | 매개변수 | 타입 | 설명 |
@@ -18,4 +18,4 @@ declare function handleRegistration(request: IncomingMessage, response: ServerRe
 | TC | 입력과 조건 | 기대 결과 | 확인 범위 |
 | --- | --- | --- | --- |
 | TC-U-HANDLE-REGISTRATION-01 | 등록 수령을 승인 전과 후에 요청합니다. | 승인 전에는 pending, 승인 뒤 첫 요청은 registered입니다. | [연결한 검사](../../apps/mcp-server/test/shared-remote.test.ts) |
-| TC-U-HANDLE-REGISTRATION-02 | 기존 확장 키로 등록을 해제합니다. | 204 뒤 같은 사용자 소켓 상태는 unregistered입니다. | [연결한 검사](../../apps/mcp-server/test/shared-remote.test.ts) |
+| TC-U-HANDLE-REGISTRATION-02 | 기존 확장 키로 등록을 해제합니다. | 204 뒤 이전 연결 키를 거부합니다. | [연결한 검사](../../apps/mcp-server/test/shared-remote.test.ts) |

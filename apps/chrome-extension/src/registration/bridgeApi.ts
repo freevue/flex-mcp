@@ -23,18 +23,6 @@ function post(origin: string, path: string, init: RequestInit = {}): Promise<Res
   });
 }
 
-export async function pairBrowser(origin: string, code: string): Promise<StoredRegistration> {
-  const server = parseBridgeOrigin(origin);
-  if (!server || !/^[A-Za-z0-9_-]{43}$/.test(code)) throw new Error("서버 주소와 등록 코드를 확인하세요.");
-  const response = await post(server.origin, "/bridge/pair", {
-    body: JSON.stringify({ code }), headers: { "Content-Type": "application/json" },
-  });
-  if (!response.ok) throw new Error("등록에 실패했습니다. 서버 설정과 등록 코드를 확인하세요.");
-  const registration = readRegistration(await response.json() as unknown);
-  if (!registration) throw new Error("서버에서 올바른 등록 정보를 받지 못했습니다.");
-  return { origin: server.origin, ...registration };
-}
-
 export async function requestBridgeTicket(registration: StoredRegistration, signal: AbortSignal, onUnauthorized?: () => void): Promise<string> {
   const response = await post(registration.origin, "/bridge/ticket", {
     headers: { Authorization: `Bearer ${registration.deviceKey}` }, signal,
