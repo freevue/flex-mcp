@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import { authorizeMcpCaller, resolveBrowserBinding, revokeAccess } from "../src/access/index.ts";
 import { approveDevicePairing, claimDevicePairing, consumeBridgeTicket, createAccessState, issueAgentKey, issueBridgeTicket, issuePairingCode,
-  openStateDatabase, redeemPairingCode, secretDigest, startDevicePairing, verifyAgentKey, verifyDeviceKey } from "../src/registration/index.ts";
+  openStateDatabase, redeemPairingCode, secretDigest, startChannelInvitation, startDevicePairing, verifyAgentKey, verifyDeviceKey } from "../src/registration/index.ts";
 
 test("등록 코드는 만료·재사용을 거부하고 다시 등록하면 이전 키와 접속권이 해제된다", context => {
   const database = openStateDatabase(":memory:");
@@ -86,4 +86,29 @@ test("만료와 재사용을 거부하고 확장이 교체 등록을 수령할 �
   assert.equal(verifyDeviceKey(database, first.registration.deviceKey), null);
   assert.equal(access.findOwner(secretDigest(firstKey)), null);
   assert.equal(access.findOwner(secretDigest(secondKey)), channel);
+});
+
+test("초대 코드는 만료되고 등록을 교체하면 추가 키와 승인 전 코드를 폐기한다", context => {
+  const database = openStateDatabase(":memory:");
+  context.after(() => database.close());
+  const first = startDevicePairing(database, "", 0);
+  assert.ok(first && approveDevicePairing(database, first.approvalCode, 1));
+  const paired = claimDevicePairing(database, first.requestKey, 2);
+  assert.equal(paired.status, "registered");
+  const { deviceKey } = paired.registration;
+  const expired = startChannelInvitation(database, deviceKey, 3);
+  assert.ok(expired.ok);
+  assert.equal(approveDevicePairing(database, expired.value.approvalCode, 300_003), null);
+  const invite = startChannelInvitation(database, deviceKey, 300_004);
+  const unused = startChannelInvitation(database, deviceKey, 300_004);
+  assert.ok(invite.ok && unused.ok);
+  const extraKey = approveDevicePairing(database, invite.value.approvalCode, 300_005);
+  assert.ok(extraKey);
+  const access = createAccessState(database, true);
+  assert.ok(access.findOwner(secretDigest(extraKey)));
+  const replacement = startDevicePairing(database, deviceKey, 300_006);
+  assert.ok(replacement && approveDevicePairing(database, replacement.approvalCode, 300_007));
+  assert.equal(claimDevicePairing(database, replacement.requestKey, 300_008).status, "registered");
+  assert.equal(access.findOwner(secretDigest(extraKey)), null);
+  assert.equal(approveDevicePairing(database, unused.value.approvalCode, 300_009), null);
 });

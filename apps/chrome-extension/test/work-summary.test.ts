@@ -75,10 +75,10 @@ test("한국 자정으로 기간을 나누고 합성 자료로 월 요약을 계
     "0b47a3c6-cddf-43b8-85f9-fdc8ef531661", new AbortController().signal, new Date("2026-11-18T00:00:00Z"),
   );
   assert.deepEqual(summary, calculateWorkSummary(input));
-  assert.deepEqual(readPopupSnapshot({ kind: "connected", flex: "synthetic", summary }), {
-    kind: "connected", flex: "synthetic", summary,
-  });
-  assert.equal(readPopupSnapshot({ kind: "connected", flex: "unavailable", summary }), null);
+  const snapshot = { kind: "connected", flex: "synthetic", summary, approvalCode: "ABCD-1234-5678", inviteFailed: false };
+  assert.deepEqual(readPopupSnapshot(snapshot), snapshot);
+  assert.equal(readPopupSnapshot({ ...snapshot, requestKey: "private" }), null);
+  assert.equal(readPopupSnapshot({ ...snapshot, flex: "unavailable" }), null);
   assert.equal(readPopupSnapshot({ kind: "disconnected", canReconnect: false, approvalCode: null, requestKey: "private" }), null);
 });
 

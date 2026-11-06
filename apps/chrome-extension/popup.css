@@ -30,6 +30,8 @@ body { margin: 0; }
   font-weight: 650;
 }
 .brand img { display: block; flex: none; }
+.brand:has(button:not([hidden])) { padding-block: 8px; }
+.brand button { margin-inline-start: auto; }
 main { display: grid; gap: 12px; padding: 16px 20px; }
 h1, h2, p, dl, dd { margin: 0; }
 h1 { font-size: 22px; font-weight: 600; line-height: 1.3; }

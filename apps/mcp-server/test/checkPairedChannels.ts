@@ -11,6 +11,7 @@ export async function checkPairedChannels(origin: string): Promise<void> {
   const sockets: WebSocket[] = [];
   const deviceKeys = new Set<string>();
   const client = new Client({ name: "flex-channel-check", version: "1" });
+  const additionalClient = new Client({ name: "flex-additional-client", version: "1" });
   const post = (path: string, key?: string, requestOrigin = extension) => fetch(new URL(path, origin), {
     method: "POST",
     headers: { Origin: requestOrigin, ...(key ? { Authorization: `Bearer ${key}` } : {}) },
@@ -82,13 +83,32 @@ export async function checkPairedChannels(origin: string): Promise<void> {
       assert.equal(Object.hasOwn(result, "source"), false);
       assert.ok(JSON.stringify(result).includes(channel.bindingId.slice(0, 8)));
     }
+    assert.equal((await post("/bridge/pair/invite", first.connectionKey)).status, 401);
+    await additionalClient.connect(new StreamableHTTPClientTransport(new URL("/mcp", origin)));
+    const invitation = await post("/bridge/pair/invite", first.deviceKey);
+    assert.equal(invitation.status, 201);
+    const { approvalCode, requestKey } = await invitation.json() as { approvalCode: string; requestKey: string };
+    const claimInvitation = async (key: string) => (await post("/bridge/pair/claim", key)).json();
+    assert.deepEqual(await claimInvitation(requestKey), { status: "pending" });
+    const approval = { name: "flex_approve_connection", arguments: { approvalCode } };
+    const invited = (await additionalClient.callTool(approval)).structuredContent;
+    assert.ok(isRecord(invited) && typeof invited.connectionKey === "string" && invited.connectionKey !== first.connectionKey);
+    assert.equal((await additionalClient.callTool(approval)).isError, true);
+    const addedQuery = () => additionalClient.callTool({ name: "flex_get_schedule", arguments: { connectionKey: invited.connectionKey } });
+    assert.deepEqual((await addedQuery()).structuredContent, (await query(first.connectionKey)).structuredContent);
+    assert.deepEqual(await claimInvitation(invited.connectionKey), { status: "unavailable" });
+    assert.deepEqual(await claimInvitation(requestKey), { status: "linked" });
+    assert.deepEqual(await claimInvitation(requestKey), { status: "unavailable" });
+    assert.deepEqual((await status(first.connectionKey)).structuredContent, { status: "online" });
     assert.equal((await post("/bridge/unpair", first.deviceKey)).status, 204);
     deviceKeys.delete(first.deviceKey);
     assert.deepEqual((await query(first.connectionKey)).structuredContent, { code: "ACCESS_DENIED" });
+    assert.deepEqual((await addedQuery()).structuredContent, { code: "ACCESS_DENIED" });
     assert.deepEqual((await status(second.connectionKey)).structuredContent, { status: "online" });
   } finally {
     for (const socket of sockets) socket.terminate();
     await client.close();
+    await additionalClient.close();
     for (const deviceKey of deviceKeys) {
       assert.equal((await post("/bridge/unpair", deviceKey)).status, 204);
     }

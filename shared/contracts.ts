@@ -48,5 +48,5 @@ export type BridgeRegistration = { bindingId: string; deviceKey: string };
 
 export type DevicePairingStart = { approvalCode: string; requestKey: string; expiresAt: number };
 export type DevicePairingClaim =
-  | { status: "pending" | "unavailable" }
+  | { status: "pending" | "unavailable" | "linked" }
   | { status: "registered"; registration: BridgeRegistration };

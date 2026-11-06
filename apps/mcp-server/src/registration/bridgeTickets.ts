@@ -2,11 +2,12 @@ import type { StateDatabase } from "./stateDatabase.ts";
 import type { BrowserBinding } from "../access/types.ts";
 import { asBrowserBinding, createSecret, isSecret, secretDigest } from "./stateDatabase.ts";
 
-export function verifyDeviceKey(database: StateDatabase, key: string): BrowserBinding | null {
+export function verifyDeviceKey(database: StateDatabase, key: string, channelOnly = false): BrowserBinding | null {
   if (!isSecret(key)) return null;
   return asBrowserBinding(database.prepare(
-    "SELECT owner_id AS ownerId, binding_id AS bindingId FROM bindings WHERE digest = ?",
-  ).get(secretDigest(key)));
+    `SELECT owner_id AS ownerId, binding_id AS bindingId FROM bindings WHERE digest = ?
+      AND (? = 0 OR binding_id IN (SELECT binding_id FROM channel_keys))`,
+  ).get(secretDigest(key), Number(channelOnly)));
 }
 
 export function issueBridgeTicket(database: StateDatabase, deviceKey: string, now = Date.now(), channelOnly = false): string | null {
@@ -15,7 +16,7 @@ export function issueBridgeTicket(database: StateDatabase, deviceKey: string, no
   const { changes } = database.prepare(`
     INSERT INTO tickets(digest, binding_id, expires_at)
     SELECT ?, binding_id, ? FROM bindings WHERE digest = ?
-      AND (? = 0 OR binding_id IN (SELECT binding_id FROM channel_connections))
+      AND (? = 0 OR binding_id IN (SELECT binding_id FROM channel_keys))
     ON CONFLICT(binding_id) DO UPDATE SET digest = excluded.digest, expires_at = excluded.expires_at
   `).run(secretDigest(ticket), now + 30_000, secretDigest(deviceKey), Number(channelOnly));
   return changes ? ticket : null;

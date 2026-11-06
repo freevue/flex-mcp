@@ -6,14 +6,14 @@ import type { RelayContext } from "../src/bridge/types.ts";
 import { createPairedMcpServer } from "../src/createPairedMcpServer.ts";
 import { createAccessState } from "../src/registration/accessState.ts";
 import { issueBridgeTicket, verifyDeviceKey } from "../src/registration/bridgeTickets.ts";
-import { claimDevicePairing, startDevicePairing } from "../src/registration/devicePairing.ts";
+import { claimDevicePairing, startChannelInvitation, startDevicePairing } from "../src/registration/devicePairing.ts";
 import { initializeStateDatabase, secretDigest } from "../src/registration/stateDatabase.ts";
 import type { StateDatabase } from "../src/registration/stateDatabase.ts";
 import { createBrowserSockets } from "./browserSockets.ts";
 import { createWorkerDatabase } from "./environment.ts";
 import type { WorkerEnvironment } from "./environment.ts";
 
-const routes = new Set(["/mcp", "/bridge", "/bridge/pair/start", "/bridge/pair/claim", "/bridge/ticket", "/bridge/unpair"]);
+const routes = new Set(["/mcp", "/bridge", "/bridge/pair/start", "/bridge/pair/invite", "/bridge/pair/claim", "/bridge/ticket", "/bridge/unpair"]);
 
 function json(status: number, value: unknown): Response {
   return Response.json(value, { status, headers: { "Cache-Control": "no-store" } });
@@ -68,8 +68,13 @@ export class FlexBridge extends DurableObject<WorkerEnvironment> {
   private handleRegistration(request: Request, path: string): Response {
     if (request.method !== "POST") return new Response(null, { status: 405, headers: { Allow: "POST" } });
     const key = readBearer(request);
-    if (path === "/bridge/pair/start") {
+    if (path === "/bridge/pair/start" || path === "/bridge/pair/invite") {
       if (!this.allowPairingAttempt(request, "start", 6)) return json(429, { error: "PAIRING_LIMIT" });
+      if (path === "/bridge/pair/invite") {
+        const invitation = startChannelInvitation(this.database, key);
+        return invitation.ok ? json(201, invitation.value)
+          : json(invitation.error === "INVALID_DEVICE_KEY" ? 401 : 429, { error: invitation.error });
+      }
       const started = startDevicePairing(this.database, key);
       return started ? json(201, started) : json(429, { error: "PAIRING_LIMIT" });
     }

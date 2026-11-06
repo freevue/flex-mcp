@@ -38,6 +38,17 @@ export function initializeStateDatabase(database: StateDatabase): void {
     CREATE TABLE IF NOT EXISTS channel_connections (
       digest TEXT PRIMARY KEY, binding_id TEXT NOT NULL UNIQUE REFERENCES bindings(binding_id) ON DELETE CASCADE
     );
+    CREATE TABLE IF NOT EXISTS channel_invites (
+      request_digest TEXT PRIMARY KEY, code_digest TEXT NOT NULL UNIQUE, expires_at INTEGER NOT NULL,
+      binding_id TEXT NOT NULL REFERENCES bindings(binding_id) ON DELETE CASCADE, approved INTEGER NOT NULL DEFAULT 0
+    );
+    CREATE TABLE IF NOT EXISTS channel_additional_connections (
+      digest TEXT PRIMARY KEY, binding_id TEXT NOT NULL REFERENCES bindings(binding_id) ON DELETE CASCADE
+    );
+    CREATE INDEX IF NOT EXISTS channel_additional_connections_binding ON channel_additional_connections(binding_id);
+    CREATE VIEW IF NOT EXISTS channel_keys AS
+      SELECT digest, binding_id FROM channel_connections UNION ALL
+      SELECT digest, binding_id FROM channel_additional_connections;
     CREATE TABLE IF NOT EXISTS tickets (
       digest TEXT PRIMARY KEY, binding_id TEXT NOT NULL UNIQUE, expires_at INTEGER NOT NULL,
       FOREIGN KEY (binding_id) REFERENCES bindings(binding_id) ON DELETE CASCADE

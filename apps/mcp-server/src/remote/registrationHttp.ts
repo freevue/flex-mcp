@@ -2,7 +2,7 @@ import type { IncomingMessage, ServerResponse } from "node:http";
 import type { DatabaseSync } from "node:sqlite";
 import { revokeAccess } from "../access/index.ts";
 import type { RelayContext } from "../bridge/index.ts";
-import { claimDevicePairing, issueBridgeTicket, startDevicePairing, verifyDeviceKey } from "../registration/index.ts";
+import { claimDevicePairing, issueBridgeTicket, startChannelInvitation, startDevicePairing, verifyDeviceKey } from "../registration/index.ts";
 import { reconcileBrowserAccess } from "./browserSocket.ts";
 import { readBearer, sendJson } from "./http.ts";
 
@@ -15,6 +15,11 @@ export function handleRegistration(request: IncomingMessage, response: ServerRes
   if (request.url === "/bridge/pair/start") {
     const started = startDevicePairing(database, readBearer(request));
     return sendJson(response, started ? 201 : 429, started ?? { error: "PAIRING_LIMIT" });
+  }
+  if (request.url === "/bridge/pair/invite") {
+    const invitation = startChannelInvitation(database, readBearer(request));
+    return invitation.ok ? sendJson(response, 201, invitation.value)
+      : sendJson(response, invitation.error === "INVALID_DEVICE_KEY" ? 401 : 429, { error: invitation.error });
   }
   if (request.url === "/bridge/pair/claim") {
     const result = claimDevicePairing(database, readBearer(request));

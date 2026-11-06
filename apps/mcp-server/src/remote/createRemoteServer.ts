@@ -12,7 +12,7 @@ import { readJson, sendJson } from "./http.ts";
 import { handleRegistration } from "./registrationHttp.ts";
 
 export type RemoteConfiguration = { origin: string };
-const registrationPaths = new Set(["/bridge/pair/start", "/bridge/pair/claim", "/bridge/ticket", "/bridge/unpair"]);
+const registrationPaths = new Set(["/bridge/pair/start", "/bridge/pair/invite", "/bridge/pair/claim", "/bridge/ticket", "/bridge/unpair"]);
 
 export function createRemoteServer(configuration: RemoteConfiguration, database: DatabaseSync): Server {
   const relay: RelayContext = {
