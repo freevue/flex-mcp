@@ -10,4 +10,4 @@ writeFileSync("dist/extension-config.json", JSON.stringify({
   origin: origin.origin, demo: process.env.FLEX_EXTENSION_DEMO === "1",
 }));
 for (const name of ["popup.html", "popup.css"]) copyFileSync(name, `dist/${name}`);
-writeFileSync("dist/service-worker.js", 'import "./apps/chrome-extension/src/service-worker.js";');
+writeFileSync("dist/service-worker.js", 'import { startExtension } from "./apps/chrome-extension/src/service-worker.js";\nstartExtension();\n');

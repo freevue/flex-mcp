@@ -22,12 +22,12 @@ export function createPairedMcpServer(database: StateDatabase, relay: RelayConte
       const identity = findChannel(connectionKey);
       if (!identity) return failure("ACCESS_DENIED");
       const caller = authorizeMcpCaller(identity, relay.access);
-      return caller.ok ? forwardFlexQuery(caller.value, query, relay) : caller;
+      return caller.ok ? forwardFlexQuery(caller.value, query, relay, true) : caller;
     },
     connectionStatus: connectionKey => {
       const identity = findChannel(connectionKey);
       return identity ? getBrowserConnectionStatus(identity, relay) : failure("ACCESS_DENIED");
     },
     approveConnection: code => allowApproval() ? approveDevicePairing(database, code) : null,
-  }, undefined, true);
+  });
 }

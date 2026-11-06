@@ -26,7 +26,8 @@ export function attachBrowserBridge(binding: BrowserBinding, connection: Browser
     if (!pending || pending.connection !== connection) return;
     const reply = parseBridgeReply(value, pending.query);
     if (!reply.ok) return pending.finish(reply);
-    pending.finish("error" in reply.value ? failure(reply.value.error) : success(reply.value.result));
+    if ("error" in reply.value) return pending.finish(failure(reply.value.error));
+    pending.finish(success(reply.value.result), reply.value.source);
   });
 
   if (previous) {

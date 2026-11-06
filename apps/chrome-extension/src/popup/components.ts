@@ -36,7 +36,8 @@ export function renderConnectionRows(flex: Extract<PopupSnapshot, { kind: "conne
   const entries = [
     { label: "MCP 연결", value: "연결됨", tone: "online" },
     flex === "synthetic" ? { label: "Flex 연결", value: "합성 모드", tone: "attention" }
-      : { label: "Flex 연결", value: "미연결", tone: "attention" },
+      : flex === "registered" ? { label: "Flex 연결", value: "계정 등록됨", tone: "online" }
+        : { label: "Flex 연결", value: "미연결", tone: "attention" },
   ];
   for (const { label, value, tone } of entries) {
     const row = document.createElement("div");

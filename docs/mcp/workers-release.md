@@ -2,7 +2,7 @@
 
 [배포 설계](cloudflare-workers.md) · [개발 명령](development.md) · [운영과 복구](../features/remote-operations.md) · [최종 검증](../features/release-verification.md)
 
-상태: 합성 검증용 Worker 구현. 이 절차는 저장소 루트의 Wrangler 설정을 사용합니다. Node 패키지는 별도입니다. 실제 Flex 데이터는 별도 작업입니다.
+이 절차는 저장소 루트의 Wrangler 설정을 사용합니다. Node 패키지는 별도입니다. 실계정은 [개인 설치본 검증](../features/extension-setup.md)에서 확인합니다.
 
 ## 개발 환경
 
@@ -49,7 +49,7 @@ Worker에 별도 확장 ID, 에이전트 목록과 Flex 인증 값을 등록하�
 2. 저장소 루트에서 `pnpm exec wrangler dev --env staging`으로 로컬 실행을 확인합니다.
 3. 저장소 루트에서 `pnpm build:worker`로 운영 번들과 설정을 모의 검사합니다.
 4. 검증 환경 배포를 승인한 뒤 저장소 루트에서 `pnpm exec wrangler deploy --env staging`을 실행합니다.
-5. 배포한 검증 URL에서 초기화와 도구 목록을 확인합니다. Chrome 두 프로필로 등록, 승인, 조회와 복구를 확인합니다. 현재 빌드는 합성 조회만 허용합니다.
+5. 배포한 검증 URL에서 초기화와 도구 목록을 확인합니다. Chrome 두 프로필로 등록, 승인, 조회와 복구를 확인합니다. 공개 빌드의 검증에는 합성 자료를 사용합니다.
 6. 승인된 실제 조회 코드를 연결한 뒤, 승인된 한 계정으로 Flex 화면과 도구 결과를 대조합니다.
 7. 운영 환경의 합성 검증 배포를 준비했으면 `pnpm exec wrangler deploy --env production`을 실행합니다. 실제 운영 전환은 승인된 Flex 조회 검증을 마친 뒤 수행합니다.
 

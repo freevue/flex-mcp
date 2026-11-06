@@ -2,7 +2,7 @@
 
 [유틸 목록](../../UTILITIES.md) · [기능 문서](../features/remote-bridge.md) · [공통 타입](../UTILITY_TYPES.md)
 
-서버가 받은 확장 응답을 도구 계약과 대조합니다.
+서버가 받은 확장 응답을 도구 계약과 대조합니다. 성공 응답의 선택 필드 `source`는 `"flex"`만 받습니다.
 
 | 항목 | 내용 |
 | --- | --- |
@@ -33,3 +33,4 @@ declare function parseBridgeReply(value: unknown, expectedQuery: FlexQuery): Out
 | TC-U-PARSE-BRIDGE-REPLY-03 | 근무 시간 요청에 일정 결과를 보냅니다. | `INVALID_BRIDGE_MESSAGE`를 반환합니다. | 예정 |
 | TC-U-PARSE-BRIDGE-REPLY-04 | 일정 결과의 기간이 원래 요청과 다릅니다. | `INVALID_BRIDGE_MESSAGE`를 반환합니다. | 예정 |
 | TC-U-PARSE-BRIDGE-REPLY-05 | 결과와 오류를 함께 보내거나 알 수 없는 코드나 필드를 넣습니다. | `INVALID_BRIDGE_MESSAGE`를 반환합니다. | 예정 |
+| TC-U-PARSE-BRIDGE-REPLY-06 | 출처 표시를 추가한 유효한 응답을 보냅니다. | 도구 결과와 출처 표시를 분리해 반환합니다. | [원격 연결 검사](../../apps/mcp-server/test/shared-remote.test.ts) |

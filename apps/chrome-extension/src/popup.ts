@@ -21,7 +21,8 @@ function setSnapshot(next: PopupSnapshot): void {
     view.replaceChildren(title, renderConnectionRows(next.flex));
     if (next.summary) view.append(renderWorkSummary(next.summary));
     else {
-      description.textContent = "Flex 조회가 연결되면 근무 시간을 표시합니다.";
+      description.textContent = next.flex === "registered" ? "Flex 탭을 열어 둔 상태에서 MCP로 조회하세요."
+        : "Flex 조회가 연결되면 근무 시간을 표시합니다.";
       view.append(description);
     }
     return;
@@ -36,6 +37,11 @@ function setSnapshot(next: PopupSnapshot): void {
   title.textContent = "Chrome 연결";
   description.textContent = "MCP 소켓이 연결되어 있지 않습니다.";
   view.replaceChildren(title, description);
+  if (next.needsFlex && !next.approvalCode) {
+    const hint = document.createElement("p");
+    hint.textContent = "같은 Chrome 프로필에서 Flex 탭 하나를 열고 로그인한 뒤 코드를 발급하세요.";
+    view.append(hint);
+  }
   if (next.approvalCode) view.append(renderApprovalCode(next.approvalCode));
   else view.append(popupButton("일회용 코드 발급", "popup-issue-code"));
   if (next.canReconnect) view.append(popupButton("다시 연결", "popup-reconnect", true));

@@ -14,7 +14,7 @@ export type PendingQuery = {
   connection: BrowserConnection;
   caller: AuthorizedCaller;
   query: FlexQuery;
-  finish: (result: Outcome<FlexResult, RelayFailure>) => void;
+  finish: (result: Outcome<FlexResult, RelayFailure>, source?: "flex") => void;
 };
 export type BridgeRegistry = {
   active: Map<string, BrowserConnection>;

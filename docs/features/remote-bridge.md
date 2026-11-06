@@ -2,7 +2,7 @@
 
 [투두 4](https://github.com/freevue/flex-mcp/issues/4) · [서비스 정책](../../SERVICE_POLICY.md) · [접근 권한](access-control.md) · [Workers 이식](../mcp/cloudflare-workers.md)
 
-중계는 서버와 확장 사이에서 요청과 결과를 전달하는 기능입니다. 에이전트는 [Streamable HTTP](https://modelcontextprotocol.io/specification/2025-11-25/basic/transports#streamable-http)를 사용합니다. 등록을 받은 확장은 WSS 연결을 엽니다. 서버는 연결을 승인한 뒤 조회를 보냅니다. 현재 빌드는 합성 조회만 지원합니다. [최초 등록과 승인](browser-pairing.md), [등록 이후의 중계](shared-connection-flow.md)를 따릅니다.
+중계는 서버와 확장 사이에서 요청과 결과를 전달하는 기능입니다. 에이전트는 [Streamable HTTP](https://modelcontextprotocol.io/specification/2025-11-25/basic/transports#streamable-http)를 사용합니다. 등록을 받은 확장은 WSS 연결을 엽니다. 서버는 연결을 승인한 뒤 조회를 보냅니다. 공개 확장은 합성 데이터를 보냅니다. [개인 설치본](extension-setup.md)은 Chrome에서 읽은 도구 결과를 보냅니다. [최초 등록과 승인](browser-pairing.md), [등록 이후의 중계](shared-connection-flow.md)를 따릅니다.
 
 ## 메시지 계약
 
@@ -40,6 +40,8 @@ Node는 같은 주소에서 `/mcp`와 `/bridge`를 제공합니다. HTTPS와 WSS
 확장은 [연결 함수](../utilities/connect-bridge.md)로 연결합니다. 서버는 [브라우저 연결을 등록](../utilities/attach-browser-bridge.md)합니다. 서버는 [조회 전달](../utilities/forward-flex-query.md)에서 호출자와 연결을 확인합니다. 양쪽은 [요청 검사](../utilities/parse-bridge-request.md)와 [응답 검사](../utilities/parse-bridge-reply.md)를 사용합니다. 확장은 [탭 전달 함수](../utilities/dispatch-to-flex-tab.md)로 패키지에 포함된 코드를 실행합니다.
 
 합성 연결에서 두 에이전트의 요청을 섞어 보냅니다. 같은 연결과 요청 ID의 결과만 반환하는지 확인합니다. 만료, 중복, 이전 연결에서 온 응답은 무시합니다. 연결이 끊기면 대기 요청을 종료합니다. 다시 연결한 뒤 예전 조회가 실행되지 않는지 확인합니다.
+
+실제 조회 성공 응답에는 최상위에 `source: "flex"`를 보냅니다. 서버는 이 표시를 제거하고 도구 결과만 반환합니다. 출처 표시가 없는 이전 확장의 응답과 공개 합성 응답에는 `synthetic: true`를 붙입니다. 출처 표시가 있어도 계정이나 Flex 원본 응답은 받지 않습니다.
 
 ## 테스트 케이스
 

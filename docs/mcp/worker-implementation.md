@@ -1,8 +1,8 @@
-# Workers 합성 검증 구현
+# Workers 중계 구현
 
 [배포 절차](workers-release.md) · [운영 설계](cloudflare-workers.md) · [로컬 Workers 검사](../../apps/mcp-server/test/worker-smoke.test.ts)
 
-이 구현은 Node와 같은 도구 다섯 개를 제공합니다. 브라우저 조회 결과는 합성 자료에 한합니다. 실제 Flex 조회와 놀수 요약은 별도 작업입니다. Wrangler의 운영 모의 배포는 Worker 번들과 설정을 확인합니다.
+이 구현은 Node와 같은 도구 다섯 개를 제공합니다. 공개 확장의 결과는 합성 자료입니다. 개인 설치본의 연차, 일정과 근무 시간도 중계합니다. 놀수 요약은 별도 작업입니다. Wrangler의 운영 모의 배포는 Worker 번들과 설정을 확인합니다.
 
 | 함수 | 매개변수 | 역할 |
 | --- | --- | --- |

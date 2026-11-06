@@ -21,7 +21,7 @@ export async function checkPairedChannels(origin: string): Promise<void> {
   const query = (connectionKey: string) =>
     client.callTool({ name: "flex_get_schedule", arguments: { connectionKey } });
 
-  async function pair() {
+  async function pair(reportsFlexSource = false) {
     const started = await post("/bridge/pair/start");
     assert.equal(started.status, 201);
     const { approvalCode, requestKey } = await started.json() as { approvalCode: string; requestKey: string };
@@ -54,9 +54,11 @@ export async function checkPairedChannels(origin: string): Promise<void> {
     assert.equal(String((await ready)[0]), '{"type":"ready"}');
     socket.on("message", data => {
       const parsed = parseBridgeRequest(JSON.parse(String(data)) as unknown);
-      if (parsed.ok) socket.send(JSON.stringify(createSyntheticReply(parsed.value, bindingId)));
+      if (!parsed.ok) return;
+      const reply = createSyntheticReply(parsed.value, bindingId);
+      socket.send(JSON.stringify(reportsFlexSource && "result" in reply ? { ...reply, source: "flex" } : reply));
     });
-    return { bindingId, connectionKey, deviceKey };
+    return { bindingId, connectionKey, deviceKey, reportsFlexSource };
   }
 
   try {
@@ -68,14 +70,16 @@ export async function checkPairedChannels(origin: string): Promise<void> {
     ]);
     assert.equal((await client.callTool({ name: "flex_get_socket_status" })).isError, true);
     const first = await pair();
-    const second = await pair();
+    const second = await pair(true);
     assert.notEqual(first.bindingId, second.bindingId);
     assert.equal((await client.callTool({ name: "flex_get_socket_status",
       arguments: { connectionKey: first.connectionKey, bindingId: second.bindingId } })).isError, true);
     for (const channel of [first, second]) {
       assert.deepEqual((await status(channel.connectionKey)).structuredContent, { status: "online" });
       const result = (await query(channel.connectionKey)).structuredContent;
-      assert.ok(isRecord(result) && result.synthetic === true);
+      assert.ok(isRecord(result));
+      assert.equal(result.synthetic, channel.reportsFlexSource ? undefined : true);
+      assert.equal(Object.hasOwn(result, "source"), false);
       assert.ok(JSON.stringify(result).includes(channel.bindingId.slice(0, 8)));
     }
     assert.equal((await post("/bridge/unpair", first.deviceKey)).status, 204);

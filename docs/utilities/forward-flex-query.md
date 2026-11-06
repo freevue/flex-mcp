@@ -14,7 +14,7 @@
 ## 함수 계약
 
 ```typescript
-declare function forwardFlexQuery(caller: AuthorizedCaller, query: FlexQuery, context: RelayContext): Promise<Outcome<FlexResult, RelayFailure>>;
+declare function forwardFlexQuery(caller: AuthorizedCaller, query: FlexQuery, context: RelayContext, markSynthetic?: boolean): Promise<Outcome<FlexResult & { synthetic?: true }, RelayFailure>>;
 ```
 
 | 매개변수 | 타입 | 필수 여부 | 설명 |
@@ -22,6 +22,7 @@ declare function forwardFlexQuery(caller: AuthorizedCaller, query: FlexQuery, co
 | `caller` | `AuthorizedCaller` | 필수 | 서버에서 접근 권한을 확인한 에이전트입니다. |
 | `query` | `FlexQuery` | 필수 | 도구 종류와 기간을 검사한 조회입니다. |
 | `context` | `RelayContext` | 필수 | 현재 권한과 연결, 요청 ID, 대기 시간과 건수 제한을 확인할 서버 문맥입니다. |
+| `markSynthetic` | `boolean` | 선택 | 기본값은 false입니다. true이면 실조회 출처 표시가 없는 성공 결과에 `synthetic: true`를 붙입니다. |
 
 ## 테스트 케이스
 
@@ -35,3 +36,4 @@ declare function forwardFlexQuery(caller: AuthorizedCaller, query: FlexQuery, co
 | TC-U-FORWARD-FLEX-QUERY-04 | 다른 연결에서 같은 ID의 응답이 오거나 같은 응답이 두 번 도착합니다. | 첫 유효 응답만 사용합니다. 다른 연결과 중복 응답은 폐기합니다. | [로컬 테스트](../../apps/mcp-server/test/relay.test.ts) |
 | TC-U-FORWARD-FLEX-QUERY-05 | 응답을 보내기 전에 호출자의 권한을 회수합니다. | `ACCESS_DENIED`를 반환합니다. 조회 결과는 보내지 않습니다. | [로컬 테스트](../../apps/mcp-server/test/relay.test.ts) |
 | TC-U-FORWARD-FLEX-QUERY-06 | 대기 건수 상한이 찬 상태에서 조회를 요청합니다. | `QUERY_LIMIT_REACHED`를 반환합니다. 새 조회를 전달하지 않습니다. | [로컬 테스트](../../apps/mcp-server/test/relay.test.ts) |
+| TC-U-FORWARD-FLEX-QUERY-07 | 출처 표시가 있는 응답과 없는 응답을 보냅니다. | 표시가 없는 원격 결과만 합성으로 표시합니다. | [원격 연결 검사](../../apps/mcp-server/test/shared-remote.test.ts) |

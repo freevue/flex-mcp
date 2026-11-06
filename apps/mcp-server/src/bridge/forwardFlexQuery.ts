@@ -5,8 +5,8 @@ import { resolveBrowserBinding } from "../access/resolveBrowserBinding.ts";
 import type { AuthorizedCaller } from "../access/types.ts";
 import type { RelayContext, RelayFailure } from "./types.ts";
 
-export async function forwardFlexQuery(caller: AuthorizedCaller, query: FlexQuery, context: RelayContext):
-  Promise<Outcome<FlexResult, RelayFailure>> {
+export async function forwardFlexQuery(caller: AuthorizedCaller, query: FlexQuery, context: RelayContext, markSynthetic = false):
+  Promise<Outcome<FlexResult & { synthetic?: true }, RelayFailure>> {
   const { access, registry, timeoutMs, maxPending } = context;
   const binding = resolveBrowserBinding(caller, access);
   if (!binding.ok) return binding;
@@ -16,11 +16,12 @@ export async function forwardFlexQuery(caller: AuthorizedCaller, query: FlexQuer
   if (registry.pending.size >= maxPending) return failure("QUERY_LIMIT_REACHED");
 
   const requestId = randomUUID();
-  const result = await new Promise<Outcome<FlexResult, RelayFailure>>(resolve => {
-    function finish(outcome: Outcome<FlexResult, RelayFailure>) {
+  const result = await new Promise<Outcome<FlexResult & { synthetic?: true }, RelayFailure>>(resolve => {
+    function finish(outcome: Outcome<FlexResult, RelayFailure>, source?: "flex") {
       if (!registry.pending.delete(requestId)) return;
       clearTimeout(timer);
-      resolve(outcome);
+      resolve(outcome.ok && markSynthetic && source !== "flex"
+        ? { ok: true, value: { ...outcome.value, synthetic: true } } : outcome);
     }
     const timer = setTimeout(() => finish(failure("QUERY_TIMEOUT")), timeoutMs);
     registry.pending.set(requestId, { caller, connection, query, finish });

@@ -2,7 +2,7 @@
 
 [도구 목록](README.md) · [함수 목록](functions.md) · [예정 함수](workers/README.md) · [배포 검증](workers-release.md) · [원격 운영 투두](https://github.com/freevue/flex-mcp/issues/11)
 
-저장소 루트의 `wrangler.jsonc`가 합성 검증 Worker를 빌드합니다. 실제 Flex 조회는 별도 작업입니다.
+저장소 루트의 `wrangler.jsonc`가 Worker를 빌드합니다. Worker는 공개 확장의 합성 결과와 [개인 설치본](../features/extension-setup.md)의 실조회 결과를 구분해 전달합니다.
 
 운영 도메인은 `flex-mcp.freevue.dev`입니다. MCP 클라이언트는 `https://flex-mcp.freevue.dev/mcp`를 사용합니다. Chrome 확장의 서버 주소는 `https://flex-mcp.freevue.dev`입니다. 확장은 이 주소로 등록 요청을 보내고 `wss://flex-mcp.freevue.dev/bridge`에 연결합니다.
 

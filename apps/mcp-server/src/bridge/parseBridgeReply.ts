@@ -24,6 +24,11 @@ export function parseBridgeReply(value: unknown, expectedQuery: FlexQuery): Outc
   if (!isRecord(value) || !isRequestId(value.requestId)) return failure("INVALID_BRIDGE_MESSAGE");
   const { requestId } = value;
   if (hasKeys(value, ["requestId", "error"]) && isBridgeError(value.error)) return success({ requestId, error: value.error });
-  if (hasKeys(value, ["requestId", "result"]) && isResult(value.result, expectedQuery)) return success({ requestId, result: value.result });
+  if (isResult(value.result, expectedQuery)) {
+    if (hasKeys(value, ["requestId", "result"])) return success({ requestId, result: value.result });
+    if (hasKeys(value, ["requestId", "result", "source"]) && value.source === "flex") {
+      return success({ requestId, result: value.result, source: "flex" });
+    }
+  }
   return failure("INVALID_BRIDGE_MESSAGE");
 }
