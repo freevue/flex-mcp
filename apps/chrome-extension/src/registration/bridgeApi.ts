@@ -35,10 +35,11 @@ export async function pairBrowser(origin: string, code: string): Promise<StoredR
   return { origin: server.origin, ...registration };
 }
 
-export async function requestBridgeTicket(registration: StoredRegistration, signal: AbortSignal): Promise<string> {
+export async function requestBridgeTicket(registration: StoredRegistration, signal: AbortSignal, onUnauthorized?: () => void): Promise<string> {
   const response = await post(registration.origin, "/bridge/ticket", {
     headers: { Authorization: `Bearer ${registration.deviceKey}` }, signal,
   });
+  if (response.status === 401) onUnauthorized?.();
   if (!response.ok) throw new Error("접속권을 받지 못했습니다.");
   const value = await response.json() as unknown;
   if (!isRecord(value) || !hasKeys(value, ["ticket"]) || typeof value.ticket !== "string"

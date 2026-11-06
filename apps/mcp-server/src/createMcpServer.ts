@@ -1,17 +1,25 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { z } from "zod";
+import { z as schema } from "zod";
 import type { DateRange, FlexQuery, FlexResult, Outcome } from "../../../shared/index.ts";
 import type { AccessFailure } from "./access/index.ts";
 import type { RelayFailure } from "./bridge/index.ts";
 import { resolveRange, seoulDate, shiftDate } from "./dates.ts";
+import { browserConnectionStates } from "./operations/index.ts";
+import type { BrowserConnectionStatus } from "./operations/index.ts";
 
-type QueryHandler = (query: FlexQuery) => Promise<Outcome<FlexResult, RelayFailure | AccessFailure>>;
+type ToolFailure = RelayFailure | AccessFailure | "CONNECTION_STATUS_FAILED";
+type ToolHandlers = {
+  query: (query: FlexQuery) => Promise<Outcome<FlexResult, RelayFailure | AccessFailure>>;
+  connectionStatus?: () => Outcome<BrowserConnectionStatus, AccessFailure>;
+  approveConnection?: (code: string) => boolean;
+};
 const annotations = { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: true };
-const rangeFields = z.strictObject({
-  from: z.iso.date().optional().describe("시작일(포함), YYYY-MM-DD"),
-  to: z.iso.date().optional().describe("종료일(포함), YYYY-MM-DD"),
+const rangeFields = schema.strictObject({
+  from: schema.iso.date().optional().describe("시작일(포함), YYYY-MM-DD"),
+  to: schema.iso.date().optional().describe("종료일(포함), YYYY-MM-DD"),
 });
-const errors: Record<RelayFailure | AccessFailure, string> = {
+const errors: Record<ToolFailure, string> = {
+  CONNECTION_STATUS_FAILED: "Chrome 소켓 상태를 확인할 수 없습니다.",
   CALLER_UNVERIFIED: "호출자를 확인할 수 없습니다.",
   ACCESS_DENIED: "조회 권한이 없습니다.",
   BROWSER_OFFLINE: "연결한 Chrome이 오프라인입니다.",
@@ -25,11 +33,15 @@ const errors: Record<RelayFailure | AccessFailure, string> = {
   QUERY_LIMIT_REACHED: "대기 중인 조회가 많습니다. 잠시 뒤 다시 요청하세요.",
 };
 
-function errorReply(text: string, code?: RelayFailure | AccessFailure) {
+function errorReply(text: string, code?: ToolFailure) {
   return { isError: true, content: [{ type: "text" as const, text }], ...(code ? { structuredContent: { code } } : {}) };
 }
 
-export function createMcpServer(handler?: QueryHandler, now = () => new Date(), synthetic = false): McpServer {
+function successReply(result: Record<string, unknown>) {
+  return { structuredContent: result, content: [{ type: "text" as const, text: JSON.stringify(result) }] };
+}
+
+export function createMcpServer(handlers?: ToolHandlers, now = () => new Date(), synthetic = false): McpServer {
   const server = new McpServer({ name: synthetic ? "flex-demo" : "flex", version: "0.1.0" });
   async function reply(buildQuery: () => FlexQuery) {
     let query: FlexQuery;
@@ -38,12 +50,12 @@ export function createMcpServer(handler?: QueryHandler, now = () => new Date(), 
     } catch (error) {
       return errorReply(error instanceof Error ? error.message : "조회 범위를 확인하세요.");
     }
-    if (!handler) return errorReply("조회 연결이 구성되지 않았습니다.");
+    if (!handlers) return errorReply("조회 연결이 구성되지 않았습니다.");
     try {
-      const outcome = await handler(query);
+      const outcome = await handlers.query(query);
       if (!outcome.ok) return errorReply(errors[outcome.error], outcome.error);
       const result = synthetic ? { ...outcome.value, synthetic: true } : outcome.value;
-      return { structuredContent: result, content: [{ type: "text" as const, text: JSON.stringify(result) }] };
+      return successReply(result);
     } catch {
       return errorReply(errors.FLEX_READ_FAILED, "FLEX_READ_FAILED");
     }
@@ -59,7 +71,7 @@ export function createMcpServer(handler?: QueryHandler, now = () => new Date(), 
   server.registerTool("flex_get_annual_leave", {
     title: "내 연차 잔액",
     description: "flex에 로그인한 본인의 현재 연차 잔여량과 사용 가능량을 일·분 단위로 조회합니다.",
-    inputSchema: z.strictObject({}),
+    inputSchema: schema.strictObject({}),
     annotations,
   }, () => reply(() => ({ kind: "leave" })));
 
@@ -76,6 +88,40 @@ export function createMcpServer(handler?: QueryHandler, now = () => new Date(), 
     inputSchema: rangeFields,
     annotations,
   }, input => reply(() => buildRange("work", input)));
+
+  if (handlers && !handlers.connectionStatus) return server;
+
+  server.registerTool("flex_get_socket_status", {
+    title: "내 Chrome 소켓 상태",
+    description: "본인의 Chrome 확장이 이 서버에 등록됐는지, 현재 소켓이 열려 있는지 확인합니다. flex 로그인이나 조회 가능 여부는 확인하지 않습니다.",
+    inputSchema: schema.strictObject({}),
+    outputSchema: schema.strictObject({ status: schema.enum(browserConnectionStates) }),
+    annotations,
+  }, () => {
+    if (!handlers?.connectionStatus) return errorReply("조회 연결이 구성되지 않았습니다.");
+    try {
+      const outcome = handlers.connectionStatus();
+      return outcome.ok ? successReply(outcome.value) : errorReply(errors[outcome.error], outcome.error);
+    } catch {
+      return errorReply(errors.CONNECTION_STATUS_FAILED, "CONNECTION_STATUS_FAILED");
+    }
+  });
+
+  server.registerTool("flex_approve_connection", {
+    title: "Chrome 연결 승인",
+    description: "사용자가 자신의 Chrome 연결 승인을 명시적으로 요청할 때 팝업의 승인 코드를 확인합니다. 승인 후 팝업에서 연결 상태를 확인합니다.",
+    inputSchema: schema.strictObject({ approvalCode: schema.string().regex(/^[0-9A-F]{4}(?:-[0-9A-F]{4}){2}$/) }),
+    outputSchema: schema.strictObject({ status: schema.literal("approved") }),
+    annotations: { readOnlyHint: false, destructiveHint: true, idempotentHint: false, openWorldHint: false },
+  }, ({ approvalCode }) => {
+    if (!handlers?.approveConnection) return errorReply("조회 연결이 구성되지 않았습니다.");
+    try {
+      return handlers.approveConnection(approvalCode) ? successReply({ status: "approved" })
+        : errorReply("승인 권한과 유효한 연결 코드를 확인하세요.", "ACCESS_DENIED");
+    } catch {
+      return errorReply("Chrome 연결을 승인하지 못했습니다.");
+    }
+  });
 
   return server;
 }

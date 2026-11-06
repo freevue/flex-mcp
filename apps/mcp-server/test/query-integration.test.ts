@@ -39,6 +39,7 @@ test("MCP 도구부터 합성 Chrome 조회까지 세 결과와 권한 경계를
   let receiveReply = (_value: unknown) => {};
   assert.ok(attachBrowserBridge(binding, {
     ...binding,
+    isOpen: () => true,
     send: request => {
       const parsed = parseBridgeRequest(JSON.parse(JSON.stringify(request)) as unknown);
       assert.ok(parsed.ok);
@@ -64,6 +65,7 @@ test("MCP 도구부터 합성 Chrome 조회까지 세 결과와 권한 경계를
 
   const denied = await connect("denied-agent");
   assert.deepEqual((await denied.callTool({ name: "flex_get_annual_leave" })).structuredContent, { code: "ACCESS_DENIED" });
+  assert.deepEqual((await denied.callTool({ name: "flex_get_socket_status" })).structuredContent, { code: "ACCESS_DENIED" });
   assert.deepEqual(reads, []);
 
   const client = await connect("approved-agent");

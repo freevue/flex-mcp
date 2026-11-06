@@ -29,10 +29,12 @@ export function authenticateBrowserSocket(socket: WebSocket, database: DatabaseS
       }
       const binding = consumeBridgeTicket(database, value.ticket);
       if (!binding || relay.access.findBinding(binding.ownerId)?.bindingId !== binding.bindingId) return socket.terminate();
+      const isOpen = () => socket.readyState === WebSocket.OPEN;
       const connection: BrowserConnection = {
         ...binding,
+        isOpen,
         send: request => {
-          if (socket.readyState !== WebSocket.OPEN) throw new Error("Chrome 연결이 닫혔습니다.");
+          if (!isOpen()) throw new Error("Chrome 연결이 닫혔습니다.");
           socket.send(JSON.stringify(request));
         },
         close: () => socket.terminate(),
@@ -40,7 +42,7 @@ export function authenticateBrowserSocket(socket: WebSocket, database: DatabaseS
         onReply: receive => socket.on("message", (message, isBinary) => {
           const payload = decode(message, isBinary);
           if (isRecord(payload) && hasKeys(payload, ["type"]) && payload.type === "ping") {
-            if (socket.readyState === WebSocket.OPEN) socket.send('{"type":"pong"}');
+            if (isOpen()) socket.send('{"type":"pong"}');
             return;
           }
           receive(payload);

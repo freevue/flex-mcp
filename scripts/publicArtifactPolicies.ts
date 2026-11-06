@@ -5,22 +5,23 @@ const server = [
   "index", "dates", "createMcpServer", "createCallerMcpServer",
   "access/authorizeMcpCaller", "access/index", "access/resolveBrowserBinding", "access/revokeAccess", "access/types",
   "bridge/attachBrowserBridge", "bridge/forwardFlexQuery", "bridge/index", "bridge/parseBridgeReply", "bridge/types",
-  "operations/index", "operations/getServiceReadiness",
+  "operations/index", "operations/getServiceReadiness", "operations/getBrowserConnectionStatus",
   "registration/accessState", "registration/admin", "registration/agentKeys", "registration/bridgeTickets",
-  "registration/database", "registration/index", "registration/pairing",
+  "registration/database", "registration/devicePairing", "registration/index", "registration/pairing", "registration/stateDatabase",
   "remote/browserSocket", "remote/createRemoteServer", "remote/demoQuery", "remote/http", "remote/index",
   "remote/registrationHttp", "remote/start",
 ].map(name => `apps/mcp-server/src/${name}.js`);
 const extension = [
-  "options", "service-worker",
-  "registration/bridgeApi", "registration/index",
+  "extensionConfiguration", "popup", "service-worker",
+  "popup/components", "popup/formatWorkMinutes", "popup/index", "popup/readPopupSnapshot", "popup/types",
+  "registration/bridgeApi", "registration/devicePairingApi", "registration/index",
   "bridge/confirmBrowserBinding", "bridge/connectBridge", "bridge/deriveConnectionState", "bridge/dispatchToFlexTab",
   "bridge/findFlexTab", "bridge/index", "bridge/parseBridgeRequest", "bridge/syntheticReply",
-  "flex/index", "flex/parseAnnualLeave", "flex/readAnnualLeave", "flex/readCurrentUser", "flex/readFlexJson",
+  "flex/demoWorkSummary", "flex/workSummary", "flex/index", "flex/parseAnnualLeave", "flex/readAnnualLeave", "flex/readCurrentUser", "flex/readFlexJson",
   "flex/readSchedule", "flex/readWorkHours", "flex/runFlexQuery", "flex/types",
 ].map(name => `apps/chrome-extension/src/${name}.js`);
 const serverEntries = ["package/package.json", ...["index.js", ...server, ...shared].map(path => `package/dist/${path}`)];
-const extensionEntries = ["manifest.json", "options.html", "service-worker.js", ...extension, ...shared];
+const extensionEntries = ["manifest.json", "extension-config.json", "popup.html", "popup.css", "service-worker.js", ...extension, ...shared];
 
 export const serverArtifactPolicy: PublicArtifactPolicy = {
   format: "tgz",

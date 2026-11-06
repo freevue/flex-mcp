@@ -1,6 +1,7 @@
 import { shiftDate } from "../../../../shared/shiftDate.ts";
 import { timezone } from "../../../../shared/index.ts";
 import type { BridgeReply, BridgeRequest } from "../../../../shared/index.ts";
+import { createDemoWorkTotals } from "../flex/demoWorkSummary.ts";
 
 export function createSyntheticReply(request: BridgeRequest, bindingId: string): BridgeReply {
   const { requestId, query } = request;
@@ -15,6 +16,6 @@ export function createSyntheticReply(request: BridgeRequest, bindingId: string):
     }] } };
   }
   return { requestId, result: { ...query.range, timezone,
-    actualMinutes: 480, recognizedMinutes: 480, requiredAgreedMinutes: 480, overtimeMinutes: 0, timeOffMinutes: 0,
+    ...createDemoWorkTotals(query.range),
   } };
 }

@@ -12,9 +12,7 @@
     "storage",
     "alarms"
   ],
-  "optional_host_permissions": [
-    "https://*/*",
-    "http://127.0.0.1/*"
-  ],
-  "options_page": "options.html"
+  "action": {
+    "default_popup": "popup.html"
+  }
 }

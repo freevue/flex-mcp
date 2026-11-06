@@ -1,15 +1,15 @@
-import type { DatabaseSync } from "node:sqlite";
+import type { StateDatabase } from "./stateDatabase.ts";
 import type { BrowserBinding } from "../access/types.ts";
-import { asBrowserBinding, createSecret, isSecret, secretDigest } from "./database.ts";
+import { asBrowserBinding, createSecret, isSecret, secretDigest } from "./stateDatabase.ts";
 
-export function verifyDeviceKey(database: DatabaseSync, key: string): BrowserBinding | null {
+export function verifyDeviceKey(database: StateDatabase, key: string): BrowserBinding | null {
   if (!isSecret(key)) return null;
   return asBrowserBinding(database.prepare(
     "SELECT owner_id AS ownerId, binding_id AS bindingId FROM bindings WHERE digest = ?",
   ).get(secretDigest(key)));
 }
 
-export function issueBridgeTicket(database: DatabaseSync, deviceKey: string, now = Date.now()): string | null {
+export function issueBridgeTicket(database: StateDatabase, deviceKey: string, now = Date.now()): string | null {
   if (!isSecret(deviceKey)) return null;
   const ticket = createSecret();
   const { changes } = database.prepare(`
@@ -20,7 +20,7 @@ export function issueBridgeTicket(database: DatabaseSync, deviceKey: string, now
   return changes ? ticket : null;
 }
 
-export function consumeBridgeTicket(database: DatabaseSync, ticket: string, now = Date.now()): BrowserBinding | null {
+export function consumeBridgeTicket(database: StateDatabase, ticket: string, now = Date.now()): BrowserBinding | null {
   if (!isSecret(ticket)) return null;
   const bindingId = database.prepare(
     "DELETE FROM tickets WHERE digest = ? AND expires_at > ? RETURNING binding_id",

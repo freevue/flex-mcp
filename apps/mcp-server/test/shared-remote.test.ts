@@ -6,7 +6,7 @@ import { StreamableHTTPClientTransport } from "@modelcontextprotocol/sdk/client/
 import { WebSocket } from "ws";
 import { isRecord } from "../../../shared/index.ts";
 import { createSyntheticReply, parseBridgeRequest } from "../../chrome-extension/src/bridge/index.ts";
-import { issueAgentKey, issuePairingCode, openStateDatabase } from "../src/registration/index.ts";
+import { issueAgentKey, openStateDatabase } from "../src/registration/index.ts";
 import { createRemoteServer } from "../src/remote/index.ts";
 
 test("두 사용자가 같은 주소에서 조회하고 다른 사용자의 소켓으로 전환하지 않는다", { timeout: 8_000 }, async context => {
@@ -28,15 +28,37 @@ test("두 사용자가 같은 주소에서 조회하고 다른 사용자의 소�
   const { port } = address;
   const origin = `http://127.0.0.1:${port}`;
 
+  async function connectAgent(ownerId: string, canApprove: boolean) {
+    const { key } = issueAgentKey(database, ownerId, canApprove);
+    const client = new Client({ name: ownerId, version: "0.1.0" });
+    clients.push(client);
+    await client.connect(new StreamableHTTPClientTransport(new URL("/mcp", origin), {
+      requestInit: { headers: { Authorization: `Bearer ${key}` } },
+    }));
+    return client;
+  }
+
   async function setup(ownerId: string) {
-    const { key } = issueAgentKey(database, ownerId);
-    const code = issuePairingCode(database, ownerId);
-    const paired = await fetch(`${origin}/bridge/pair`, {
-      method: "POST", headers: { Origin: extension, "Content-Type": "application/json" },
-      body: JSON.stringify({ code }),
-    });
-    assert.equal(paired.status, 200);
-    const registration = await paired.json() as { bindingId: string; deviceKey: string };
+    const client = await connectAgent(ownerId, true);
+    const readOnly = await connectAgent(ownerId, false);
+    const started = await fetch(`${origin}/bridge/pair/start`, { method: "POST", headers: { Origin: extension } });
+    assert.equal(started.status, 201);
+    const { approvalCode, requestKey } = await started.json() as { approvalCode: string; requestKey: string };
+    const claim = async (proof: string) => (await fetch(`${origin}/bridge/pair/claim`, {
+      method: "POST", headers: { Origin: extension, Authorization: `Bearer ${proof}` },
+    })).json();
+    assert.deepEqual(await claim(requestKey), { status: "pending" });
+    const approval = { name: "flex_approve_connection", arguments: { approvalCode } };
+    assert.equal((await readOnly.callTool(approval)).isError, true);
+    assert.deepEqual(await claim(requestKey), { status: "pending" });
+    assert.deepEqual((await client.callTool(approval)).structuredContent, { status: "approved" });
+    assert.deepEqual(await socketStatus(client), { status: "unregistered" });
+    assert.equal((await client.callTool(approval)).isError, true);
+    assert.deepEqual(await claim(approvalCode), { status: "unavailable" });
+    const paired = await claim(requestKey) as { status: string; registration: { bindingId: string; deviceKey: string } };
+    assert.equal(paired.status, "registered");
+    assert.deepEqual(await claim(requestKey), { status: "unavailable" });
+    const { registration } = paired;
     const issued = await fetch(`${origin}/bridge/ticket`, {
       method: "POST", headers: { Origin: extension, Authorization: `Bearer ${registration.deviceKey}` },
     });
@@ -53,11 +75,6 @@ test("두 사용자가 같은 주소에서 조회하고 다른 사용자의 소�
       const parsed = parseBridgeRequest(JSON.parse(String(data)) as unknown);
       if (parsed.ok) socket.send(JSON.stringify(createSyntheticReply(parsed.value, registration.bindingId)));
     });
-    const client = new Client({ name: ownerId, version: "0.1.0" });
-    clients.push(client);
-    await client.connect(new StreamableHTTPClientTransport(new URL("/mcp", origin), {
-      requestInit: { headers: { Authorization: `Bearer ${key}` } },
-    }));
     return { client, socket, registration };
   }
 
@@ -65,8 +82,20 @@ test("두 사용자가 같은 주소에서 조회하고 다른 사용자의 소�
     return client.callTool({ name: "flex_get_schedule", arguments: { from: "2027-01-01", to: "2027-01-01" } });
   }
 
+  async function socketStatus(client: Client) {
+    const result = await client.callTool({ name: "flex_get_socket_status" });
+    assert.notEqual(result.isError, true);
+    return result.structuredContent;
+  }
+
+  assert.equal((await fetch(`${origin}/bridge/pair/start`, { method: "POST" })).status, 403);
   const first = await setup("sample-alpha");
   const second = await setup("sample-beta");
+  assert.deepEqual(await socketStatus(first.client), { status: "online" });
+  const foreignStatus = await first.client.callTool({
+    name: "flex_get_socket_status", arguments: { bindingId: second.registration.bindingId },
+  });
+  assert.equal(foreignStatus.isError, true);
   const [firstResult, secondResult] = await Promise.all([query(first.client), query(second.client)]);
   for (const [result, entry] of [[firstResult, first], [secondResult, second]] as const) {
     assert.ok(isRecord(result.structuredContent));
@@ -77,6 +106,8 @@ test("두 사용자가 같은 주소에서 조회하고 다른 사용자의 소�
   const closed = once(first.socket, "close");
   first.socket.close();
   await closed;
+  assert.deepEqual(await socketStatus(first.client), { status: "offline" });
+  assert.deepEqual(await socketStatus(second.client), { status: "online" });
   assert.deepEqual((await query(first.client)).structuredContent, { code: "BROWSER_OFFLINE" });
   const remaining = (await query(second.client)).structuredContent;
   assert.ok(isRecord(remaining));
@@ -85,6 +116,7 @@ test("두 사용자가 같은 주소에서 조회하고 다른 사용자의 소�
     method: "POST", headers: { Origin: extension, Authorization: `Bearer ${second.registration.deviceKey}` },
   });
   assert.equal(unpaired.status, 204);
+  assert.deepEqual(await socketStatus(second.client), { status: "unregistered" });
   assert.deepEqual((await query(second.client)).structuredContent, { code: "ACCESS_DENIED" });
   assert.equal((await fetch(`${origin}/mcp`)).status, 401);
   assert.equal((await fetch(`${origin}/mcp`, { headers: { Origin: "https://other.invalid" } })).status, 403);

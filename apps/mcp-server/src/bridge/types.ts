@@ -3,6 +3,7 @@ import type { AccessState, AuthorizedCaller, BrowserBinding } from "../access/ty
 
 export type RelayFailure = BridgeError | "ACCESS_DENIED" | "QUERY_LIMIT_REACHED";
 export type BrowserConnection = BrowserBinding & {
+  isOpen: () => boolean;
   send: (request: BridgeRequest) => void;
   close: () => void;
   onReply: (receive: (value: unknown) => void) => void;

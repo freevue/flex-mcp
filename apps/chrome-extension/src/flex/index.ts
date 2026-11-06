@@ -6,3 +6,5 @@ export * from "./readAnnualLeave.ts";
 export * from "./readSchedule.ts";
 export * from "./readWorkHours.ts";
 export * from "./runFlexQuery.ts";
+export * from "./workSummary.ts";
+export * from "./demoWorkSummary.ts";

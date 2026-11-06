@@ -12,7 +12,7 @@ export async function forwardFlexQuery(caller: AuthorizedCaller, query: FlexQuer
   if (!binding.ok) return binding;
   if (!isQuery(query)) return failure("INVALID_BRIDGE_MESSAGE");
   const connection = registry.active.get(binding.value.bindingId);
-  if (!connection || connection.ownerId !== binding.value.ownerId) return failure("BROWSER_OFFLINE");
+  if (!connection || connection.ownerId !== binding.value.ownerId || !connection.isOpen()) return failure("BROWSER_OFFLINE");
   if (registry.pending.size >= maxPending) return failure("QUERY_LIMIT_REACHED");
 
   const requestId = randomUUID();

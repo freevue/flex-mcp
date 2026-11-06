@@ -21,9 +21,12 @@ test("공개 서버는 조회를 차단하고 임의 조회 대상을 거부한�
     args: [fileURLToPath(new URL("../src/index.ts", import.meta.url))],
   }));
   const { tools } = await client.listTools();
-  assert.equal(tools.length, 3);
+  assert.deepEqual(tools.map(tool => tool.name).sort(), [
+    "flex_approve_connection", "flex_get_annual_leave", "flex_get_schedule", "flex_get_socket_status", "flex_get_work_hours",
+  ]);
   for (const tool of tools) {
-    const result = await client.callTool({ name: tool.name, arguments: {} });
+    const args = tool.name === "flex_approve_connection" ? { approvalCode: "2F8A-4C92-71BD" } : {};
+    const result = await client.callTool({ name: tool.name, arguments: args });
     assert.equal(result.isError, true);
     assert.deepEqual(result.content, [{ type: "text", text: "조회 연결이 구성되지 않았습니다." }]);
     assert.equal(result.structuredContent, undefined);

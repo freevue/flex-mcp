@@ -1,8 +1,8 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import { authorizeMcpCaller, resolveBrowserBinding, revokeAccess } from "../src/access/index.ts";
-import { consumeBridgeTicket, createAccessState, issueAgentKey, issueBridgeTicket, issuePairingCode,
-  openStateDatabase, redeemPairingCode, verifyAgentKey, verifyDeviceKey } from "../src/registration/index.ts";
+import { approveDevicePairing, claimDevicePairing, consumeBridgeTicket, createAccessState, issueAgentKey, issueBridgeTicket, issuePairingCode,
+  openStateDatabase, redeemPairingCode, startDevicePairing, verifyAgentKey, verifyDeviceKey } from "../src/registration/index.ts";
 
 test("등록 코드는 만료·재사용을 거부하고 다시 등록하면 이전 키와 접속권이 해제된다", context => {
   const database = openStateDatabase(":memory:");
@@ -50,4 +50,35 @@ test("사용자별 키가 등록을 선택하고 접속권을 한 번만 사용�
   assert.equal(resolveBrowserBinding({ ...alpha, bindingId: beta.bindingId }, access).ok, false);
   assert.equal(revokeAccess(alpha, { kind: "profile", bindingId: beta.bindingId }, access, { active: new Map(), pending: new Map() }).ok, false);
   assert.equal(resolveBrowserBinding(beta, access).ok, true);
+});
+
+test("승인 만료와 권한 회수 시 기존 등록을 유지하고 새 승인은 수령할 때만 교체한다", context => {
+  const database = openStateDatabase(":memory:");
+  context.after(() => database.close());
+  const ownerId = "owner-alpha";
+  const first = redeemPairingCode(database, issuePairingCode(database, ownerId, 0), 1);
+  assert.ok(first);
+  const agent = issueAgentKey(database, ownerId, true);
+  const identity = verifyAgentKey(database, agent.key);
+  assert.ok(identity);
+  const expired = startDevicePairing(database, 0);
+  assert.ok(expired);
+  assert.equal(approveDevicePairing(database, identity, expired.approvalCode, 300_000), false);
+  assert.deepEqual(claimDevicePairing(database, expired.requestKey, 300_000), { status: "unavailable" });
+  const revoked = startDevicePairing(database, 300_000);
+  assert.ok(revoked);
+  assert.equal(approveDevicePairing(database, identity, revoked.approvalCode, 300_001), true);
+  const access = createAccessState(database);
+  access.removeCaller(ownerId, agent.callerId);
+  assert.deepEqual(claimDevicePairing(database, revoked.requestKey, 300_002), { status: "unavailable" });
+  assert.equal(access.findBinding(ownerId)?.bindingId, first.bindingId);
+  const newIdentity = verifyAgentKey(database, issueAgentKey(database, ownerId, true).key);
+  assert.ok(newIdentity);
+  const request = startDevicePairing(database, 300_003);
+  assert.ok(request);
+  assert.equal(approveDevicePairing(database, newIdentity, request.approvalCode, 300_004), true);
+  assert.equal(access.findBinding(ownerId)?.bindingId, first.bindingId);
+  const claim = claimDevicePairing(database, request.requestKey, 300_005);
+  assert.equal(claim.status, "registered");
+  assert.equal(verifyDeviceKey(database, first.deviceKey), null);
 });

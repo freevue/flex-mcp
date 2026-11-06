@@ -5,13 +5,13 @@ import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/
 import { WebSocketServer } from "ws";
 import type { RelayContext } from "../bridge/index.ts";
 import { createCallerMcpServer } from "../createCallerMcpServer.ts";
-import { createAccessState, verifyAgentKey } from "../registration/index.ts";
+import { approveDevicePairing, createAccessState, verifyAgentKey } from "../registration/index.ts";
 import { authenticateBrowserSocket, reconcileBrowserAccess } from "./browserSocket.ts";
 import { readBearer, readJson, sendJson } from "./http.ts";
 import { handleRegistration } from "./registrationHttp.ts";
 
 export type RemoteConfiguration = { origin: string; extensionOrigins: ReadonlySet<string> };
-const registrationPaths = new Set(["/bridge/pair", "/bridge/ticket", "/bridge/unpair"]);
+const registrationPaths = new Set(["/bridge/pair", "/bridge/pair/start", "/bridge/pair/claim", "/bridge/ticket", "/bridge/unpair"]);
 
 export function createRemoteServer(configuration: RemoteConfiguration, database: DatabaseSync): Server {
   const relay: RelayContext = {
@@ -38,7 +38,7 @@ export function createRemoteServer(configuration: RemoteConfiguration, database:
       response.setHeader("Connection", "close");
       return sendJson(response, 400, { error: "INVALID_MCP_REQUEST" });
     }
-    const mcp = createCallerMcpServer(identity, relay, undefined, true);
+    const mcp = createCallerMcpServer(identity, relay, undefined, true, code => approveDevicePairing(database, identity, code));
     const transport = new StreamableHTTPServerTransport({ sessionIdGenerator: undefined, enableJsonResponse: true });
     response.setHeader("Cache-Control", "no-store");
     response.once("close", () => { void mcp.close().catch(() => {}); });
@@ -49,7 +49,9 @@ export function createRemoteServer(configuration: RemoteConfiguration, database:
   async function handle(request: IncomingMessage, response: ServerResponse): Promise<void> {
     if (request.url === "/mcp") return handleMcp(request, response);
     if (!registrationPaths.has(request.url ?? "")) return sendJson(response, 404, { error: "NOT_FOUND" });
-    if (request.headers.origin !== undefined && !configuration.extensionOrigins.has(request.headers.origin)) {
+    const origin = request.headers.origin;
+    const devicePairing = request.url === "/bridge/pair/start" || request.url === "/bridge/pair/claim";
+    if ((devicePairing || origin !== undefined) && !configuration.extensionOrigins.has(origin ?? "")) {
       return sendJson(response, 403, { error: "ORIGIN_DENIED" });
     }
     return handleRegistration(request, response, database, relay);

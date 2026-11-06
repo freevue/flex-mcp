@@ -45,3 +45,8 @@ export type BridgeRequest = { requestId: string; query: FlexQuery };
 export type BridgeReply = { requestId: string } & ({ result: FlexResult } | { error: BridgeError });
 
 export type BridgeRegistration = { bindingId: string; deviceKey: string };
+
+export type DevicePairingStart = { approvalCode: string; requestKey: string; expiresAt: number };
+export type DevicePairingClaim =
+  | { status: "pending" | "unavailable" }
+  | { status: "registered"; registration: BridgeRegistration };

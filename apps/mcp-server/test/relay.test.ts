@@ -18,6 +18,7 @@ function bridge(profile = binding) {
   let disconnect = () => {};
   const connection: BrowserConnection = {
     ...profile,
+    isOpen: () => true,
     send: request => { sent.push(request); },
     close: () => disconnect(),
     onReply: handler => { receive = handler; },
