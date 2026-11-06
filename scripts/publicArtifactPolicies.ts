@@ -21,7 +21,10 @@ const extension = [
   "flex/readSchedule", "flex/readWorkHours", "flex/runFlexQuery", "flex/types",
 ].map(name => `apps/chrome-extension/src/${name}.js`);
 const serverEntries = ["package/package.json", ...["index.js", ...server, ...shared].map(path => `package/dist/${path}`)];
-const extensionEntries = ["manifest.json", "extension-config.json", "popup.html", "popup.css", "service-worker.js", ...extension, ...shared];
+const extensionIcons = ["logo.svg", "icon-16.png", "icon-32.png", "icon-48.png", "icon-128.png"].map(name => `icons/${name}`);
+const extensionEntries = [
+  "manifest.json", "extension-config.json", "popup.html", "popup.css", "service-worker.js", ...extensionIcons, ...extension, ...shared,
+];
 
 export const serverArtifactPolicy: PublicArtifactPolicy = {
   format: "tgz",

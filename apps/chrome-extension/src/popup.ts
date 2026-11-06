@@ -19,11 +19,10 @@ function setSnapshot(next: PopupSnapshot): void {
   if (next.kind === "connected") {
     title.textContent = "연결 상태";
     view.replaceChildren(title, renderConnectionRows(next.flex));
-    if (next.summary) view.append(renderWorkSummary(next.summary));
+    if (next.flex !== "unavailable") view.append(renderWorkSummary(next.summary, next.flex));
     else {
-      description.textContent = next.flex === "registered" ? "Flex 탭을 열어 둔 상태에서 MCP로 조회하세요."
-        : "Flex 조회가 연결되면 근무 시간을 표시합니다.";
-      view.append(description);
+      description.textContent = "등록한 계정으로 로그인한 Flex 탭 하나를 열어 주세요.";
+      view.append(description, popupButton("다시 확인", "popup-state", true));
     }
     return;
   }
@@ -80,5 +79,9 @@ view.addEventListener("click", async (event) => {
   }
 });
 
-void runCommand("popup-state");
-window.setInterval(() => { if (!inFlight) void runCommand("popup-state"); }, 2000);
+async function refresh(): Promise<void> {
+  if (!inFlight) await runCommand("popup-state");
+  window.setTimeout(() => { void refresh(); }, snapshot?.kind === "connected" ? 15_000 : 2_000);
+}
+
+void refresh();

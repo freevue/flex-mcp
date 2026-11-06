@@ -1,4 +1,4 @@
-import { copyFileSync, readFileSync, writeFileSync } from "node:fs";
+import { copyFileSync, cpSync, readFileSync, writeFileSync } from "node:fs";
 import { parseBridgeOrigin } from "../../shared/bridgeOrigin.ts";
 
 const origin = parseBridgeOrigin(process.env.FLEX_EXTENSION_SERVER_URL ?? "http://127.0.0.1:8787");
@@ -10,4 +10,5 @@ writeFileSync("dist/extension-config.json", JSON.stringify({
   origin: origin.origin, demo: process.env.FLEX_EXTENSION_DEMO === "1",
 }));
 for (const name of ["popup.html", "popup.css"]) copyFileSync(name, `dist/${name}`);
+cpSync("icons", "dist/icons", { recursive: true });
 writeFileSync("dist/service-worker.js", 'import { startExtension } from "./apps/chrome-extension/src/service-worker.js";\nstartExtension();\n');

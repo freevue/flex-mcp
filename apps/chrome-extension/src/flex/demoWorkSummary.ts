@@ -1,26 +1,9 @@
 import { shiftDate } from "../../../../shared/shiftDate.ts";
 import type { DateRange, WorkTotals } from "../../../../shared/index.ts";
 import { runFlexQuery } from "./runFlexQuery.ts";
-import { calculateRestTargetMinutes, calculateWorkSummary } from "./workSummary.ts";
+import { calculateRestTargetMinutes, calculateWorkSummary, getWorkSummaryRanges } from "./workSummary.ts";
 import type { FlexReadRequest } from "./types.ts";
 import type { PopupWorkSummary } from "./workSummary.ts";
-
-const seoulDate = new Intl.DateTimeFormat("en-CA", {
-  timeZone: "Asia/Seoul", year: "numeric", month: "2-digit", day: "2-digit",
-});
-
-export function getWorkSummaryRanges(now: Date) {
-  const today = seoulDate.format(now);
-  const month = today.slice(0, 7);
-  const end = new Date(`${month}-01T00:00:00Z`);
-  end.setUTCMonth(end.getUTCMonth() + 1, 0);
-  const from = `${month}-01`;
-  return {
-    today: { from: today, to: today },
-    monthToDate: { from, to: today },
-    fullMonth: { from, to: end.toISOString().slice(0, 10) },
-  };
-}
 
 export function createDemoWorkTotals(range: DateRange, now = new Date()): WorkTotals {
   const { today, fullMonth } = getWorkSummaryRanges(now);
@@ -61,6 +44,10 @@ export async function readDemoWorkSummary(bindingId: string, signal: AbortSignal
     todayActualMinutes: daily.value.actualMinutes,
     monthActualMinutes: cumulative.value.actualMinutes,
     monthRecognizedMinutes: cumulative.value.recognizedMinutes,
+    monthAnnualLeaveUsedMinutes: 0,
+    monthAnnualLeaveRecognizedMinutes: 0,
+    monthAnnualLeaveScheduledMinutes: 0,
+    monthAnnualLeaveScheduledRecognizedMinutes: 0,
     monthRequiredMinutes: target.value.requiredAgreedMinutes,
     restTargetMinutes: calculateRestTargetMinutes(fullMonth, [restWeekday], demoTargets),
   });

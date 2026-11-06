@@ -1,5 +1,6 @@
 node_modules/
 dist/
+/apps/chrome-extension/dist-personal/
 /.artifacts/
 /.local/
 .env*

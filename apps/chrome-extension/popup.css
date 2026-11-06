@@ -1,4 +1,6 @@
 :root {
+  /* Chrome 툴바는 문서 너비로 팝업 크기를 정합니다. */
+  width: 380px;
   color-scheme: light;
   --surface: #fff;
   --surface-subtle: #f7f6f8;
@@ -13,20 +15,25 @@
   --border: #e8e3eb;
   background: var(--surface);
   color: var(--text);
-  font: 14px/1.5 system-ui, sans-serif;
+  font: 15px/1.5 system-ui, sans-serif;
 }
 
 * { box-sizing: border-box; }
-body { margin: 0; width: 320px; max-width: 100vw; }
-header {
-  padding: 12px 16px;
+body { margin: 0; }
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 20px;
   border-bottom: 1px solid var(--border);
-  font-weight: 600;
+  font-size: 16px;
+  font-weight: 650;
 }
-main { display: grid; gap: 12px; padding: 16px; }
+.brand img { display: block; flex: none; }
+main { display: grid; gap: 12px; padding: 16px 20px; }
 h1, h2, p, dl, dd { margin: 0; }
-h1 { font-size: 18px; font-weight: 600; line-height: 1.3; }
-h2 { font-size: 14px; font-weight: 600; }
+h1 { font-size: 22px; font-weight: 600; line-height: 1.3; }
+h2 { font-size: 15px; font-weight: 600; }
 p { color: var(--muted); }
 button {
   border: 1px solid transparent;
@@ -36,16 +43,21 @@ button {
   cursor: pointer;
   font: inherit;
   font-weight: 600;
-  min-height: 40px;
+  min-height: 44px;
   padding: 8px 16px;
 }
 button.secondary { border-color: var(--border); background: var(--surface); color: var(--text); }
 button:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
 button:disabled { cursor: wait; opacity: .65; }
-.approval, .work { display: grid; gap: 8px; padding: 12px; border-radius: 12px; }
+.approval, .work { display: grid; gap: 10px; min-width: 0; padding: 16px; border-radius: 12px; }
 .approval { background: var(--approval-tint); }
-.approval-code { color: var(--primary); font: 600 20px/1.2 ui-monospace, Menlo, Consolas, monospace; }
-.connection-rows { display: grid; gap: 8px; }
+.approval-code {
+  color: var(--primary);
+  font: 600 24px/1.2 ui-monospace, Menlo, Consolas, monospace;
+  overflow-wrap: anywhere;
+}
+.connection-rows { display: grid; gap: 6px; }
+main:has(.work) .connection-rows { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
 .connection-rows div {
   display: flex;
   flex-wrap: wrap;
@@ -54,15 +66,22 @@ button:disabled { cursor: wait; opacity: .65; }
   padding-block: 6px;
   border-bottom: 1px solid var(--border);
 }
-.signal { display: flex; align-items: center; gap: 6px; font-size: 12px; }
+.signal { display: flex; align-items: center; gap: 6px; font-size: 14px; }
 .signal::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
 .online { color: var(--success); }
 .attention { color: var(--warning); }
 .error { color: var(--danger); }
-.work { background: var(--surface-subtle); }
-.metadata, .work dt { color: var(--quiet); font-size: 12px; }
-.work dl { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
-.work dl div:nth-child(n + 3) { padding-top: 8px; border-top: 1px solid var(--border); }
+.work { gap: 8px; background: var(--surface-subtle); }
+.metadata, .work dt { color: var(--quiet); font-size: 13px; }
+.work dl { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px 8px; }
+.work dl div:nth-child(n + 3) { padding-top: 6px; border-top: 1px solid var(--border); }
 .work dd { font-variant-numeric: tabular-nums; font-weight: 600; overflow-wrap: anywhere; }
-#notice { padding: 0 16px 12px; color: var(--muted); font-size: 12px; }
+.work-credit { margin-inline-start: 6px; color: var(--quiet); font-size: 13px; font-weight: 400; }
+.work-remaining { width: 100%; border-collapse: collapse; table-layout: fixed; font-size: 13px; }
+.work-remaining th, .work-remaining td { padding: 4px 0; text-align: start; overflow-wrap: anywhere; }
+.work-remaining th { color: var(--quiet); font-weight: 500; }
+.work-remaining thead th { border-top: 1px solid var(--border); }
+.work-remaining tbody th, .work-remaining tbody td { border-top: 1px solid var(--border); }
+.work-remaining td { font-variant-numeric: tabular-nums; font-weight: 600; }
+#notice { padding: 0 20px 14px; color: var(--muted); font-size: 13px; }
 #notice:empty { display: none; }

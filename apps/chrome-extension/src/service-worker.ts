@@ -4,6 +4,7 @@ import { connectBridge, createSyntheticReply } from "./bridge/index.ts";
 import type { BridgeControl } from "./bridge/index.ts";
 import { loadExtensionConfiguration } from "./extensionConfiguration.ts";
 import { readDemoWorkSummary } from "./flex/index.ts";
+import type { PopupWorkSummary } from "./flex/index.ts";
 import type { PopupCommand, PopupSnapshot } from "./popup/index.ts";
 import { pollDevicePairing, readDevicePairingStart, readStoredRegistration, requestBridgeTicket,
   requestDevicePairing } from "./registration/index.ts";
@@ -12,8 +13,10 @@ import type { StoredRegistration } from "./registration/index.ts";
 type FlexReader = {
   identify: () => Promise<Outcome<string, BrowserQueryFailure>>;
   read: (request: BridgeRequest, account: string, signal: AbortSignal) => Promise<BridgeReply>;
+  workSummary: (account: string, signal: AbortSignal) => Promise<PopupWorkSummary | null>;
 };
 
+type WorkerCommand = PopupCommand | "restore";
 const alarmName = "flex-bridge-retry";
 
 function readAccount(value: unknown, binding: string): string | undefined {
@@ -30,7 +33,7 @@ export function startExtension(reader?: FlexReader): void {
   let rejectedBinding: string | undefined;
   const configuration = loadExtensionConfiguration().catch(() => null);
 
-  async function updatePopup(command: PopupCommand): Promise<PopupSnapshot> {
+  async function updatePopup(command: WorkerCommand): Promise<PopupSnapshot> {
     const settings = await configuration;
     if (!settings) return { kind: "error" };
     const liveReader = settings.demo ? undefined : reader;
@@ -112,23 +115,24 @@ export function startExtension(reader?: FlexReader): void {
       return { kind: "disconnected", canReconnect: Boolean(next), approvalCode: pending?.approvalCode ?? null,
         ...(liveReader ? { needsFlex: true } : {}) };
     }
-    if (!settings.demo) return { kind: "connected", flex: liveReader && account ? "registered" : "unavailable", summary: null };
-    const summary = await readDemoWorkSummary(next.bindingId, AbortSignal.timeout(3_000));
+    if (command === "restore") return { kind: "connected", flex: "unavailable", summary: null };
+    const summary = settings.demo ? await readDemoWorkSummary(next.bindingId, AbortSignal.timeout(3_000))
+      : liveReader && account ? await liveReader.workSummary(account, AbortSignal.timeout(20_000)).catch(() => null) : null;
     if (control?.state() !== "online") {
       return { kind: "disconnected", canReconnect: true, approvalCode: pending?.approvalCode ?? null };
     }
-    return summary ? { kind: "connected", flex: "synthetic", summary }
+    return summary ? { kind: "connected", flex: settings.demo ? "synthetic" : "live", summary }
       : { kind: "connected", flex: "unavailable", summary: null };
   }
 
-  function enqueue(command: PopupCommand): Promise<PopupSnapshot> {
+  function enqueue(command: WorkerCommand): Promise<PopupSnapshot> {
     const result = queue.then(() => updatePopup(command)).catch((): PopupSnapshot => ({ kind: "error" }));
     queue = result;
     return result;
   }
 
   function restoreBridge(): void {
-    void enqueue("popup-state");
+    void enqueue("restore");
   }
 
   chrome.runtime.onInstalled.addListener(restoreBridge);

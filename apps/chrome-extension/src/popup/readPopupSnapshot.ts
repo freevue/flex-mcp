@@ -7,11 +7,15 @@ function isMinute(value: unknown): value is number {
 }
 
 function isSummary(value: unknown): value is PopupWorkSummary {
-  return isRecord(value) && hasKeys(value, [
-    "todayActualMinutes", "monthActualMinutes", "standardRemainingMinutes", "adjustedRemainingMinutes",
-  ]) && isMinute(value.todayActualMinutes) && isMinute(value.monthActualMinutes)
-    && (value.standardRemainingMinutes === null || isMinute(value.standardRemainingMinutes))
-    && (value.adjustedRemainingMinutes === null || isMinute(value.adjustedRemainingMinutes));
+  const requiredMinutes = ["todayActualMinutes", "monthActualMinutes", "monthRecognizedMinutes"];
+  const optionalMinutes = [
+    "monthAnnualLeaveUsedMinutes", "monthAnnualLeaveRecognizedMinutes", "monthAnnualLeaveScheduledMinutes",
+    "monthAnnualLeaveScheduledRecognizedMinutes", "monthRecognizedWithoutAnnualLeaveMinutes",
+    "standardRemainingMinutes", "adjustedRemainingMinutes", "projectedStandardRemainingMinutes", "projectedAdjustedRemainingMinutes",
+  ];
+  return isRecord(value) && hasKeys(value, [...requiredMinutes, ...optionalMinutes])
+    && requiredMinutes.every(field => isMinute(value[field]))
+    && optionalMinutes.every(field => value[field] === null || isMinute(value[field]));
 }
 
 export function readPopupSnapshot(value: unknown): PopupSnapshot | null {
@@ -25,10 +29,12 @@ export function readPopupSnapshot(value: unknown): PopupSnapshot | null {
       ...(value.needsFlex === true ? { needsFlex: true } : {}) };
   }
   if (value.kind === "connected" && hasKeys(value, ["kind", "flex", "summary"])) {
-    if ((value.flex === "unavailable" || value.flex === "registered") && value.summary === null) {
+    if (value.flex === "unavailable" && value.summary === null) {
       return { kind: "connected", flex: value.flex, summary: null };
     }
-    if (value.flex === "synthetic" && isSummary(value.summary)) return { kind: "connected", flex: "synthetic", summary: value.summary };
+    if ((value.flex === "synthetic" || value.flex === "live") && isSummary(value.summary)) {
+      return { kind: "connected", flex: value.flex, summary: value.summary };
+    }
   }
   return null;
 }
