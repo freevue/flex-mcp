@@ -1,0 +1,9 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "module": "NodeNext",
+    "lib": ["ES2024"],
+    "types": ["@cloudflare/workers-types", "node"]
+  },
+  "include": ["worker"]
+}

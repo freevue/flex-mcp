@@ -10,3 +10,5 @@ dist/
 .DS_Store
 *.sqlite
 *.sqlite-*
+/.wrangler/
+.dev.vars*
