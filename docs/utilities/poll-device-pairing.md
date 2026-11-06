@@ -16,3 +16,5 @@ declare function pollDevicePairing(origin: string, requestKey: string): Promise<
 | `requestKey` | 팝업에 보내지 않는 요청 키 |
 
 확인할 경우: 서버가 승인하지 않으면 확장 키가 없습니다.
+
+`TC-U-POLL-DEVICE-PAIRING-02`: 추가 요청이 승인되면 `linked`만 받습니다. 등록이나 확장 키를 바꾸지 않습니다.

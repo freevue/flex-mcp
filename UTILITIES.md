@@ -28,10 +28,13 @@ TC는 테스트 케이스입니다. `TC-U`는 함수 하나의 입력과 결과�
 | 팝업과 MCP 승인 | 유틸 문서 |
 | --- | --- |
 | `startDevicePairing` | [함수 계약](docs/utilities/start-device-pairing.md) |
+| `startChannelInvitation` | [함수 계약](docs/utilities/start-channel-invitation.md) |
 | `approveDevicePairing` | [함수 계약](docs/utilities/approve-device-pairing.md) |
 | `claimDevicePairing` | [함수 계약](docs/utilities/claim-device-pairing.md) |
 | `requestDevicePairing` | [함수 계약](docs/utilities/request-device-pairing.md) |
 | `pollDevicePairing` | [함수 계약](docs/utilities/poll-device-pairing.md) |
+| `createPairingSession` | [함수 계약](docs/utilities/create-pairing-session.md) |
+| `readAccount` | [함수 계약](docs/utilities/read-account.md) |
 | `calculateWorkSummary` | [함수 계약](docs/utilities/calculate-work-summary.md) |
 | `formatWorkMinutes` | [함수 계약](docs/utilities/format-work-minutes.md) |
 | `readPopupSnapshot` | [함수 계약](docs/utilities/read-popup-snapshot.md) |

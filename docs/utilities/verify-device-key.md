@@ -12,13 +12,14 @@
 ## 함수 계약
 
 ```typescript
-declare function verifyDeviceKey(database: StateDatabase, key: string): BrowserBinding | null;
+declare function verifyDeviceKey(database: StateDatabase, key: string, channelOnly?: boolean): BrowserBinding | null;
 ```
 
 | 매개변수 | 타입 | 설명 |
 | --- | --- | --- |
 | `database` | `StateDatabase` | 연결 상태를 저장한 SQLite 데이터베이스입니다. |
 | `key` | `string` | 확장이 보낸 키입니다. |
+| `channelOnly` | `boolean` | 참이면 MCP 연결 키가 있는 등록만 확인합니다. 기본값은 거짓입니다. |
 
 ## 확인할 경우
 

@@ -15,7 +15,7 @@
 | 상태와 운영 | [getBrowserConnectionStatus](../utilities/get-browser-connection-status.md), [getServiceReadiness](../utilities/get-service-readiness.md) |
 | Node HTTP | [createRemoteServer](../utilities/create-remote-server.md), [handle](../utilities/handle-http.md), [handleMcp](../utilities/handle-mcp.md), [readBearer](../utilities/read-bearer.md), [readJson](../utilities/read-json.md), [sendJson](../utilities/send-json.md) |
 | Node 등록과 소켓 인증 | [handleRegistration](../utilities/handle-registration.md), [authenticateBrowserSocket](../utilities/authenticate-browser-socket.md), [decode](../utilities/decode-socket-message.md), [reconcileBrowserAccess](../utilities/reconcile-browser-access.md) |
-| 초기 승인 | [startDevicePairing](../utilities/start-device-pairing.md), [approveDevicePairing](../utilities/approve-device-pairing.md), [claimDevicePairing](../utilities/claim-device-pairing.md) |
+| 최초 등록과 추가 연결 | [startDevicePairing](../utilities/start-device-pairing.md), [startChannelInvitation](../utilities/start-channel-invitation.md), [approveDevicePairing](../utilities/approve-device-pairing.md), [claimDevicePairing](../utilities/claim-device-pairing.md) |
 | 등록 교체와 기존 호환 | [replaceBrowserRegistration](../utilities/replace-browser-registration.md), [issuePairingCode](../utilities/issue-pairing-code.md), [redeemPairingCode](../utilities/redeem-pairing-code.md) |
 | 이전 키 도구 | [issueAgentKey](../utilities/issue-agent-key.md), [verifyAgentKey](../utilities/verify-agent-key.md) |
 | 확장 키와 접속권 | [verifyDeviceKey](../utilities/verify-device-key.md), [issueBridgeTicket](../utilities/issue-bridge-ticket.md), [consumeBridgeTicket](../utilities/consume-bridge-ticket.md) |

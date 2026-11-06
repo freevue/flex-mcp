@@ -4,6 +4,8 @@
 
 유효한 일회용 코드를 승인합니다. 연결 키를 발급하고 해시만 저장합니다.
 
+추가 코드를 승인하면 기존 채널에 새 키의 해시를 저장합니다. 확장 등록과 소켓은 유지합니다.
+
 ```typescript
 declare function approveDevicePairing(database: StateDatabase, code: string, now?: number): string | null;
 ```
@@ -17,3 +19,4 @@ declare function approveDevicePairing(database: StateDatabase, code: string, now
 | TC | 조건 | 기대 결과 |
 | --- | --- | --- |
 | TC-U-APPROVE-DEVICE-PAIRING-01 | 같은 코드로 두 번 승인합니다. | 첫 요청에만 연결 키를 반환합니다. |
+| TC-U-APPROVE-DEVICE-PAIRING-02 | 추가 코드를 승인합니다. | 기존 키와 새 키가 같은 채널을 조회합니다. |

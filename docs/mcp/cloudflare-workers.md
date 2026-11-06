@@ -31,6 +31,7 @@ MCP 초기화와 도구 목록에는 별도 인증이 필요하지 않습니다.
 | --- | --- |
 | `POST /mcp` | 클라이언트가 Streamable HTTP로 도구를 호출합니다. 조회는 연결 키가 필요합니다. |
 | `POST /bridge/pair/start`, `POST /bridge/pair/claim` | Chrome 확장 출처 형식을 확인합니다. 등록 수령에는 요청 키가 필요합니다. |
+| `POST /bridge/pair/invite` | 기존 채널의 확장 키를 확인하고 추가 연결 코드를 발급합니다. |
 | `POST /bridge/ticket`, `POST /bridge/unpair` | Chrome 확장 출처 형식과 확장 키를 확인합니다. |
 | `GET /bridge` | Chrome 확장 출처의 WebSocket을 엽니다. 확장이 첫 메시지로 접속권을 보냅니다. |
 

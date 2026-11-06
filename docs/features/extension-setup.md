@@ -38,6 +38,8 @@ FLEX_EXTENSION_SERVER_URL=https://flex-mcp.freevue.dev FLEX_EXTENSION_DEMO=1 pnp
 
 Flex 탭이 여러 개면 확장은 가장 최근에 사용한 Flex 탭을 확인합니다. 조회 중에 해당 탭을 닫거나 등록한 계정과 다른 계정이 확인되면 조회를 차단합니다. 등록한 계정의 Flex 탭을 연 뒤 `다시 확인`을 누르세요. 기존 연결 키를 다시 쓸 수 있습니다. 로그인 정보와 계정 비교 값은 Chrome에 남습니다. 팝업의 [이번 달 근무 요약](extension-work-summary.md)에도 같은 규칙을 적용합니다.
 
+같은 채널에 다른 에이전트를 연결하려면 상태 화면에서 `에이전트 추가`를 누르세요. 새 에이전트의 MCP 클라이언트에서 [코드를 승인](browser-pairing.md#연결된-확장에-에이전트-추가)하면 이전 연결은 유지됩니다.
+
 ## 연결 상태
 
 | 팝업 상태 | 사용자가 할 일 |
