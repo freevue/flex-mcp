@@ -6,7 +6,7 @@ import type { FlexPageContext, FlexReadRequest } from "../src/flex/index.ts";
 const signal = new AbortController().signal;
 const asOf = new Date("2027-01-01T00:00:00Z");
 const user = { userRef: "example-user" };
-const binding = { profileId: "example-profile", ...user };
+const binding = { bindingId: "example-profile", ...user };
 const range = { from: "2027-01-01", to: "2027-01-02" };
 const zero = { days: 0, totalMinutes: 0, breakdown: { days: 0, hours: 0, minutes: 0 } };
 const present = { days: 1, totalMinutes: 480, breakdown: { days: 1, hours: 0, minutes: 0 } };

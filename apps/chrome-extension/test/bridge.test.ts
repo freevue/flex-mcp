@@ -43,7 +43,7 @@ test("탭 문서가 교체되거나 신호가 중단되면 결과를 폐기한�
 });
 
 test("연결 확인과 상태 표시에서 계정 정보와 조회 결과를 분리한다", () => {
-  const target = { profileId: "example-profile" };
+  const target = { bindingId: "example-profile" };
   const user = { ok: true, value: { userRef: "example-user" } } as const;
   assert.deepEqual(confirmBrowserBinding(false, target, user), failure("BINDING_CANCELLED"));
   assert.deepEqual(confirmBrowserBinding(true, target, user), { ok: true, value: { ...target, ...user.value } });

@@ -7,7 +7,7 @@
 | 항목 | 내용 |
 | --- | --- |
 | 구현 위치 | `apps/mcp-server/src/registration/bridgeTickets.ts` |
-| 상태 | 계약 |
+| 상태 | 구현 |
 
 ## 함수 계약
 
@@ -23,4 +23,6 @@ declare function issueBridgeTicket(database: DatabaseSync, deviceKey: string, no
 
 ## 확인할 경우
 
-잘못된 키를 거부합니다. 새 접속권이 이전 미사용 접속권을 바꿉니다. [직접 검증 절차](../features/shared-connection-check.md)에서 연결 흐름도 확인합니다.
+`TC-U-ISSUE-BRIDGE-TICKET-01`: 잘못된 키를 거부합니다. 새 접속권이 이전 미사용 접속권을 바꿉니다. [직접 검증 절차](../features/shared-connection-check.md)에서 연결 흐름도 확인합니다.
+
+[자동 검사](../../apps/mcp-server/test/registration.test.ts)에서 관련 조건을 확인합니다.

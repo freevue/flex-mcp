@@ -9,9 +9,11 @@ import { attachBrowserBridge } from "../src/bridge/index.ts";
 import type { RelayContext } from "../src/bridge/index.ts";
 import { createCallerMcpServer } from "../src/createCallerMcpServer.ts";
 
+import { createTestAccess } from "./accessFixture.ts";
+
 test("MCP 도구부터 합성 Chrome 조회까지 세 결과와 권한 경계를 확인한다", async context => {
-  const binding = { ownerId: "example-owner", profileId: "example-profile" };
-  const access = { binding, allowedCallers: new Set(["approved-agent"]) };
+  const binding = { ownerId: "example-owner", bindingId: "example-profile" };
+  const access = createTestAccess(binding, ["approved-agent"]);
   const relay: RelayContext = { access, registry: { active: new Map(), pending: new Map() }, timeoutMs: 200, maxPending: 2 };
   const tab = { id: 1, url: "https://flex.team/" };
   const user = { userRef: "example-user" };
@@ -51,7 +53,7 @@ test("MCP 도구부터 합성 Chrome 조회까지 세 결과와 권한 경계를
   }, relay.registry).ok);
 
   async function connect(callerId: string) {
-    const server = createCallerMcpServer({ callerId }, relay, now);
+    const server = createCallerMcpServer({ callerId, ownerId: binding.ownerId }, relay, now);
     const client = new Client({ name: callerId, version: "0.1.0" });
     const [clientTransport, serverTransport] = InMemoryTransport.createLinkedPair();
     context.after(() => client.close());

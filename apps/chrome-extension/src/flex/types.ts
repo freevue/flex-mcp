@@ -1,7 +1,7 @@
 import type { DateRange } from "../../../../shared/index.ts";
 
 export type BrowserUser = { userRef: string };
-export type ApprovedBrowserTarget = { profileId: string };
+export type ApprovedBrowserTarget = { bindingId: string };
 export type LocalBrowserBinding = ApprovedBrowserTarget & BrowserUser;
 export type FlexReadRequest =
   | { kind: "currentUser" }

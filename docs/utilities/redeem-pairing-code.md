@@ -7,7 +7,7 @@
 | 항목 | 내용 |
 | --- | --- |
 | 구현 위치 | `apps/mcp-server/src/registration/pairing.ts` |
-| 상태 | 계약 |
+| 상태 | 구현 |
 
 ## 함수 계약
 
@@ -23,4 +23,6 @@ declare function redeemPairingCode(database: DatabaseSync, code: string, now?: n
 
 ## 확인할 경우
 
-재사용과 만료를 거부합니다. 새 등록은 해당 사용자의 이전 등록만 폐기합니다. [직접 검증 절차](../features/shared-connection-check.md)에서 연결 흐름도 확인합니다.
+`TC-U-REDEEM-PAIRING-CODE-01`: 재사용과 만료를 거부합니다. 새 등록은 해당 사용자의 이전 등록만 폐기합니다. [직접 검증 절차](../features/shared-connection-check.md)에서 연결 흐름도 확인합니다.
+
+[자동 검사](../../apps/mcp-server/test/registration.test.ts)에서 관련 조건을 확인합니다.

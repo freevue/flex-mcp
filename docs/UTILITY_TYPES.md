@@ -26,13 +26,13 @@
 | 타입 | 뜻 |
 | --- | --- |
 | `BridgeRequest`, `BridgeReply` | [원격 중계](features/remote-bridge.md)의 요청과 응답입니다. `Outcome`과 별도입니다. |
-| `BridgeConfig` | 확장에 승인한 WSS 주소, 재시도 간격과 소켓을 여는 함수입니다. 조회 요청의 일부가 아닙니다. |
+| `BridgeConfig` | 확장에 승인한 서버 주소, 재시도 간격, 접속권을 받는 함수와 소켓을 여는 함수입니다. 상태 알림 함수는 선택입니다. 조회 요청의 일부가 아닙니다. |
 | `BridgeControl` | 연결 상태를 확인하고 연결을 종료할 수 있는 값입니다. |
 | `TabCandidate`, `FlexTab` | 앞의 타입은 현재 프로필에서 얻은 탭의 ID와 주소입니다. 뒤의 타입은 ID와 주소를 확인한 flex 탭입니다. |
-| `VerifiedCallerIdentity`, `VerifiedOwnerIdentity` | 서버에서 신원을 확인한 에이전트와 소유자입니다. 요청 본문의 값으로 만들지 않습니다. |
+| `VerifiedCallerIdentity`, `VerifiedOwnerIdentity` | 서버에서 신원을 확인한 에이전트와 소유자입니다. 에이전트 신원에는 `callerId`와 `ownerId`가 있습니다. 요청 본문의 값으로 만들지 않습니다. |
 | `AuthorizedCaller` | 해당 조회에 접근할 수 있다고 확인한 에이전트입니다. |
-| `AccessState` | 현재 허용한 호출자와 프로필 연결 관계입니다. |
-| `BrowserBinding` | 서버에서 해당 소유자에게 허용한 Chrome 프로필 연결 관계입니다. |
+| `AccessState` | 호출자에서 사용자 ID를 찾고, 사용자별 등록을 확인하거나 해제하는 함수 모음입니다. |
+| `BrowserBinding` | 서버가 발급한 `bindingId`와 해당 사용자의 `ownerId`입니다. |
 | `ApprovedBrowserTarget` | 서버가 확장에 연결을 허용한 프로필입니다. |
 | `LocalBrowserBinding` | 확장이 연결한 프로필과 계정을 대조하는 로컬 정보입니다. |
 | `BrowserConnection`, `BridgeRegistry` | 앞의 타입은 서버가 확인한 확장 연결입니다. 뒤의 타입은 활성 연결과 대기 요청을 관리하는 상태입니다. |

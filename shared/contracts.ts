@@ -43,3 +43,5 @@ export const bridgeErrors = [
 export type BridgeError = typeof bridgeErrors[number];
 export type BridgeRequest = { requestId: string; query: FlexQuery };
 export type BridgeReply = { requestId: string } & ({ result: FlexResult } | { error: BridgeError });
+
+export type BridgeRegistration = { bindingId: string; deviceKey: string };

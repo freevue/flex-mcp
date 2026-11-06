@@ -7,7 +7,7 @@
 | 항목 | 내용 |
 | --- | --- |
 | 구현 위치 | `apps/mcp-server/src/registration/accessState.ts` |
-| 상태 | 계약 |
+| 상태 | 구현 |
 
 ## 함수 계약
 
@@ -21,4 +21,6 @@ declare function createAccessState(database: DatabaseSync): AccessState;
 
 ## 확인할 경우
 
-같은 조회 서버에서 서로 다른 사용자 두 명의 등록을 구분합니다. [직접 검증 절차](../features/shared-connection-check.md)에서 연결 흐름도 확인합니다.
+`TC-U-CREATE-ACCESS-STATE-01`: 같은 조회 서버에서 서로 다른 사용자 두 명의 등록을 구분합니다. [직접 검증 절차](../features/shared-connection-check.md)에서 연결 흐름도 확인합니다.
+
+[자동 검사](../../apps/mcp-server/test/registration.test.ts)에서 관련 조건을 확인합니다.

@@ -11,7 +11,7 @@ export async function forwardFlexQuery(caller: AuthorizedCaller, query: FlexQuer
   const binding = resolveBrowserBinding(caller, access);
   if (!binding.ok) return binding;
   if (!isQuery(query)) return failure("INVALID_BRIDGE_MESSAGE");
-  const connection = registry.active.get(binding.value.profileId);
+  const connection = registry.active.get(binding.value.bindingId);
   if (!connection || connection.ownerId !== binding.value.ownerId) return failure("BROWSER_OFFLINE");
   if (registry.pending.size >= maxPending) return failure("QUERY_LIMIT_REACHED");
 
@@ -31,6 +31,6 @@ export async function forwardFlexQuery(caller: AuthorizedCaller, query: FlexQuer
     }
   });
   if (!resolveBrowserBinding(caller, access).ok) return failure("ACCESS_DENIED");
-  if (result.ok && registry.active.get(binding.value.profileId) !== connection) return failure("BROWSER_OFFLINE");
+  if (result.ok && registry.active.get(binding.value.bindingId) !== connection) return failure("BROWSER_OFFLINE");
   return result;
 }

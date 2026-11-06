@@ -29,6 +29,6 @@ declare function attachBrowserBridge(binding: BrowserBinding, connection: Browse
 
 | TC | 준비와 입력 | 기대 결과 | 상태 |
 | --- | --- | --- | --- |
-| TC-U-ATTACH-BROWSER-BRIDGE-01 | 허용된 프로필의 첫 확장 연결을 등록합니다. | 새 연결을 해당 프로필의 현재 연결로 저장합니다. | [로컬 테스트](../../apps/mcp-server/test/relay.test.ts) |
+| TC-U-ATTACH-BROWSER-BRIDGE-01 | 허용된 프로필의 첫 확장 연결을 등록합니다. | 새 연결을 해당 등록 ID의 현재 연결로 저장합니다. | [로컬 테스트](../../apps/mcp-server/test/relay.test.ts) |
 | TC-U-ATTACH-BROWSER-BRIDGE-02 | 확장 연결이 등록 대상과 다른 프로필에 속합니다. | `ACCESS_DENIED`를 반환합니다. 현재 연결을 변경하지 않습니다. | [로컬 테스트](../../apps/mcp-server/test/relay.test.ts) |
 | TC-U-ATTACH-BROWSER-BRIDGE-03 | 같은 프로필이 다시 연결됩니다. 기존 연결에 대기 요청이 있습니다. | 기존 대기 요청을 종료합니다. 이전 연결의 늦은 응답을 새 연결에 전달하지 않습니다. | [로컬 테스트](../../apps/mcp-server/test/relay.test.ts) |

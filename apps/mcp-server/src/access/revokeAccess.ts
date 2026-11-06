@@ -5,32 +5,24 @@ import type { AccessState, RevocationTarget, VerifiedOwnerIdentity } from "./typ
 
 export function revokeAccess(owner: VerifiedOwnerIdentity | null, target: RevocationTarget,
   access: AccessState, registry: BridgeRegistry): Outcome<void, "ACCESS_DENIED"> {
-  const { binding } = access;
-  if (!owner || !binding || binding.ownerId !== owner.ownerId) return failure("ACCESS_DENIED");
+  if (!owner) return failure("ACCESS_DENIED");
+  const { ownerId } = owner;
+  const removed = target.kind === "caller"
+    ? access.removeCaller(ownerId, target.callerId) : access.removeBinding(ownerId, target.bindingId);
+  if (!removed) return failure("ACCESS_DENIED");
 
-  if (target.kind === "caller") {
-    if (!access.allowedCallers.has(target.callerId)) return failure("ACCESS_DENIED");
-    access.allowedCallers = new Set([...access.allowedCallers].filter(callerId => callerId !== target.callerId));
-    for (const pending of registry.pending.values()) {
-      if (pending.caller.ownerId === owner.ownerId && pending.caller.callerId === target.callerId) {
-        pending.finish(failure("ACCESS_DENIED"));
-      }
-    }
-    return success(undefined);
-  }
-
-  if (binding.profileId !== target.profileId) return failure("ACCESS_DENIED");
-  access.binding = null;
-  access.allowedCallers = new Set();
   for (const pending of registry.pending.values()) {
-    if (pending.caller.ownerId === owner.ownerId && pending.caller.profileId === target.profileId) {
-      pending.finish(failure("ACCESS_DENIED"));
-    }
+    if (pending.caller.ownerId !== ownerId) continue;
+    const matches = target.kind === "caller" ? pending.caller.callerId === target.callerId
+      : pending.caller.bindingId === target.bindingId;
+    if (matches) pending.finish(failure("ACCESS_DENIED"));
   }
-  const connection = registry.active.get(target.profileId);
-  if (connection?.ownerId === owner.ownerId) {
-    registry.active.delete(target.profileId);
-    connection.close();
+  if (target.kind === "profile") {
+    const connection = registry.active.get(target.bindingId);
+    if (connection?.ownerId === ownerId) {
+      registry.active.delete(target.bindingId);
+      connection.close();
+    }
   }
   return success(undefined);
 }

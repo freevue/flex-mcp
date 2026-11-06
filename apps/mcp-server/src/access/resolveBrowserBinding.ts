@@ -4,8 +4,8 @@ import type { AccessState, AuthorizedCaller, BrowserBinding } from "./types.ts";
 
 export function resolveBrowserBinding(caller: AuthorizedCaller, access: AccessState):
   Outcome<BrowserBinding, "ACCESS_DENIED"> {
-  const { binding } = access;
-  if (!binding || binding.ownerId !== caller.ownerId || binding.profileId !== caller.profileId
-    || !access.allowedCallers.has(caller.callerId)) return failure("ACCESS_DENIED");
+  if (access.findOwner(caller.callerId) !== caller.ownerId) return failure("ACCESS_DENIED");
+  const binding = access.findBinding(caller.ownerId);
+  if (!binding || binding.bindingId !== caller.bindingId) return failure("ACCESS_DENIED");
   return success(binding);
 }

@@ -1,11 +1,13 @@
 import type { PublicArtifactPolicy } from "./verifyPublicArtifact.ts";
 
-const shared = ["contracts", "index", "shiftDate", "validation"].map(name => `shared/${name}.js`);
+const shared = ["bridgeOrigin", "contracts", "index", "shiftDate", "validation"].map(name => `shared/${name}.js`);
 const server = [
   "index", "dates", "createMcpServer", "createCallerMcpServer",
   "access/authorizeMcpCaller", "access/index", "access/resolveBrowserBinding", "access/revokeAccess", "access/types",
   "bridge/attachBrowserBridge", "bridge/forwardFlexQuery", "bridge/index", "bridge/parseBridgeReply", "bridge/types",
   "operations/index", "operations/getServiceReadiness",
+  "registration/accessState", "registration/admin", "registration/agentKeys", "registration/bridgeTickets",
+  "registration/database", "registration/index", "registration/pairing",
 ].map(name => `apps/mcp-server/src/${name}.js`);
 const extension = [
   "service-worker",

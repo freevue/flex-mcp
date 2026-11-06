@@ -6,7 +6,9 @@ import type { BrowserConnection, RelayContext } from "../src/bridge/index.ts";
 import { getServiceReadiness } from "../src/operations/index.ts";
 import type { BridgeRequest } from "../../../shared/index.ts";
 
-const binding = { ownerId: "example-owner", profileId: "example-profile" };
+import { createTestAccess } from "./accessFixture.ts";
+
+const binding = { ownerId: "example-owner", bindingId: "example-profile" };
 const query = { kind: "leave" } as const;
 const exampleBalance = { days: 1, totalMinutes: 480, breakdown: { days: 1, hours: 0, minutes: 0 } };
 
@@ -25,10 +27,10 @@ function bridge(profile = binding) {
 }
 
 function setup(timeoutMs = 500, maxPending = 2) {
-  const access = { binding, allowedCallers: new Set(["first-agent", "second-agent"]) };
+  const access = createTestAccess(binding, ["first-agent", "second-agent"]);
   const relay: RelayContext = { access, registry: { active: new Map(), pending: new Map() }, timeoutMs, maxPending };
-  const first = authorizeMcpCaller({ callerId: "first-agent" }, access);
-  const second = authorizeMcpCaller({ callerId: "second-agent" }, access);
+  const first = authorizeMcpCaller({ callerId: "first-agent", ownerId: binding.ownerId }, access);
+  const second = authorizeMcpCaller({ callerId: "second-agent", ownerId: binding.ownerId }, access);
   assert.ok(first.ok && second.ok);
   const channel = bridge();
   assert.ok(attachBrowserBridge(binding, channel.connection, relay.registry).ok);
@@ -54,7 +56,7 @@ test("두 에이전트의 역순 응답을 분리하고 대기 상한을 지킨�
 test("연결 교체와 시간 초과를 구분하고 이전 연결의 응답을 무시한다", async () => {
   const { first, relay, channel } = setup(20);
   const pending = forwardFlexQuery(first, query, relay);
-  const wrong = bridge({ ...binding, profileId: "other-profile" });
+  const wrong = bridge({ ...binding, bindingId: "other-profile" });
   assert.deepEqual(attachBrowserBridge(binding, wrong.connection, relay.registry), { ok: false, error: "ACCESS_DENIED" });
   const replacement = bridge();
   assert.ok(attachBrowserBridge(binding, replacement.connection, relay.registry).ok);
@@ -83,7 +85,7 @@ test("권한 해제는 지정한 호출자와 프로필의 새 요청 및 대기
   assert.deepEqual(await firstResult, denied);
   assert.deepEqual(await forwardFlexQuery(first, query, relay), denied);
   assert.equal(relay.registry.pending.size, 1);
-  assert.ok(revokeAccess(binding, { kind: "profile", profileId: binding.profileId }, relay.access, relay.registry).ok);
+  assert.ok(revokeAccess(binding, { kind: "profile", bindingId: binding.bindingId }, relay.access, relay.registry).ok);
   assert.deepEqual(await secondResult, denied);
   assert.deepEqual(await forwardFlexQuery(second, query, relay), denied);
   assert.equal(relay.registry.active.size, 0);
