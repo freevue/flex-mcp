@@ -2,11 +2,11 @@
 
 [투두 8](https://github.com/freevue/flex-mcp/issues/8) · [서비스 정책](../../SERVICE_POLICY.md) · [원격 중계](remote-bridge.md)
 
-첫 버전은 소유자 한 명과 Chrome 프로필 하나를 연결합니다. 서버는 에이전트 호출과 확장 연결을 각각 확인합니다. 확장은 현재 flex 계정이 연결 당시의 계정과 같은지 확인합니다. 로그인 자료의 발급과 보관 방식은 공개 문서의 범위에 넣지 않습니다.
+서버는 사용자를 구분합니다. 사용자 한 명은 Chrome 프로필 하나를 연결합니다. [공유 연결 흐름](shared-connection-flow.md)을 따릅니다. 서버는 에이전트 호출과 확장 연결을 각각 확인합니다. 확장은 현재 flex 계정이 연결 당시의 계정과 같은지 확인합니다. 운영자는 첫 검증에서 에이전트마다 키를 발급합니다. 서버는 그 키에서 확인한 사용자 ID로만 등록을 찾습니다. 여러 사람이 같은 에이전트 키를 공유하면 서버는 사람을 구분할 수 없습니다.
 
 ## 허용과 거부
 
-[호출자 확인](../utilities/authorize-mcp-caller.md)은 도구가 실행되기 전에 권한을 확인합니다. [프로필 조회](../utilities/resolve-browser-binding.md)는 서버가 확인한 호출자로 연결 대상을 찾습니다. 확장은 [연결 확인](../utilities/confirm-browser-binding.md)에서 사용자가 선택한 계정을 기록합니다. 요청 본문이 다른 프로필이나 계정을 고를 수 없습니다.
+[호출자 확인](../utilities/authorize-mcp-caller.md)은 도구가 실행되기 전에 권한을 확인합니다. [프로필 조회](../utilities/resolve-browser-binding.md)는 서버가 확인한 호출자로 연결 대상을 찾습니다. 확장은 [연결 확인](../utilities/confirm-browser-binding.md)에서 사용자가 선택한 계정을 기록합니다. 요청 본문은 다른 등록이나 계정을 고를 수 없습니다. 사용자 한 명의 등록을 해제해도 다른 사용자의 연결은 유지합니다.
 
 사용자가 권한이나 프로필 연결을 해제하면 [접근 해제](../utilities/revoke-access.md)가 새 조회를 차단합니다. 아직 전달하지 않은 응답도 폐기합니다. 다른 flex 계정이면 `FLEX_ACCOUNT_MISMATCH`를 반환합니다. 현재 계정을 확인할 수 없으면 조회를 실행하지 않습니다.
 
@@ -23,3 +23,5 @@
 | TC-F-ACCESS-CONTROL-03 | 합성 연결 | 대기 중인 요청 하나의 에이전트 권한을 해제한 뒤 응답을 보냅니다. | 응답을 전달하지 않습니다. 같은 프로필의 다른 허용 에이전트는 계속 조회할 수 있습니다. |
 | TC-F-ACCESS-CONTROL-04 | 합성 연결 | 같은 프로필의 두 에이전트가 조회 중일 때 프로필 연결을 해제합니다. | 두 대기 결과를 버립니다. 둘 다 새 조회를 시작할 수 없습니다. |
 | TC-F-ACCESS-CONTROL-05 | 로컬 · 기존 테스트 | 공개 서버의 연차 도구에 임의 `userId`를 넣습니다. | 입력 오류를 반환합니다. 원격 권한 확인의 근거로 사용하지 않습니다. |
+
+운영자는 `pnpm flex:admin revoke-agent <callerId>`로 호출자 하나를 해제합니다. `pnpm flex:admin revoke-browser <ownerId>`로 사용자의 Chrome 등록을 해제합니다. 서버는 결과를 돌려주기 전에 현재 권한과 등록을 다시 확인합니다.

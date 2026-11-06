@@ -13,6 +13,8 @@ LLM Wiki는 확인한 프로젝트 지식을 정리하고 다시 찾는 방식�
 | 설치, 빌드, 패키지 | [README](README.md) |
 | 현재 동작과 원격 연결 설계 | [아키텍처](ARCHITECTURE.md) |
 | 첫 운영 범위, 실조회 조건, 보안과 배포 정책 | [서비스 정책](SERVICE_POLICY.md) |
+| 공유 MCP에서 Chrome 등록, 인증, 요청 전달 | [공유 연결 흐름](docs/features/shared-connection-flow.md) |
+| 두 사용자로 설치와 재접속 확인 | [직접 검증](docs/features/shared-connection-check.md) |
 | MCP 도구 이름, 입력, 로컬 연결 | [MCP 서버 사용 안내](apps/mcp-server/README.md) |
 | 투두별 기능, 메시지 계약, 기능 테스트 케이스 | [기능 목록](docs/features/README.md) |
 | 함수별 구현 위치, 이름, 매개변수와 단위 테스트 케이스 | [유틸 계약](UTILITIES.md) |

@@ -2,7 +2,7 @@
 
 [투두 9](https://github.com/freevue/flex-mcp/issues/9) · [서비스 정책](../../SERVICE_POLICY.md) · [접근 권한](access-control.md)
 
-사용자는 Chrome 프로필을 선택하고 연결을 확인합니다. 확장은 현재 상태와 사용자가 할 일을 보여줍니다. 조회 결과와 접근 정보는 화면이나 진단 로그에 표시하지 않습니다. 승인된 조회에 필요한 사이트와 동작에만 권한을 요청합니다.
+사용자는 연결할 Chrome 프로필에서 확장 옵션을 엽니다. [등록 코드](browser-pairing.md)와 서버 주소를 입력합니다. 확장은 현재 상태와 사용자가 할 일을 보여줍니다. 조회 결과와 접근 정보는 화면이나 진단 로그에 표시하지 않습니다. 승인된 조회에 필요한 사이트와 동작에만 권한을 요청합니다.
 
 | 상태 | 사용자가 할 일 |
 | --- | --- |
@@ -17,7 +17,7 @@
 
 ## 동작과 확인
 
-연결 확인과 상태별 안내 문구는 로컬에서 검사했습니다. 설정 화면, 프로필 선택 저장, 실제 Chrome 재시작은 아직 연결하지 않았습니다.
+확장 옵션은 등록 ID와 연결 상태를 표시합니다. [직접 검증 절차](shared-connection-check.md)에서 Chrome 재시작과 재접속을 확인합니다.
 
 [연결 확인](../utilities/confirm-browser-binding.md)이 선택한 계정을 기록합니다. [확장 연결](../utilities/connect-bridge.md)이 서버 연결을 복구합니다. [상태 판정](../utilities/derive-connection-state.md)이 현재 상태를 안내로 바꿉니다. 연결을 해제하면 [접근 해제](../utilities/revoke-access.md)가 이후 조회를 차단합니다.
 

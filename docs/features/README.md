@@ -17,3 +17,5 @@
 | [6](https://github.com/freevue/flex-mcp/issues/6) | [최종 배포 검증](release-verification.md) | 일정·근무 조회, 확장 안내, 자동 검사, 운영 준비 |
 
 실조회 방식과 자동 검사는 따로 진행할 수 있습니다. 접근 권한과 중계의 거부 조건은 합성 데이터로 먼저 확인할 수 있습니다. 실제 조회는 허용 범위를 정한 뒤 연차 한 건부터 확인합니다.
+
+[공유 연결 흐름](shared-connection-flow.md)은 [투두 12](https://github.com/freevue/flex-mcp/issues/12)의 등록, 인증과 사용자별 요청 경로를 설명합니다. [Chrome 등록](browser-pairing.md)과 [직접 검증](shared-connection-check.md)에서 단계별 조건을 확인합니다.

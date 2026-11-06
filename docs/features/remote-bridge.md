@@ -2,11 +2,11 @@
 
 [투두 4](https://github.com/freevue/flex-mcp/issues/4) · [서비스 정책](../../SERVICE_POLICY.md) · [접근 권한](access-control.md)
 
-중계는 서버와 확장 사이에서 요청과 결과를 전달하는 기능입니다. 에이전트는 [Streamable HTTP](https://modelcontextprotocol.io/specification/2025-11-25/basic/transports#streamable-http)를 사용합니다. 확장은 WSS 연결을 먼저 엽니다. 첫 연결에서는 연차 조회부터 확인합니다.
+중계는 서버와 확장 사이에서 요청과 결과를 전달하는 기능입니다. 에이전트는 [Streamable HTTP](https://modelcontextprotocol.io/specification/2025-11-25/basic/transports#streamable-http)를 사용합니다. 확장은 WSS 연결을 먼저 엽니다. 첫 연결에서는 합성 조회를 확인합니다. [공유 연결 흐름](shared-connection-flow.md)을 따릅니다.
 
 ## 메시지 계약
 
-서버는 조회마다 고유한 `requestId`를 붙입니다. 확장은 요청의 형태를 검사합니다. 성공 응답에는 같은 `requestId`와 `result`만 넣습니다. 실패 응답에는 같은 `requestId`와 `error` 코드만 넣습니다. 오류 문구는 서버에서 만듭니다.
+서버는 등록 ID로 활성 소켓을 찾습니다. 서버는 조회마다 고유한 `requestId`를 붙입니다. 확장은 요청의 형태를 검사합니다. 성공 응답에는 같은 `requestId`와 `result`만 넣습니다. 실패 응답에는 같은 `requestId`와 `error` 코드만 넣습니다. 오류 문구는 서버에서 만듭니다.
 
 ```json
 {"requestId":"example-request","query":{"kind":"leave"}}
@@ -33,7 +33,7 @@
 
 ## 연결과 검증
 
-로컬 테스트는 연결을 대신하는 입력으로 요청과 응답을 전달합니다. 운영 Streamable HTTP, WSS 접속 신원 확인과 Chrome 서비스 워커 연결은 아직 설정하지 않았습니다.
+Node는 같은 주소에서 `/mcp`와 `/bridge`를 제공합니다. HTTPS와 WSS를 사용하는 프록시는 경로를 그대로 전달합니다. 인증과 실패 조건은 [Chrome 등록](browser-pairing.md)과 [사용자 권한](access-control.md)에 있습니다.
 
 확장은 [연결 함수](../utilities/connect-bridge.md)로 연결합니다. 서버는 [브라우저 연결을 등록](../utilities/attach-browser-bridge.md)합니다. 서버는 [조회 전달](../utilities/forward-flex-query.md)에서 호출자와 연결을 확인합니다. 양쪽은 [요청 검사](../utilities/parse-bridge-request.md)와 [응답 검사](../utilities/parse-bridge-reply.md)를 사용합니다. 확장은 [탭 전달 함수](../utilities/dispatch-to-flex-tab.md)로 패키지에 포함된 코드를 실행합니다.
 
