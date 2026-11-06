@@ -7,7 +7,7 @@
 | 항목 | 내용 |
 | --- | --- |
 | 구현 위치 | `apps/chrome-extension/src/registration/bridgeApi.ts` |
-| 상태 | 계약 |
+| 상태 | 구현 |
 
 ## 함수 계약
 
@@ -22,4 +22,4 @@ declare function pairBrowser(origin: string, code: string): Promise<StoredRegist
 
 ## 확인할 경우
 
-정상 등록 응답만 저장할 수 있습니다. 다른 주소로 이동하는 응답은 거부합니다. [직접 검증 절차](../features/shared-connection-check.md)에서 연결 흐름도 확인합니다.
+`TC-U-PAIR-BROWSER-01`: 정상 등록 응답만 저장할 수 있습니다. 다른 주소로 이동하는 응답은 거부합니다. [직접 검증 절차](../features/shared-connection-check.md)에서 연결 흐름도 확인합니다.

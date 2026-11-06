@@ -20,3 +20,5 @@ TC는 테스트 케이스입니다. `TC-U`는 함수 하나의 입력과 결과�
 | --- | --- |
 | 서버와 공통 코드 | [`parseBridgeOrigin`](docs/utilities/parse-bridge-origin.md), [`issueAgentKey`](docs/utilities/issue-agent-key.md), [`verifyAgentKey`](docs/utilities/verify-agent-key.md), [`issuePairingCode`](docs/utilities/issue-pairing-code.md), [`redeemPairingCode`](docs/utilities/redeem-pairing-code.md), [`verifyDeviceKey`](docs/utilities/verify-device-key.md), [`issueBridgeTicket`](docs/utilities/issue-bridge-ticket.md), [`consumeBridgeTicket`](docs/utilities/consume-bridge-ticket.md), [`createAccessState`](docs/utilities/create-access-state.md), [`createRemoteServer`](docs/utilities/create-remote-server.md) |
 | Chrome 등록 | [`pairBrowser`](docs/utilities/pair-browser.md), [`requestBridgeTicket`](docs/utilities/request-bridge-ticket.md), [`unpairBrowser`](docs/utilities/unpair-browser.md) |
+
+소켓 등록과 검사: [`openStateDatabase`](docs/utilities/open-state-database.md), [`authenticateBrowserSocket`](docs/utilities/authenticate-browser-socket.md), [`reconcileBrowserAccess`](docs/utilities/reconcile-browser-access.md), [`createSyntheticReply`](docs/utilities/create-synthetic-reply.md).

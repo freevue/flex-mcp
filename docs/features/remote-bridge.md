@@ -33,7 +33,7 @@
 
 ## 연결과 검증
 
-Node는 같은 주소에서 `/mcp`와 `/bridge`를 제공합니다. HTTPS와 WSS를 사용하는 프록시는 경로를 그대로 전달합니다. 인증과 실패 조건은 [Chrome 등록](browser-pairing.md)과 [사용자 권한](access-control.md)에 있습니다.
+Node는 같은 주소에서 `/mcp`와 `/bridge`를 제공합니다. HTTPS와 WSS를 사용하는 프록시는 경로를 그대로 전달합니다. 로컬 합성 검증은 `127.0.0.1`에서만 암호화하지 않은 연결을 허용합니다. 서버는 허용한 확장 출처와 일회용 접속권을 모두 확인합니다. 인증과 실패 조건은 [Chrome 등록](browser-pairing.md)과 [사용자 권한](access-control.md)에 있습니다.
 
 확장은 [연결 함수](../utilities/connect-bridge.md)로 연결합니다. 서버는 [브라우저 연결을 등록](../utilities/attach-browser-bridge.md)합니다. 서버는 [조회 전달](../utilities/forward-flex-query.md)에서 호출자와 연결을 확인합니다. 양쪽은 [요청 검사](../utilities/parse-bridge-request.md)와 [응답 검사](../utilities/parse-bridge-reply.md)를 사용합니다. 확장은 [탭 전달 함수](../utilities/dispatch-to-flex-tab.md)로 패키지에 포함된 코드를 실행합니다.
 

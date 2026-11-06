@@ -34,3 +34,9 @@ codex mcp add flex -- "$(command -v node)" "$PWD/apps/mcp-server/dist/index.js"
 ```
 
 기존 `src/index.ts` 경로로 등록한 MCP 클라이언트도 서버를 실행할 수 있습니다. 루트에서 `pnpm check`로 타입을 검사합니다. `pnpm test`로 날짜 범위와 미연결 상태를 검사합니다.
+
+## 공유 서버 연결
+
+[직접 검증 절차](../../docs/features/shared-connection-check.md)에서 사용자별 키 발급과 Chrome 등록을 확인하세요. `pnpm flex:remote`는 합성 검증 서버를 시작합니다. 실제 flex 결과는 반환하지 않습니다.
+
+패키지로 실행할 때는 `node dist/apps/mcp-server/src/remote/start.js`를 사용하세요. 키를 발급할 때는 `node dist/apps/mcp-server/src/registration/admin.js`를 사용하세요. 두 명령은 같은 `FLEX_STATE_FILE`을 읽습니다.

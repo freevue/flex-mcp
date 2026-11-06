@@ -2,7 +2,7 @@
 
 [유틸 목록](../../UTILITIES.md) · [기능 문서](../features/remote-bridge.md) · [공통 타입](../UTILITY_TYPES.md)
 
-확장에서 서버 연결을 열고 끊긴 연결을 다시 엽니다.
+확장은 접속권을 받은 뒤 서버 연결을 엽니다. 서버가 `ready`를 보낸 뒤부터 조회를 받습니다. 재접속에는 새 접속권을 사용합니다.
 
 | 항목 | 내용 |
 | --- | --- |
@@ -19,7 +19,7 @@ declare function connectBridge(config: BridgeConfig, onRequest: (request: Bridge
 
 | 매개변수 | 타입 | 필수 여부 | 설명 |
 | --- | --- | --- | --- |
-| `config` | `BridgeConfig` | 필수 | 운영자가 허용한 서버 주소와 재연결 설정입니다. |
+| `config` | `BridgeConfig` | 필수 | 서버 주소, 접속권 요청 함수, 소켓을 여는 함수와 재시도 간격입니다. 상태 알림 함수는 선택입니다. |
 | `onRequest` | `(request: BridgeRequest, signal: AbortSignal) => Promise<BridgeReply>` | 필수 | 검사를 마친 새 조회를 실행하는 함수입니다. 연결이 끊기면 `signal`로 실행을 중단합니다. |
 
 ## 테스트 케이스

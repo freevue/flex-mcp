@@ -4,8 +4,8 @@ flex의 본인 연차, 일정, 근무 시간을 조회하는 프로젝트입니�
 
 | 앱 | 현재 상태 | 독립 빌드 |
 | --- | --- | --- |
-| [MCP 서버](apps/mcp-server/README.md) | 로컬에서 도구 목록과 입력을 확인할 수 있습니다. 실제 조회는 연결하지 않았습니다. | `pnpm build:mcp` → `apps/mcp-server/dist/` |
-| [Chrome 확장](apps/chrome-extension/manifest.json) | 조회와 중계 로직을 합성 데이터로 확인했습니다. 실제 탭과 서버에는 연결하지 않습니다. | `pnpm build:extension` → `apps/chrome-extension/dist/` |
+| [MCP 서버](apps/mcp-server/README.md) | 로컬 도구 계약과 공유 원격 연결을 제공합니다. 원격 연결은 합성 데이터를 반환합니다. | `pnpm build:mcp` → `apps/mcp-server/dist/` |
+| [Chrome 확장](apps/chrome-extension/manifest.json) | 옵션에서 서버에 등록하고 합성 조회를 처리합니다. 실제 flex 탭에는 연결하지 않습니다. | `pnpm build:extension` → `apps/chrome-extension/dist/` |
 
 ## 개발 환경
 
@@ -19,6 +19,8 @@ pnpm build
 ```
 
 `pnpm start`는 로컬 MCP를 소스에서 실행합니다. MCP 클라이언트 등록 방법은 [서버 사용 안내](apps/mcp-server/README.md)를 참고하세요.
+
+사용자 두 명으로 공유 서버를 확인하려면 [직접 검증 절차](docs/features/shared-connection-check.md)를 따르세요. 합성 검증 서버는 로컬 표준 입출력 서버와 별도로 실행합니다.
 
 ## 배포 산출물 준비
 

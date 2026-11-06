@@ -5,9 +5,12 @@
   "type": "module",
   "sideEffects": false,
   "scripts": {
-    "build": "tsc --noEmit false && node --input-type=module -e \"import { copyFileSync, writeFileSync } from 'node:fs'; copyFileSync('manifest.json', 'dist/manifest.json'); writeFileSync('dist/service-worker.js', 'import \\\"./apps/chrome-extension/src/service-worker.js\\\";')\"",
+    "build": "tsc --noEmit false && node --input-type=module -e \"import { copyFileSync, writeFileSync } from 'node:fs'; copyFileSync('manifest.json', 'dist/manifest.json'); copyFileSync('options.html', 'dist/options.html'); writeFileSync('dist/service-worker.js', 'import \\\"./apps/chrome-extension/src/service-worker.js\\\";')\"",
     "check": "tsc && tsc -p tsconfig.test.json",
     "prebuild": "node --input-type=module -e \"import { rmSync } from 'node:fs'; rmSync('dist', { recursive: true, force: true })\"",
     "test": "node --test"
+  },
+  "devDependencies": {
+    "@types/chrome": "^0.3.7"
   }
 }

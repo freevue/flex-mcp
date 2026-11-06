@@ -6,9 +6,12 @@
     "moduleResolution": "Bundler",
     "lib": [
       "ES2022",
-      "WebWorker"
+      "WebWorker",
+      "DOM"
     ],
-    "types": [],
+    "types": [
+      "chrome"
+    ],
     "rootDir": "../..",
     "outDir": "dist"
   },

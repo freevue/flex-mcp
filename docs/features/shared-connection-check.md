@@ -6,6 +6,8 @@
 
 ## 준비
 
+Node.js 24와 Chrome 120 이상을 사용하세요. 아래 절차는 macOS와 Linux의 셸 명령을 사용합니다.
+
 1. 저장소 루트에서 `pnpm install --frozen-lockfile`과 `pnpm build:extension`을 실행하세요.
 2. 서로 다른 Chrome 프로필 두 개에서 `apps/chrome-extension/dist`를 압축 해제된 확장으로 로드하세요.
 3. `chrome://extensions`에서 두 확장의 ID를 확인하세요. ID가 같으면 한 번만 적으세요.
@@ -18,7 +20,7 @@ export FLEX_PUBLIC_URL="http://127.0.0.1:8787"
 export FLEX_EXTENSION_IDS="extension-id-a,extension-id-b"
 ```
 
-HTTPS를 사용할 때는 `FLEX_PUBLIC_URL`에 프록시 주소를 넣으세요. 프록시는 `127.0.0.1:8787`에 HTTP와 WebSocket을 전달합니다. 같은 Mac에서 확인할 때만 위의 HTTP 주소를 사용하세요.
+HTTPS를 사용할 때는 `FLEX_PUBLIC_URL`에 프록시 주소를 넣으세요. 프록시는 `127.0.0.1:8787`에 HTTP와 WebSocket을 전달합니다. 같은 Mac에서 확인할 때만 위의 HTTP 주소를 사용하세요. 다른 포트를 사용하면 `FLEX_PORT`와 주소를 함께 바꾸세요.
 
 ## 등록과 조회
 
@@ -40,15 +42,15 @@ pnpm flex:remote
 pnpm --filter @flex-mcp/server run demo:query
 ```
 
-이 명령은 `FLEX_PUBLIC_URL`과 `FLEX_AGENT_KEY`를 읽고 `flex_get_schedule`을 호출합니다. 응답의 합성 일정 제목에 등록 ID 앞부분이 표시됩니다. 키는 출력에 표시하지 않습니다.
+이 명령은 `FLEX_PUBLIC_URL`과 `FLEX_AGENT_KEY`를 읽고 `flex_get_schedule`을 호출합니다. 응답의 합성 일정 제목에 등록 ID 앞부분이 표시됩니다. 조회 명령은 키를 출력하지 않습니다.
 
 ## 결과 기록
 
 | TC | 실행 | 기대 결과 |
 | --- | --- | --- |
 | TC-F-SHARED-01 | 두 키로 같은 서버에 일정 조회를 보냅니다. | 각 응답은 해당 Chrome의 등록 ID 앞부분만 표시합니다. 결과에 `synthetic: true`가 있습니다. |
-| TC-F-SHARED-02 | 첫 Chrome 프로필만 닫습니다. 두 키로 각각 조회합니다. | 첫 요청은 `BROWSER_OFFLINE`입니다. 둘째 요청은 성공합니다. |
-| TC-F-SHARED-03 | 첫 프로필을 다시 엽니다. | 이전과 같은 등록 ID를 표시합니다. 이후 조회만 처리합니다. |
+| TC-F-SHARED-02 | 첫 Chrome 프로필의 확장만 끕니다. 두 키로 각각 조회합니다. | 첫 요청은 `BROWSER_OFFLINE`입니다. 둘째 요청은 성공합니다. |
+| TC-F-SHARED-03 | 첫 프로필의 확장을 다시 켜고 옵션을 엽니다. | 이전과 같은 등록 ID를 표시합니다. 이후 조회만 처리합니다. |
 | TC-F-SHARED-04 | 첫 확장의 연결을 해제합니다. | 첫 키로 조회할 수 없습니다. 둘째 연결은 유지됩니다. |
 | TC-F-SHARED-05 | 잘못된 키 또는 두 번째 사용한 등록 코드로 요청합니다. | 서버가 요청을 거부합니다. |
 

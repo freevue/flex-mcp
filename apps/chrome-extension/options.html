@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <title>flex MCP 연결 설정</title>
+  <script type="module" src="apps/chrome-extension/src/options.js"></script>
+</head>
+<body>
+  <main>
+    <h1>flex MCP 연결 설정</h1>
+    <p>이 확장은 합성 데이터를 반환합니다. 실제 flex에 접속하지 않습니다.</p>
+    <form>
+      <p><label>서버 주소 <input name="origin" type="url" required placeholder="https://mcp.example.com"></label></p>
+      <p><label>등록 코드 <input name="code" type="password" autocomplete="off" required></label></p>
+      <button type="submit">연결</button>
+    </form>
+    <p><button id="unpair" type="button">연결 해제</button></p>
+    <p id="status" role="status"></p>
+    <p id="message" role="alert"></p>
+  </main>
+</body>
+</html>

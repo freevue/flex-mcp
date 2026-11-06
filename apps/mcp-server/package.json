@@ -17,11 +17,18 @@
     "prebuild": "node --input-type=module -e \"import { rmSync } from 'node:fs'; rmSync('dist', { recursive: true, force: true })\"",
     "build": "tsc -p tsconfig.build.json && node --input-type=module -e \"import { writeFileSync } from 'node:fs'; writeFileSync('dist/index.js', 'import \\\"./apps/mcp-server/src/index.js\\\";')\"",
     "check": "tsc -p tsconfig.json",
-    "test": "node --test",
-    "prepack": "pnpm run build"
+    "test": "node --test \"test/*.test.ts\"",
+    "prepack": "pnpm run build",
+    "admin": "node src/registration/admin.ts",
+    "remote": "node src/remote/start.ts",
+    "demo:query": "node src/remote/demoQuery.ts"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.32.2",
+    "ws": "^8.22.1",
     "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@types/ws": "^8.18.2"
   }
 }

@@ -15,7 +15,9 @@
     "build:extension": "pnpm --filter @flex-mcp/chrome-extension run build",
     "check": "tsc -p tsconfig.scripts.json && pnpm -r run check",
     "test": "node --test scripts/verifyPublicArtifact.test.ts && pnpm -r run --if-present test",
-    "package:public": "pnpm build:extension && node scripts/packagePublicArtifacts.ts"
+    "package:public": "pnpm build:extension && node scripts/packagePublicArtifacts.ts",
+    "flex:admin": "pnpm --filter @flex-mcp/server run admin",
+    "flex:remote": "pnpm --filter @flex-mcp/server run remote"
   },
   "devDependencies": {
     "@types/node": "^24.19.2",

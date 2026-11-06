@@ -29,8 +29,8 @@ function errorReply(text: string, code?: RelayFailure | AccessFailure) {
   return { isError: true, content: [{ type: "text" as const, text }], ...(code ? { structuredContent: { code } } : {}) };
 }
 
-export function createMcpServer(handler?: QueryHandler, now = () => new Date()): McpServer {
-  const server = new McpServer({ name: "flex", version: "0.1.0" });
+export function createMcpServer(handler?: QueryHandler, now = () => new Date(), synthetic = false): McpServer {
+  const server = new McpServer({ name: synthetic ? "flex-demo" : "flex", version: "0.1.0" });
   async function reply(buildQuery: () => FlexQuery) {
     let query: FlexQuery;
     try {
@@ -42,10 +42,8 @@ export function createMcpServer(handler?: QueryHandler, now = () => new Date()):
     try {
       const outcome = await handler(query);
       if (!outcome.ok) return errorReply(errors[outcome.error], outcome.error);
-      return {
-        structuredContent: outcome.value,
-        content: [{ type: "text" as const, text: JSON.stringify(outcome.value) }],
-      };
+      const result = synthetic ? { ...outcome.value, synthetic: true } : outcome.value;
+      return { structuredContent: result, content: [{ type: "text" as const, text: JSON.stringify(result) }] };
     } catch {
       return errorReply(errors.FLEX_READ_FAILED, "FLEX_READ_FAILED");
     }

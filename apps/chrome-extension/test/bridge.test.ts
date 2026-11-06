@@ -62,23 +62,29 @@ class FakeSocket extends EventTarget {
 
 test("중계는 잘못된 메시지를 읽지 않고 재연결 뒤 이전 조회를 버린다", async context => {
   const sockets: FakeSocket[] = [];
+  const firstConnection = Promise.withResolvers<FakeSocket>();
   const connected = Promise.withResolvers<FakeSocket>();
   const pending = Promise.withResolvers<BridgeReply>();
   let querySignal: AbortSignal | undefined;
   const control = connectBridge({
-    url: "wss://example.invalid/",
+    url: "https://example.invalid/",
+    getTicket: async () => "synthetic-ticket",
     retryDelayMs: 1,
     openSocket: () => {
       const socket = new FakeSocket();
       sockets.push(socket);
+      if (sockets.length === 1) firstConnection.resolve(socket);
       if (sockets.length === 2) connected.resolve(socket);
       return socket as unknown as WebSocket;
     },
   }, (_query, signal) => { querySignal = signal; return pending.promise; });
   context.after(() => control.close());
-  const first = sockets[0];
-  assert.ok(first);
+  const first = await firstConnection.promise;
   first.dispatchEvent(new Event("open"));
+  assert.equal(control.state(), "offline");
+  first.receive(request);
+  assert.equal(querySignal, undefined);
+  first.receive({ type: "ready" });
   assert.equal(control.state(), "online");
   first.receive({ ...request, extra: true });
   assert.equal(querySignal, undefined);
@@ -88,9 +94,12 @@ test("중계는 잘못된 메시지를 읽지 않고 재연결 뒤 이전 조회
   assert.equal((querySignal as AbortSignal).aborted, true);
   const second = await connected.promise;
   second.dispatchEvent(new Event("open"));
+  second.receive({ type: "ready" });
   pending.resolve({ requestId: request.requestId, error: "FLEX_READ_FAILED" });
   await Promise.resolve();
-  assert.deepEqual([...first.sent, ...second.sent], []);
+  const authentication = JSON.stringify({ type: "auth", ticket: "synthetic-ticket" });
+  assert.deepEqual(first.sent, [authentication]);
+  assert.deepEqual(second.sent, [authentication]);
   second.close();
   control.close();
   await delay(10);
