@@ -21,7 +21,7 @@ function setSnapshot(next: PopupSnapshot): void {
     view.replaceChildren(title, renderConnectionRows(next.flex));
     if (next.flex !== "unavailable") view.append(renderWorkSummary(next.summary, next.flex));
     else {
-      description.textContent = "등록한 계정으로 로그인한 Flex 탭 하나를 열어 주세요.";
+      description.textContent = "등록한 계정의 Flex 탭을 연 뒤 다시 확인하세요.";
       view.append(description, popupButton("다시 확인", "popup-state", true));
     }
     return;
@@ -38,7 +38,7 @@ function setSnapshot(next: PopupSnapshot): void {
   view.replaceChildren(title, description);
   if (next.needsFlex && !next.approvalCode) {
     const hint = document.createElement("p");
-    hint.textContent = "같은 Chrome 프로필에서 Flex 탭 하나를 열고 로그인한 뒤 코드를 발급하세요.";
+    hint.textContent = "같은 Chrome 프로필에서 Flex에 로그인한 뒤 코드를 발급하세요.";
     view.append(hint);
   }
   if (next.approvalCode) view.append(renderApprovalCode(next.approvalCode));

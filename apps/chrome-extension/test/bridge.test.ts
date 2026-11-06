@@ -25,6 +25,15 @@ test("요청은 날짜와 허용 필드만 받고 flex 탭을 임의로 바꾸�
   assert.deepEqual(findFlexTab([tab, other], 2), unavailable);
 });
 
+test("Flex 탭이 여러 개면 최근 사용한 탭을 고르고 명시한 선택을 우선한다", () => {
+  const older = { ...tab, lastAccessed: 100 };
+  const newer = { id: 3, url: "https://flex.team/home", lastAccessed: 200 };
+  const other = { id: 2, url: "https://example.invalid/", lastAccessed: 300 };
+  assert.deepEqual(findFlexTab([older, other, newer]), { ok: true, value: { id: newer.id, url: newer.url } });
+  assert.deepEqual(findFlexTab([newer, older], older.id), { ok: true, value: tab });
+  assert.deepEqual(findFlexTab([older, { ...newer, lastAccessed: 100 }]), unavailable);
+});
+
 test("탭 문서가 교체되거나 신호가 중단되면 결과를 폐기한다", async () => {
   const signal = new AbortController();
   let documentId = "first";
