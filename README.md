@@ -4,8 +4,8 @@ flex의 본인 연차, 일정, 근무 시간을 조회하는 프로젝트입니�
 
 | 앱 | 현재 상태 | 독립 빌드 |
 | --- | --- | --- |
-| [MCP 서버](apps/mcp-server/README.md) | 로컬 도구 계약과 공유 원격 연결을 제공합니다. 원격 연결은 합성 데이터를 반환합니다. | `pnpm build:mcp` → `apps/mcp-server/dist/` |
-| [Chrome 확장](apps/chrome-extension/manifest.json) | 툴바 팝업에서 연결하고, 합성 모드를 켜면 근무 요약과 합성 조회를 제공합니다. 실제 flex 탭에는 연결하지 않습니다. | `pnpm build:extension` → `apps/chrome-extension/dist/` |
+| [MCP 서버](apps/mcp-server/README.md) | 로컬 도구 계약과 공유 원격 연결을 제공합니다. 원격 연결은 합성 조회와 개인 설치본의 실계정 조회를 중계합니다. | `pnpm build:mcp` → `apps/mcp-server/dist/` |
+| [Chrome 확장](apps/chrome-extension/manifest.json) | 공개 빌드는 합성 조회에 사용합니다. [개인 설치본](docs/features/extension-setup.md)은 Flex에서 근무 요약과 예정 연차 반영 예상치를 읽습니다. | `pnpm build:extension` → `apps/chrome-extension/dist/` |
 
 ## 개발 환경
 

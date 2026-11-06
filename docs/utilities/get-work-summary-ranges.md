@@ -1,6 +1,6 @@
 # getWorkSummaryRanges
 
-[유틸 목록](../../UTILITIES.md) · [근무 요약](../features/extension-work-summary.md)
+[유틸 목록](../../UTILITIES.md) · [근무 요약](../features/extension-work-summary.md) · [구현](../../apps/chrome-extension/src/flex/workSummary.ts)
 
 기준 시각을 한국 날짜로 바꿉니다. 오늘, 월 1일부터 오늘, 이번 달 전체를 반환합니다. 각 기간은 시작일과 종료일을 포함합니다.
 

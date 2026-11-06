@@ -20,6 +20,6 @@ declare function readDemoWorkSummary(
 
 | TC | 조건 | 기대 결과 |
 | --- | --- | --- |
-| TC-U-DEMO-SUMMARY-01 | 2026년 11월 18일의 예시를 읽습니다. | 오늘 5시간 20분, 이번 달 실제 92시간, 남은 시간 70시간과 54시간을 반환합니다. |
+| TC-U-DEMO-SUMMARY-01 | 2026년 11월 18일의 예시를 읽습니다. | 오늘 5시간 20분, 이번 달 실제 92시간, 오늘 기준 70시간과 54시간을 반환합니다. 예시 예정 연차가 0시간이므로 예상치도 같습니다. |
 
 [자동 검사](../../apps/chrome-extension/test/work-summary.test.ts)에서 확인합니다.

@@ -55,7 +55,7 @@
 | `DevicePairingStart` | 화면에 표시할 승인 코드와 비공개 요청 키, 만료 시각입니다. |
 | `DevicePairingClaim` | 승인 대기, 사용할 수 없음, 등록 완료 중 하나입니다. 등록 완료 응답에만 등록 ID와 확장 키가 있습니다. |
 | `PopupCommand`, `PopupSnapshot` | 팝업에서 워커로 보내는 행동 이름과 워커가 돌려주는 표시 상태입니다. 표시 상태에는 비공개 키가 없습니다. |
-| `WorkSummaryInput`, `PopupWorkSummary` | 앞의 타입은 근무 요약 계산에 쓰는 분 단위 입력입니다. 뒤의 타입은 팝업에 표시할 실제 근무와 남은 시간입니다. |
+| `WorkSummaryInput`, `PopupWorkSummary` | 앞의 타입은 근무 요약 계산에 쓰는 분 단위 입력입니다. 뒤의 타입은 팝업에 표시할 실제 근무, 연차, 오늘 기준 남은 시간과 예상치입니다. |
 | `WorkWeekday` | 일요일 0부터 토요일 6까지의 요일입니다. |
 
 ## 검사와 운영 타입

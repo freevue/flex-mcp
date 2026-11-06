@@ -17,22 +17,22 @@ colors:
 typography:
   metadata:
     fontFamily: "system-ui, sans-serif"
-    fontSize: 12px
+    fontSize: 13px
     fontWeight: 400
     lineHeight: 1.5
   heading:
     fontFamily: "system-ui, sans-serif"
-    fontSize: 18px
+    fontSize: 22px
     fontWeight: 600
     lineHeight: 1.3
   body:
     fontFamily: "system-ui, sans-serif"
-    fontSize: 14px
+    fontSize: 15px
     fontWeight: 400
     lineHeight: 1.5
   code:
     fontFamily: "ui-monospace, Menlo, Consolas, monospace"
-    fontSize: 20px
+    fontSize: 24px
     fontWeight: 600
     lineHeight: 1.2
 rounded:
@@ -41,6 +41,7 @@ rounded:
 spacing:
   sm: 8px
   md: 16px
+  popup: 20px
   lg: 24px
 components:
   popup-title:
@@ -80,7 +81,7 @@ components:
 
 ## Overview
 
-이 기준은 [확장 화면 구성 계획](docs/features/extension-ui-plan.md)에 적용합니다. 사용자는 자신의 Chrome 연결을 승인하고 상태를 확인합니다. 브라우저 권한 창처럼 차분하고 정확하게 표현합니다. 승인 대기에는 사용자가 에이전트에 보낼 코드를 강조합니다.
+이 기준은 [확장 화면 구성 계획](docs/features/extension-ui-plan.md)에 적용합니다. 사용자는 자신의 Chrome 연결을 승인하고 상태를 확인합니다. 브라우저 권한 창처럼 차분하고 정확하게 표현합니다. 승인 대기에는 사용자가 MCP 클라이언트에 보낼 코드를 강조합니다. 보라색 바탕 위의 F와 시계는 Flex와 근무 시간을 뜻합니다.
 
 ## Colors
 
@@ -92,11 +93,11 @@ components:
 
 ## Layout
 
-팝업은 폭 320px을 기준으로 한 열을 사용합니다. 상태가 바뀌어도 제목과 16px 안쪽 여백을 유지합니다. 간격은 4px 단위로 맞춥니다. 화면 폭이 좁거나 글자를 확대해도 입력과 버튼이 가로로 잘리지 않게 합니다.
+팝업 문서의 폭은 380px입니다. Chrome은 문서 폭으로 툴바 팝업 크기를 정합니다. 문서 폭을 뷰포트 단위로 제한하면 첫 표시에서 폭이 줄어들 수 있습니다. 상태가 바뀌어도 상단 로고와 20px 좌우 여백을 유지합니다. 버튼은 높이 44px 이상입니다. 레이아웃은 Chrome 툴바 버튼으로 팝업을 열어 확인합니다.
 
 ## Components
 
-상태 행은 `MCP 연결`과 `Flex 연결`을 별도로 표시합니다. 소켓이 없으면 연결 화면에 코드 발급 버튼을 둡니다. 승인 대기에는 코드와 복사 버튼을 둡니다. 사용자는 기존 에이전트 대화에서 승인을 요청합니다. 두 연결이 활성화되면 상태 아래에 근무 요약을 둡니다. 남은 시간은 휴무 반영 전과 후를 같은 너비로 표시합니다. 등록을 유지한 채 연결이 끊겼으면 재연결 버튼을 둡니다.
+팝업 상단에는 [보라색 근무 시간 로고](apps/chrome-extension/icons/logo.svg)를 32px로 표시합니다. Chrome 툴바와 확장 관리 화면에는 같은 로고의 PNG를 사용합니다. 상태 행은 `MCP 연결`과 `Flex 연결`을 별도로 표시합니다. 소켓이 없으면 연결 화면에 코드 발급 버튼을 둡니다. 승인 대기에는 코드와 복사 버튼을 둡니다. 사용자는 MCP 클라이언트에서 승인을 요청합니다. 두 연결이 활성화되면 상태 아래에 근무 요약을 둡니다. 사용 연차에는 그중 인정된 시간을 함께 표시합니다. 예정 연차는 옆에 따로 표시합니다. 남은 시간 표는 오늘 기준과 예정 연차 반영 예상치를 행으로 나눕니다. 놀수 미반영과 반영은 같은 너비의 열에 둡니다. 등록을 유지한 채 연결이 끊겼으면 재연결 버튼을 둡니다.
 
 ## Do's and Don'ts
 

@@ -15,6 +15,6 @@ declare function getWorkerWorkSummary(connectionKey: string, now: Date): Promise
 
 | TC | 입력과 조건 | 기대 결과 |
 | --- | --- | --- |
-| TC-W-GET-WORKER-WORK-SUMMARY-01 | 월 목표에 포함된 두 휴무를 설정합니다. | 날짜별 소정 근무 목표만 빼고 남은 시간 두 값을 반환합니다. |
+| TC-W-GET-WORKER-WORK-SUMMARY-01 | 월 목표에 포함된 두 휴무를 설정합니다. | 날짜별 소정 근무 목표만 차감합니다. 오늘 기준과 예정 연차 반영 예상치를 구분합니다. |
 | TC-W-GET-WORKER-WORK-SUMMARY-02 | 구간 합이 다르거나 월 설정이 없습니다. | 반영 값은 null입니다. |
 | TC-W-GET-WORKER-WORK-SUMMARY-03 | 근무 조회 사이에 등록을 교체합니다. | 기존 등록의 부분 결과를 반환하지 않습니다. |
