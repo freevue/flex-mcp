@@ -14,7 +14,7 @@ const server = [
 const extension = [
   "extensionConfiguration", "popup", "service-worker",
   "popup/components", "popup/formatWorkMinutes", "popup/index", "popup/readPopupSnapshot", "popup/types",
-  "registration/bridgeApi", "registration/devicePairingApi", "registration/index",
+  "registration/bridgeApi", "registration/devicePairingApi", "registration/index", "registration/pairingSession",
   "bridge/confirmBrowserBinding", "bridge/connectBridge", "bridge/deriveConnectionState", "bridge/dispatchToFlexTab",
   "bridge/findFlexTab", "bridge/index", "bridge/parseBridgeRequest", "bridge/syntheticReply",
   "flex/demoWorkSummary", "flex/workSummary", "flex/index", "flex/parseAnnualLeave", "flex/readAnnualLeave", "flex/readCurrentUser", "flex/readFlexJson",
