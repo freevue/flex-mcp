@@ -30,13 +30,13 @@ FLEX_EXTENSION_SERVER_URL=https://flex-mcp.freevue.dev FLEX_EXTENSION_DEMO=1 pnp
 
 개인 설치본은 공개 확장과 다른 폴더에 둡니다. 로컬 조회 원본이 있는 PC에서는 저장소 루트에서 `node .local/flex-mcp/chrome/build.mjs`를 실행합니다. `apps/chrome-extension/dist-personal` 폴더를 Chrome의 개발자 모드에서 로드합니다. 이 폴더를 공개 저장소나 공개 배포에 올리지 않습니다.
 
-1. 설치한 Chrome 프로필에서 `https://flex.team` 탭 하나를 열고 로그인합니다.
+1. 설치한 Chrome 프로필에서 `https://flex.team`을 열고 로그인합니다.
 2. 개인 설치본 팝업에서 일회용 코드를 발급합니다. 확장이 이 탭의 계정을 등록합니다.
 3. [운영 MCP](https://flex-mcp.freevue.dev/mcp)에서 코드를 `flex_approve_connection`에 보냅니다.
 4. 연결 키로 `flex_get_socket_status`를 호출합니다. `online`이면 같은 키로 연차, 일정과 근무 시간 도구를 호출합니다.
 5. 해당 결과를 Flex 화면과 대조합니다. 개인 설치본의 결과에는 `synthetic: true`가 붙지 않습니다.
 
-Flex 탭을 닫거나 계정을 바꾸면 조회를 차단합니다. 처음 연결한 계정으로 로그인한 탭을 다시 열면 같은 연결 키를 사용할 수 있습니다. 로그인 정보와 계정 비교 값은 Chrome에 남습니다. 팝업의 [이번 달 근무 요약](extension-work-summary.md)도 같은 Flex 탭에서 읽습니다.
+Flex 탭이 여러 개면 확장은 가장 최근에 사용한 Flex 탭을 확인합니다. 조회 중에 해당 탭을 닫거나 등록한 계정과 다른 계정이 확인되면 조회를 차단합니다. 등록한 계정의 Flex 탭을 연 뒤 `다시 확인`을 누르세요. 기존 연결 키를 다시 쓸 수 있습니다. 로그인 정보와 계정 비교 값은 Chrome에 남습니다. 팝업의 [이번 달 근무 요약](extension-work-summary.md)에도 같은 규칙을 적용합니다.
 
 ## 연결 상태
 
