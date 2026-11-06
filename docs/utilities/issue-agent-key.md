@@ -12,13 +12,15 @@
 ## 함수 계약
 
 ```typescript
-declare function issueAgentKey(database: DatabaseSync, ownerId: string): { callerId: string; key: string };
+declare function issueAgentKey(database: StateDatabase, ownerId: string, canApprove?: boolean): { callerId: string; key: string };
 ```
 
 | 매개변수 | 타입 | 설명 |
 | --- | --- | --- |
-| `database` | `DatabaseSync` | 연결 상태를 저장한 SQLite 데이터베이스입니다. |
+| `database` | `StateDatabase` | 연결 상태를 저장한 SQLite 데이터베이스입니다. |
 | `ownerId` | `string` | 운영자가 지정한 사용자 ID입니다. |
+
+| `canApprove` | `boolean` | 선택입니다. `true`이면 Chrome 연결을 승인할 수 있습니다. 기본값은 `false`입니다. |
 
 ## 확인할 경우
 

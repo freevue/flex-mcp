@@ -12,12 +12,12 @@
 ## 함수 계약
 
 ```typescript
-declare function createAccessState(database: DatabaseSync): AccessState;
+declare function createAccessState(database: StateDatabase): AccessState;
 ```
 
 | 매개변수 | 타입 | 설명 |
 | --- | --- | --- |
-| `database` | `DatabaseSync` | 연결 상태를 저장한 SQLite 데이터베이스입니다. |
+| `database` | `StateDatabase` | 연결 상태를 저장한 SQLite 데이터베이스입니다. |
 
 ## 확인할 경우
 

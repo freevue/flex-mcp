@@ -12,12 +12,12 @@
 ## 함수 계약
 
 ```typescript
-declare function verifyAgentKey(database: DatabaseSync, key: string): VerifiedCallerIdentity | null;
+declare function verifyAgentKey(database: StateDatabase, key: string): VerifiedCallerIdentity | null;
 ```
 
 | 매개변수 | 타입 | 설명 |
 | --- | --- | --- |
-| `database` | `DatabaseSync` | 연결 상태를 저장한 SQLite 데이터베이스입니다. |
+| `database` | `StateDatabase` | 연결 상태를 저장한 SQLite 데이터베이스입니다. |
 | `key` | `string` | 에이전트가 보낸 키입니다. |
 
 ## 확인할 경우

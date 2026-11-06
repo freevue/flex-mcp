@@ -12,12 +12,12 @@
 ## 함수 계약
 
 ```typescript
-declare function issueBridgeTicket(database: DatabaseSync, deviceKey: string, now?: number): string | null;
+declare function issueBridgeTicket(database: StateDatabase, deviceKey: string, now?: number): string | null;
 ```
 
 | 매개변수 | 타입 | 설명 |
 | --- | --- | --- |
-| `database` | `DatabaseSync` | 연결 상태를 저장한 SQLite 데이터베이스입니다. |
+| `database` | `StateDatabase` | 연결 상태를 저장한 SQLite 데이터베이스입니다. |
 | `deviceKey` | `string` | 확장이 보낸 키입니다. |
 | `now` | `number` | 선택 항목입니다. 현재 시각을 밀리초로 받습니다. |
 

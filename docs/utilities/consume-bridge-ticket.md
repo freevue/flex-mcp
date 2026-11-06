@@ -12,12 +12,12 @@
 ## 함수 계약
 
 ```typescript
-declare function consumeBridgeTicket(database: DatabaseSync, ticket: string, now?: number): BrowserBinding | null;
+declare function consumeBridgeTicket(database: StateDatabase, ticket: string, now?: number): BrowserBinding | null;
 ```
 
 | 매개변수 | 타입 | 설명 |
 | --- | --- | --- |
-| `database` | `DatabaseSync` | 연결 상태를 저장한 SQLite 데이터베이스입니다. |
+| `database` | `StateDatabase` | 연결 상태를 저장한 SQLite 데이터베이스입니다. |
 | `ticket` | `string` | 소켓의 첫 메시지에 담긴 접속권입니다. |
 | `now` | `number` | 선택 항목입니다. 현재 시각을 밀리초로 받습니다. |
 

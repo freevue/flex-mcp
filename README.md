@@ -5,7 +5,7 @@ flex의 본인 연차, 일정, 근무 시간을 조회하는 프로젝트입니�
 | 앱 | 현재 상태 | 독립 빌드 |
 | --- | --- | --- |
 | [MCP 서버](apps/mcp-server/README.md) | 로컬 도구 계약과 공유 원격 연결을 제공합니다. 원격 연결은 합성 데이터를 반환합니다. | `pnpm build:mcp` → `apps/mcp-server/dist/` |
-| [Chrome 확장](apps/chrome-extension/manifest.json) | 옵션에서 서버에 등록하고 합성 조회를 처리합니다. 실제 flex 탭에는 연결하지 않습니다. | `pnpm build:extension` → `apps/chrome-extension/dist/` |
+| [Chrome 확장](apps/chrome-extension/manifest.json) | 툴바 팝업에서 연결하고, 합성 모드를 켜면 근무 요약과 합성 조회를 제공합니다. 실제 flex 탭에는 연결하지 않습니다. | `pnpm build:extension` → `apps/chrome-extension/dist/` |
 
 ## 개발 환경
 
@@ -20,7 +20,9 @@ pnpm build
 
 `pnpm start`는 로컬 MCP를 소스에서 실행합니다. MCP 클라이언트 등록 방법은 [서버 사용 안내](apps/mcp-server/README.md)를 참고하세요.
 
-사용자 두 명으로 공유 서버를 확인하려면 [직접 검증 절차](docs/features/shared-connection-check.md)를 따르세요. 합성 검증 서버는 로컬 표준 입출력 서버와 별도로 실행합니다.
+[MCP 도구와 함수 계약](docs/mcp/README.md)에서 입력, 반환값과 테스트 케이스를 확인합니다. 운영 배포 대상은 Cloudflare Workers입니다. [배포 설계](docs/mcp/cloudflare-workers.md)에서 합성 검증 빌드와 실제 운영 전환을 구분합니다.
+
+현재 빌드에서 두 사용자로 확인하려면 [직접 검증 절차](docs/features/shared-connection-check.md)를 따르세요. 합성 검증 서버는 로컬 표준 입출력 서버와 별도로 실행합니다. [확장이 시작하는 등록](docs/features/browser-pairing.md)은 에이전트가 MCP 도구로 승인합니다.
 
 ## 배포 산출물 준비
 

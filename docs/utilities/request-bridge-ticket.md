@@ -12,13 +12,15 @@
 ## 함수 계약
 
 ```typescript
-declare function requestBridgeTicket(registration: StoredRegistration, signal: AbortSignal): Promise<string>;
+declare function requestBridgeTicket(registration: StoredRegistration, signal: AbortSignal, onUnauthorized?: () => void): Promise<string>;
 ```
 
 | 매개변수 | 타입 | 설명 |
 | --- | --- | --- |
 | `registration` | `StoredRegistration` | 확장에 저장한 서버 주소, 등록 ID와 확장 키입니다. |
 | `signal` | `AbortSignal` | 진행 중인 요청을 중단하는 신호입니다. |
+
+| `onUnauthorized` | `() => void` | 선택입니다. 서버가 확장 키를 401로 거부할 때 한 번 호출합니다. |
 
 ## 확인할 경우
 

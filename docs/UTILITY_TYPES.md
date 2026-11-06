@@ -37,11 +37,26 @@
 | `LocalBrowserBinding` | 확장이 연결한 프로필과 계정을 대조하는 로컬 정보입니다. |
 | `BrowserConnection`, `BridgeRegistry` | 앞의 타입은 서버가 확인한 확장 연결입니다. 뒤의 타입은 활성 연결과 대기 요청을 관리하는 상태입니다. |
 | `RelayContext` | 현재 권한, 연결 상태, 요청 시간 제한과 대기 상한을 중계 함수에 제공합니다. 요청 ID는 서버에서 발급합니다. |
+| `ToolHandlers` | Node MCP 내부 타입입니다. `query`는 조회를 실행합니다. `connectionStatus`와 `approveConnection`은 연결 기능을 제공합니다. |
+| `ToolFailure` | 조회, 권한과 소켓 상태를 분류하는 Node MCP 내부 오류 타입입니다. |
+| `StateDatabase` | Node와 Durable Object가 공유하는 SQLite 호출 계약입니다. `exec`, `prepare`와 선택적인 `transactionSync`를 제공합니다. |
+| `RemoteConfiguration` | 공개 Node 서버의 `origin`과 허용한 확장의 `extensionOrigins`를 담습니다. |
 | `RelayFailure` | [중계 오류](features/remote-bridge.md) 또는 서버가 처리하는 `ACCESS_DENIED`, `QUERY_LIMIT_REACHED`입니다. 서버의 접근 거부와 상한 초과는 확장으로 보내는 코드가 아닙니다. |
 | `AccessFailure` | 호출자를 확인하지 못한 `CALLER_UNVERIFIED`와 권한이 없는 `ACCESS_DENIED`를 구분합니다. |
 | `BindingFailure` | `FlexRequestFailure` 또는 사용자가 연결을 취소한 `BINDING_CANCELLED`입니다. 이 취소 상태는 확장 안에서만 사용합니다. |
 | `RevocationTarget` | 해제할 에이전트나 프로필을 가리키는 값입니다. |
 | `ConnectionSnapshot`, `ConnectionState` | 앞의 타입은 연결과 마지막 조회 확인 상태입니다. 뒤의 타입은 [확장 안내](features/extension-setup.md)에 표시할 상태와 다음 행동입니다. |
+
+## 팝업과 승인 타입
+
+| 타입 | 뜻 |
+| --- | --- |
+| `ExtensionConfiguration` | 빌드에서 정한 서버 주소와 합성 모드 여부입니다. |
+| `DevicePairingStart` | 화면에 표시할 승인 코드와 비공개 요청 키, 만료 시각입니다. |
+| `DevicePairingClaim` | 승인 대기, 사용할 수 없음, 등록 완료 중 하나입니다. 등록 완료 응답에만 등록 ID와 확장 키가 있습니다. |
+| `PopupCommand`, `PopupSnapshot` | 팝업에서 워커로 보내는 행동 이름과 워커가 돌려주는 표시 상태입니다. 표시 상태에는 비공개 키가 없습니다. |
+| `WorkSummaryInput`, `PopupWorkSummary` | 앞의 타입은 근무 요약 계산에 쓰는 분 단위 입력입니다. 뒤의 타입은 팝업에 표시할 실제 근무와 남은 시간입니다. |
+| `WorkWeekday` | 일요일 0부터 토요일 6까지의 요일입니다. |
 
 ## 검사와 운영 타입
 
@@ -51,3 +66,5 @@
 | `ArtifactCheckResult` | 검사 성공 여부와 실패 종류입니다. 민감한 값은 넣지 않습니다. |
 | `ServiceReadinessInput` | 필수 설정 여부, 운영 중단 여부, 승인된 브라우저 연결 여부입니다. |
 | `ServiceReadiness` | 서버의 `acceptsRequests`와 운영자용 `browserOnline`을 구분합니다. 서버가 요청을 받을 수 있어도 브라우저 조회가 가능하다는 뜻은 아닙니다. |
+
+Workers의 `WorkerEnv`와 `WorkerCaller`는 [예정 함수 문서](mcp/workers/README.md)에서 설명합니다. 현재 Node 타입과 구분합니다.

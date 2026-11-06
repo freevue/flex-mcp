@@ -7,17 +7,19 @@
 | 항목 | 내용 |
 | --- | --- |
 | 구현 위치 | `apps/mcp-server/src/registration/pairing.ts` |
-| 상태 | 구현 |
+| 상태 | 현재 합성 빌드에서 사용 |
+
+이 함수는 호환 API에서 운영자가 발급한 코드를 씁니다. 팝업은 [별도 승인 방식](../features/browser-pairing.md)을 사용합니다.
 
 ## 함수 계약
 
 ```typescript
-declare function redeemPairingCode(database: DatabaseSync, code: string, now?: number): BridgeRegistration | null;
+declare function redeemPairingCode(database: StateDatabase, code: string, now?: number): BridgeRegistration | null;
 ```
 
 | 매개변수 | 타입 | 설명 |
 | --- | --- | --- |
-| `database` | `DatabaseSync` | 연결 상태를 저장한 SQLite 데이터베이스입니다. |
+| `database` | `StateDatabase` | 연결 상태를 저장한 SQLite 데이터베이스입니다. |
 | `code` | `string` | 확장이 제출한 등록 코드입니다. |
 | `now` | `number` | 선택 항목입니다. 현재 시각을 밀리초로 받습니다. |
 

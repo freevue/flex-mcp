@@ -7,7 +7,9 @@
 | 항목 | 내용 |
 | --- | --- |
 | 구현 위치 | `apps/chrome-extension/src/registration/bridgeApi.ts` |
-| 상태 | 구현 |
+| 상태 | 현재 합성 빌드에서 사용 |
+
+이 함수는 호환 API에서 운영자가 발급한 코드를 씁니다. 팝업은 [별도 승인 방식](../features/browser-pairing.md)을 사용합니다.
 
 ## 함수 계약
 

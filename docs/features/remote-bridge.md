@@ -1,8 +1,8 @@
 # 원격 MCP와 Chrome 확장 중계
 
-[투두 4](https://github.com/freevue/flex-mcp/issues/4) · [서비스 정책](../../SERVICE_POLICY.md) · [접근 권한](access-control.md)
+[투두 4](https://github.com/freevue/flex-mcp/issues/4) · [서비스 정책](../../SERVICE_POLICY.md) · [접근 권한](access-control.md) · [Workers 이식](../mcp/cloudflare-workers.md)
 
-중계는 서버와 확장 사이에서 요청과 결과를 전달하는 기능입니다. 에이전트는 [Streamable HTTP](https://modelcontextprotocol.io/specification/2025-11-25/basic/transports#streamable-http)를 사용합니다. 확장은 WSS 연결을 먼저 엽니다. 첫 연결에서는 합성 조회를 확인합니다. [공유 연결 흐름](shared-connection-flow.md)을 따릅니다.
+중계는 서버와 확장 사이에서 요청과 결과를 전달하는 기능입니다. 에이전트는 [Streamable HTTP](https://modelcontextprotocol.io/specification/2025-11-25/basic/transports#streamable-http)를 사용합니다. 등록을 받은 확장은 WSS 연결을 엽니다. 서버는 연결을 승인한 뒤 조회를 보냅니다. 현재 빌드는 합성 조회만 지원합니다. [최초 등록과 승인](browser-pairing.md), [등록 이후의 중계](shared-connection-flow.md)를 따릅니다.
 
 ## 메시지 계약
 
@@ -17,6 +17,8 @@
 ```
 
 `kind`는 `leave`, `schedule`, `work` 중 하나입니다. `leave`에는 기간을 넣지 않습니다. `schedule`과 `work`에는 `range.from`과 `range.to`를 넣습니다. 사번, URL, 실행 코드와 알 수 없는 필드는 거부합니다. 결과 필드는 [연차](annual-leave.md), [일정](schedule.md), [근무 시간](work-hours.md)의 계약을 따릅니다.
+
+[월 근무 요약](../mcp/tools/flex-get-work-summary.md)은 여러 근무 범위를 읽어 결과를 계산합니다. 이식할 때 기존 `work` 메시지를 재사용합니다. 확장 메시지에 새 조회 종류나 사용자 ID를 추가하지 않습니다.
 
 | 코드 | 반환 조건 |
 | --- | --- |
