@@ -42,4 +42,4 @@ Node 합성 검증에서는 `pnpm flex:remote`를 실행합니다. [두 Chrome �
 
 Node 패키지의 원격 서버는 `node dist/apps/mcp-server/src/remote/start.js`로 실행합니다. `FLEX_STATE_FILE`에 로컬 상태 파일을 지정합니다.
 
-Workers 운영 MCP 주소는 `https://flex-mcp.freevue.dev/mcp`입니다. Workers를 운영할 때는 [배포 설계](../../docs/mcp/cloudflare-workers.md)를 따릅니다. [배포 절차](../../docs/mcp/workers-release.md)에 따라 검증합니다.
+Workers 운영 MCP 주소는 `https://flex-mcp.freevue.dev/mcp`입니다. 새 에이전트를 연결하려면 [등록·승인 요청문](../../docs/screens/agent-approval.md#복사해서-보낼-요청문)을 복사하세요. Workers를 운영할 때는 [배포 설계](../../docs/mcp/cloudflare-workers.md)와 [배포 절차](../../docs/mcp/workers-release.md)를 따릅니다.

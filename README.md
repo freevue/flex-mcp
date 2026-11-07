@@ -2,6 +2,8 @@
 
 flex의 본인 연차, 일정, 근무 시간을 조회하는 프로젝트입니다. Node.js 24, TypeScript, [pnpm 워크스페이스](https://pnpm.io/workspaces)로 두 앱을 한 저장소에서 관리합니다. [LLM Wiki](LLM_WIKI.md)는 프로젝트 지식을 찾는 진입점입니다.
 
+새 에이전트에 운영 MCP를 연결하려면 [복사용 등록·승인 요청문](docs/screens/agent-approval.md#복사해서-보낼-요청문)을 보내세요.
+
 | 앱 | 현재 상태 | 독립 빌드 |
 | --- | --- | --- |
 | [MCP 서버](apps/mcp-server/README.md) | 로컬 도구 계약과 공유 원격 연결을 제공합니다. 원격 연결은 합성 조회와 개인 설치본의 실계정 조회를 중계합니다. | `pnpm build:mcp` → `apps/mcp-server/dist/` |

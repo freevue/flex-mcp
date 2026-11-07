@@ -17,7 +17,7 @@ LLM Wiki는 확인한 프로젝트 지식을 정리하고 다시 찾는 방식�
 | 두 채널로 설치와 재접속 확인 | [직접 검증](docs/features/shared-connection-check.md) |
 | 확장이 시작하는 등록과 MCP 승인 | [Chrome 등록 순서도](docs/features/browser-pairing.md) |
 | Chrome 팝업, MCP 승인과 재연결 | [화면 구성](docs/features/extension-ui-plan.md) · [디자인 기준](DESIGN.md) |
-| 화면과 공용 컴포넌트 | [연결](docs/screens/connection.md), [상태](docs/screens/status.md), [근무 요약](docs/screens/work-summary.md), [MCP 승인](docs/screens/agent-approval.md) · [공용 컴포넌트](docs/components/README.md) |
+| 화면과 공용 컴포넌트 | [연결](docs/screens/connection.md), [상태](docs/screens/status.md), [근무 요약](docs/screens/work-summary.md), [MCP 등록·승인 요청문](docs/screens/agent-approval.md) · [공용 컴포넌트](docs/components/README.md) |
 | 확장 팝업의 월 근무 요약, 놀수와 예정 연차 예상치 | [근무 요약 계산](docs/features/extension-work-summary.md) |
 | MCP 도구, 입력과 테스트 케이스 | [MCP 개발 문서](docs/mcp/README.md) · [서버 실행 안내](apps/mcp-server/README.md) |
 | MCP 서버의 함수와 매개변수 | [서버 함수 목록](docs/mcp/functions.md) |
