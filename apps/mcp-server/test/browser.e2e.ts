@@ -13,8 +13,9 @@ import { chromium, type BrowserContext } from "playwright";
 import { isRecord } from "../../../shared/index.ts";
 import { openStateDatabase } from "../src/registration/index.ts";
 import { createRemoteServer } from "../src/remote/index.ts";
+import { checkDashboardFixtures } from "./checkDashboardFixtures.ts";
 
-test("Chromium 확장을 승인하면 팝업과 MCP에서 합성 데이터를 읽는다", { timeout: 60_000 }, async (context) => {
+test("FT-GALPI-DASHBOARD-01~03: Chromium에서 승인, 근무 비교, 연결 상태와 키보드를 확인한다", { timeout: 60_000 }, async (context) => {
   const root = fileURLToPath(new URL("../../../", import.meta.url));
   const folder = await mkdtemp(join(tmpdir(), "flex-browser-e2e-"));
   const extension = join(folder, "extension");
@@ -57,9 +58,13 @@ test("Chromium 확장을 승인하면 팝업과 MCP에서 합성 데이터를 �
   browser.setDefaultTimeout(12_000);
   const worker = browser.serviceWorkers()[0] ?? (await browser.waitForEvent("serviceworker"));
   const popup = await browser.newPage();
-  await popup.goto(`chrome-extension://${new URL(worker.url()).host}/popup.html`);
+  const popupUrl = `chrome-extension://${new URL(worker.url()).host}/popup.html`;
+  await popup.goto(popupUrl);
   const approvalCode = await popup.locator(".approval-code").textContent();
   assert.match(approvalCode ?? "", /^[A-F0-9]{4}(?:-[A-F0-9]{4}){2}$/);
+  assert.equal(await popup.getByRole("heading", { name: "승인 대기" }).isVisible(), true, "UT-renderApprovalCode-01");
+  assert.equal(await popup.getByRole("button", { name: "코드 복사" }).isVisible(), true, "UT-renderUnavailablePopup-02");
+  assert.equal(await popup.getByRole("heading", { name: "오늘 실제 근무" }).count(), 0);
 
   await client.connect(new StreamableHTTPClientTransport(new URL("/mcp", origin)));
   const approval = await client.callTool({
@@ -70,6 +75,7 @@ test("Chromium 확장을 승인하면 팝업과 MCP에서 합성 데이터를 �
   assert.ok(isRecord(data) && data.status === "approved" && typeof data.connectionKey === "string");
   const connection = { connectionKey: data.connectionKey };
   await popup.getByText("합성 모드", { exact: true }).waitFor();
+  assert.deepEqual(await popup.locator(".connection-rows dd").allTextContents(), ["연결됨", "합성 모드"], "UT-renderConnectionRows-01");
   await popup.getByRole("heading", { name: "오늘 실제 근무" }).waitFor();
   assert.deepEqual(await popup.locator(".work section h2").allTextContents(), ["오늘 실제 근무", "이번 달 인정 근무", "이번 달 남은 시간"]);
   assert.deepEqual(await popup.locator(".work-month dt").allTextContents(), ["연차 포함", "연차 미포함"]);
@@ -96,10 +102,12 @@ test("Chromium 확장을 승인하면 팝업과 MCP에서 합성 데이터를 �
   await popup.locator("#code-popover").waitFor();
   await popup.keyboard.press("Escape");
   await popup.locator("#code-popover").waitFor({ state: "hidden" });
+  assert.equal(await codeButton.evaluate((button) => document.activeElement === button), true);
   const fits = await popup.locator(".work").evaluate((panel) => {
     document.documentElement.style.fontSize = "22px";
     return panel.scrollWidth === panel.clientWidth;
   });
   assert.equal(fits, true);
   assert.ok(isRecord(result.structuredContent) && result.structuredContent.synthetic === true);
+  await checkDashboardFixtures(await browser.newPage(), popupUrl);
 });

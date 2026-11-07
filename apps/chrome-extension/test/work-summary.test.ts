@@ -34,7 +34,11 @@ test("월 목표에서 실제 근무 대신 인정 근무를 빼고 휴무 차�
   assert.equal(calculateWorkSummary({ ...input, restTargetMinutes: null }).adjustedRemainingMinutes, null);
   assert.equal(calculateWorkSummary({ ...input, monthRequiredMinutes: null }).standardRemainingMinutes, null);
   assert.equal(calculateWorkSummary({ ...input, monthRecognizedMinutes: 9_800 }).standardRemainingMinutes, 0);
+});
+
+test("UT-formatWorkMinutes-01~03: 시간과 분, 0분과 계산 정보 없음을 구분한다", () => {
   assert.equal(formatWorkMinutes(320), "5시간 20분");
+  assert.equal(formatWorkMinutes(0), "0시간");
   assert.equal(formatWorkMinutes(null), "계산 정보 없음");
 });
 
