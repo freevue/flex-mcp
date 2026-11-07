@@ -29,9 +29,9 @@ git tag -a 0.7.0 -m '갈피 0.7.0'
 git push origin 0.7.0
 ```
 
-Actions는 확장 ZIP을 만들고 [공개 산출물 검사](../utilities/verify-public-artifact.md)로 파일 목록을 확인합니다. 검사를 통과하면 [GitHub Releases](https://github.com/freevue/flex-mcp/releases)에 `갈피.0.7.0.zip`을 첨부합니다. 팀원은 ZIP을 풀고 Chrome에서 `manifest.json`이 있는 폴더를 로드합니다.
+Actions는 확장 ZIP을 만들고 [공개 산출물 검사](../utilities/verify-public-artifact.md)로 파일 목록을 확인합니다. 검사를 통과하면 [GitHub Releases](https://github.com/freevue/flex-mcp/releases)에 ZIP을 첨부합니다. 팀원은 ZIP을 풀고 Chrome에서 `manifest.json`이 있는 폴더를 로드합니다.
 
-태그와 네 버전 값이 다르면 Actions가 릴리스를 만들지 않습니다. ZIP 이름은 `갈피.<버전>.zip`입니다. GitHub가 파일 이름을 정규화하더라도 Release 표시 이름은 같은 형식으로 지정합니다.
+태그와 네 버전 값이 다르면 Actions가 릴리스를 만들지 않습니다. 로컬 ZIP과 Release의 표시 이름은 `갈피.<버전>.zip`입니다. GitHub는 한글 파일명을 정규화하므로 실제 다운로드 파일에는 `galpi.<버전>.zip`을 씁니다.
 
 ZIP은 운영 MCP에 연결하는 합성 검증용입니다. 공개 Releases에 개인 설치본, 실제 Flex 조회 코드와 연결 키를 넣지 않습니다. 이 워크플로는 Chrome Web Store나 Worker를 배포하지 않습니다. PR과 `main` 푸시에서는 실행되지 않습니다.
 

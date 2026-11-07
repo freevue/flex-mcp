@@ -18,7 +18,7 @@ FLEX_EXTENSION_SERVER_URL=http://127.0.0.1:8787 FLEX_EXTENSION_DEMO=1 pnpm packa
 
 ## 팀 검증용 ZIP 설치
 
-[GitHub Releases](https://github.com/freevue/flex-mcp/releases)에서 `갈피.<버전>.zip`을 내려받습니다. ZIP을 풀고 `chrome://extensions`에서 개발자 모드를 켭니다. `압축해제된 확장 프로그램을 로드합니다`를 눌러 `manifest.json`이 있는 폴더를 선택합니다. 이 확장은 운영 MCP에 연결해 합성 결과를 표시합니다. 릴리스 생성 방법은 [확장 릴리스 절차](ci-artifacts.md)를 따릅니다.
+[GitHub Releases](https://github.com/freevue/flex-mcp/releases)에서 `갈피.<버전>.zip`을 선택합니다. 다운로드 파일 이름은 `galpi.<버전>.zip`입니다. ZIP을 풀고 `chrome://extensions`에서 개발자 모드를 켭니다. `압축해제된 확장 프로그램을 로드합니다`를 눌러 `manifest.json`이 있는 폴더를 선택합니다. 이 확장은 운영 MCP에 연결해 합성 결과를 표시합니다. 릴리스 생성 방법은 [확장 릴리스 절차](ci-artifacts.md)를 따릅니다.
 
 ## Workers 합성 서버 연결용 빌드
 

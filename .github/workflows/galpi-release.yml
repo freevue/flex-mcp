@@ -38,6 +38,8 @@ jobs:
           archive_name="갈피.${GITHUB_REF_NAME}.zip"
           archives=(.artifacts/public-*/"$archive_name")
           test "${#archives[@]}" -eq 1
-          gh release create "$GITHUB_REF_NAME" "${archives[0]}#$archive_name" \
+          upload_path="${archives[0]%/*}/galpi.${GITHUB_REF_NAME}.zip"
+          mv -- "${archives[0]}" "$upload_path"
+          gh release create "$GITHUB_REF_NAME" "$upload_path#$archive_name" \
             --verify-tag --title "갈피 $GITHUB_REF_NAME" \
             --notes '팀 검증용 합성 빌드입니다. ZIP을 풀고 Chrome 확장 관리에서 폴더를 로드하세요.'
