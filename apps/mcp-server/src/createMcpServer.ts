@@ -1,5 +1,6 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z as schema } from "zod";
+import serverPackage from "../package.json" with { type: "json" };
 import type { BridgeQuery, BridgeResult, DateRange, FlexQuery, Outcome } from "../../../shared/index.ts";
 import type { AccessFailure } from "./access/index.ts";
 import type { RelayFailure } from "./bridge/index.ts";
@@ -24,7 +25,7 @@ const connectionKeyField = schema
   .regex(/^[A-Za-z0-9_-]{43}$/)
   .describe("연결 승인 때 받은 비공개 연결 키");
 export function createMcpServer(handlers?: ToolHandlers, now = () => new Date(), synthetic = false): McpServer {
-  const server = new McpServer({ name: synthetic ? "flex-demo" : "flex", version: "0.1.0" });
+  const server = new McpServer({ name: synthetic ? "flex-demo" : "flex", version: serverPackage.version });
   const channelFields = { connectionKey: handlers?.channelPairing ? connectionKeyField : schema.never().optional() };
   const channelSchema = schema.strictObject(channelFields);
   const rangeSchema = schema.strictObject({ ...rangeFields, ...channelFields });

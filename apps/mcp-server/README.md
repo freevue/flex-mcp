@@ -4,6 +4,8 @@
 
 공개 서버에는 Node 검증용 실행 파일과 Workers 진입점이 있습니다. `stdio`는 도구 입력을 검사하는 로컬 실행 방식입니다. 원격 Node 서버는 합성 데이터로 등록과 조회를 검증합니다. Cloudflare Workers는 운영 배포 대상입니다. 원격 서버는 사전 등록 없이 MCP 초기화와 도구 목록을 제공합니다. 실제 조회는 [개인 Chrome 설치본](../../docs/features/extension-setup.md)에서 실행합니다.
 
+MCP 초기화 응답의 서버 버전은 이 패키지의 `package.json` 버전입니다. 배포할 때 [갈피 확장과 같은 버전](../../docs/features/ci-artifacts.md#chrome-확장-릴리스)을 사용합니다.
+
 ## 도구
 
 | 도구                                                                         | 입력과 동작                                                                                                 |

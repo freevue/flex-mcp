@@ -71,7 +71,7 @@ const extension = [
   "flex/runFlexQuery",
   "flex/types"
 ].map((name) => `apps/chrome-extension/src/${name}.js`);
-const serverEntries = ["package/package.json", ...["index.js", ...server, ...shared].map((path) => `package/dist/${path}`)];
+const serverEntries = ["package/package.json", ...["index.js", "apps/mcp-server/package.json", ...server, ...shared].map((path) => `package/dist/${path}`)];
 const extensionIcons = ["logo.svg", "icon-16.png", "icon-32.png", "icon-48.png", "icon-128.png"].map((name) => `icons/${name}`);
 const extensionEntries = ["manifest.json", "extension-config.json", "popup.html", "popup.css", "service-worker.js", ...extensionIcons, ...extension, ...shared];
 
