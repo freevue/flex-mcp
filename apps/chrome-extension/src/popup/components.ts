@@ -25,19 +25,35 @@ export function renderApprovalCode(code: string): HTMLElement {
     textElement("h2", "승인 대기"),
     textElement("code", code, "approval-code"),
     textElement("p", "MCP 클라이언트 대화에 이 코드를 보내고 연결 승인을 요청하세요."),
-    popupButton("코드 복사", "copy", true),
+    popupButton("코드 복사", "copy", true)
   );
   return panel;
+}
+
+export function renderUnavailablePopup(snapshot: Exclude<PopupSnapshot, { kind: "connected" }>): HTMLElement[] {
+  if (snapshot.kind === "error") {
+    return [textElement("h1", "연결 확인 실패", "error"), textElement("p", "팝업 상태를 읽지 못했습니다."), popupButton("다시 확인", "popup-open")];
+  }
+  const { approvalCode, canReconnect, needsFlex } = snapshot;
+  if (!canReconnect && approvalCode) return [renderApprovalCode(approvalCode)];
+  const nodes: HTMLElement[] = [textElement("h1", "Chrome 연결"), textElement("p", "MCP 소켓이 연결되어 있지 않습니다.")];
+  if (needsFlex && !approvalCode) nodes.push(textElement("p", "같은 Chrome 프로필에서 Flex에 로그인한 뒤 코드를 발급하세요."));
+  nodes.push(approvalCode ? renderApprovalCode(approvalCode) : popupButton("일회용 코드 발급", "popup-issue-code"));
+  if (canReconnect) nodes.push(popupButton("다시 연결", "popup-reconnect", true));
+  return nodes;
 }
 
 export function renderConnectionRows(flex: Extract<PopupSnapshot, { kind: "connected" }>["flex"]): HTMLDListElement {
   const list = document.createElement("dl");
   list.className = "connection-rows";
+  list.setAttribute("aria-label", "연결 상태");
   const entries = [
-    { label: "MCP 연결", value: "연결됨", tone: "online" },
-    flex === "synthetic" ? { label: "Flex 연결", value: "합성 모드", tone: "attention" }
-      : flex === "live" ? { label: "Flex 연결", value: "연결됨", tone: "online" }
-        : { label: "Flex 연결", value: "미연결", tone: "attention" },
+    { label: "MCP", value: "연결됨", tone: "online" },
+    flex === "synthetic"
+      ? { label: "Flex", value: "합성 모드", tone: "attention" }
+      : flex === "live"
+        ? { label: "Flex", value: "연결됨", tone: "online" }
+        : { label: "Flex", value: "미연결", tone: "attention" }
   ];
   for (const { label, value, tone } of entries) {
     const row = document.createElement("div");
@@ -47,54 +63,44 @@ export function renderConnectionRows(flex: Extract<PopupSnapshot, { kind: "conne
   return list;
 }
 
-function renderRemainingHours(summary: PopupWorkSummary): HTMLTableElement {
-  const table = document.createElement("table");
-  table.className = "work-remaining";
-  const columns = table.createTHead().insertRow();
-  for (const label of ["남은 시간", "놀수 미반영", "놀수 반영"]) {
-    const heading = textElement("th", label);
-    heading.scope = "col";
-    columns.append(heading);
+function renderMinutePairs(entries: readonly { label: string; minutes: number | null }[]): HTMLDListElement {
+  const list = document.createElement("dl");
+  for (const { label, minutes } of entries) {
+    const item = document.createElement("div");
+    item.append(textElement("dt", label), textElement("dd", formatWorkMinutes(minutes)));
+    list.append(item);
   }
-  const body = table.createTBody();
-  const rows = [
-    { label: "오늘 기준", standard: summary.standardRemainingMinutes, adjusted: summary.adjustedRemainingMinutes },
-    { label: "예정 연차 반영", standard: summary.projectedStandardRemainingMinutes, adjusted: summary.projectedAdjustedRemainingMinutes },
-  ];
-  for (const { label, standard, adjusted } of rows) {
-    const heading = textElement("th", label);
-    heading.scope = "row";
-    body.insertRow().append(heading, textElement("td", formatWorkMinutes(standard)), textElement("td", formatWorkMinutes(adjusted)));
-  }
-  return table;
+  return list;
 }
 
 export function renderWorkSummary(summary: PopupWorkSummary, source: "synthetic" | "live"): HTMLElement {
   const panel = document.createElement("section");
   panel.className = "work";
-  const list = document.createElement("dl");
-  const entries = [
-    { label: "오늘 근무", minutes: summary.todayActualMinutes },
-    { label: "이번 달 누적", minutes: summary.monthActualMinutes },
-    { label: "이번 달 인정 합계", minutes: summary.monthRecognizedMinutes },
-    { label: "연차 제외 인정", minutes: summary.monthRecognizedWithoutAnnualLeaveMinutes },
-    { label: "사용 연차", minutes: summary.monthAnnualLeaveUsedMinutes, credit: summary.monthAnnualLeaveRecognizedMinutes },
-    { label: "예정 연차", minutes: summary.monthAnnualLeaveScheduledMinutes, credit: summary.monthAnnualLeaveScheduledRecognizedMinutes },
-  ];
-  for (const { label, minutes, credit } of entries) {
-    const item = document.createElement("div");
-    const value = textElement("dd", formatWorkMinutes(minutes));
-    if (credit !== undefined && minutes !== null) {
-      value.append(textElement("span", credit === null ? "인정 시간 미확인" : `${formatWorkMinutes(credit)} 인정`, "work-credit"));
-    }
-    item.append(textElement("dt", label), value);
-    list.append(item);
-  }
-  panel.append(
-    textElement("h2", "근무 요약"),
-    textElement("p", source === "synthetic" ? "이번 달 · 예시" : "이번 달 · Flex 기준", "metadata"),
-    list,
-    renderRemainingHours(summary),
+  const today = document.createElement("section");
+  today.className = "work-today";
+  today.append(textElement("h2", "오늘 실제 근무"), textElement("strong", formatWorkMinutes(summary.todayActualMinutes)));
+  if (source === "synthetic") today.append(textElement("p", "예시 근무 데이터", "metadata"));
+
+  const month = document.createElement("section");
+  month.className = "work-month";
+  const { monthRecognizedMinutes, monthAnnualLeaveScheduledRecognizedMinutes: scheduled } = summary;
+  month.append(
+    textElement("h2", "이번 달 인정 근무"),
+    renderMinutePairs([
+      { label: "연차 포함", minutes: scheduled === null ? null : monthRecognizedMinutes + scheduled },
+      { label: "연차 미포함", minutes: monthRecognizedMinutes }
+    ])
   );
+
+  const remaining = document.createElement("section");
+  remaining.className = "work-remaining";
+  remaining.append(
+    textElement("h2", "이번 달 남은 시간"),
+    renderMinutePairs([
+      { label: "놀수 미반영", minutes: summary.projectedStandardRemainingMinutes },
+      { label: "놀수 반영", minutes: summary.projectedAdjustedRemainingMinutes }
+    ])
+  );
+  panel.append(today, month, remaining);
   return panel;
 }

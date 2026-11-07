@@ -1,4 +1,4 @@
-import type { BridgeError, BridgeRequest, FlexQuery, FlexResult, Outcome } from "../../../../shared/index.ts";
+import type { BridgeError, BridgeQuery, BridgeRequest, BridgeResult, Outcome } from "../../../../shared/index.ts";
 import type { AccessState, AuthorizedCaller, BrowserBinding } from "../access/types.ts";
 
 export type RelayFailure = BridgeError | "ACCESS_DENIED" | "QUERY_LIMIT_REACHED";
@@ -13,8 +13,8 @@ export type BrowserConnection = BrowserBinding & {
 export type PendingQuery = {
   connection: BrowserConnection;
   caller: AuthorizedCaller;
-  query: FlexQuery;
-  finish: (result: Outcome<FlexResult, RelayFailure>, source?: "flex") => void;
+  query: BridgeQuery;
+  finish: (result: Outcome<BridgeResult, RelayFailure>, source?: "flex") => void;
 };
 export type BridgeRegistry = {
   active: Map<string, BrowserConnection>;

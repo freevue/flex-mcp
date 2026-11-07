@@ -19,10 +19,16 @@ function bridge(profile = binding) {
   const connection: BrowserConnection = {
     ...profile,
     isOpen: () => true,
-    send: request => { sent.push(request); },
+    send: (request) => {
+      sent.push(request);
+    },
     close: () => disconnect(),
-    onReply: handler => { receive = handler; },
-    onClose: handler => { disconnect = handler; },
+    onReply: (handler) => {
+      receive = handler;
+    },
+    onClose: (handler) => {
+      disconnect = handler;
+    }
   };
   return { connection, sent, reply: (value: unknown) => receive(value) };
 }
@@ -93,21 +99,24 @@ test("권한 해제는 지정한 호출자와 프로필의 새 요청 및 대기
 });
 
 test("중계 응답은 다른 조회의 결과와 추가 필드를 거부한다", () => {
-  const reply = { requestId: "example-request", result: {
-    asOf: "2027-01-01T00:00:00Z", remaining: exampleBalance, usable: exampleBalance,
-  } };
+  const reply = {
+    requestId: "example-request",
+    result: {
+      asOf: "2027-01-01T00:00:00Z",
+      remaining: exampleBalance,
+      usable: exampleBalance
+    }
+  };
   const invalid = { ok: false, error: "INVALID_BRIDGE_MESSAGE" };
   assert.deepEqual(parseBridgeReply(reply, query), { ok: true, value: reply });
+  assert.deepEqual(parseBridgeReply(reply, { kind: "summary" }), invalid);
   assert.deepEqual(parseBridgeReply(reply, { kind: "schedule", range: { from: "2027-01-01", to: "2027-01-02" } }), invalid);
   assert.deepEqual(parseBridgeReply({ ...reply, result: { ...reply.result, userRef: "example" } }, query), invalid);
   assert.deepEqual(parseBridgeReply({ requestId: "example-request", error: "ACCESS_DENIED" }, query), invalid);
 });
 
 test("서버 준비 상태와 브라우저 연결 상태를 각각 판정한다", () => {
-  assert.deepEqual(getServiceReadiness({ configured: true, paused: false, browserOnline: false }),
-    { acceptsRequests: true, browserOnline: false });
-  assert.deepEqual(getServiceReadiness({ configured: true, paused: true, browserOnline: true }),
-    { acceptsRequests: false, browserOnline: true });
-  assert.deepEqual(getServiceReadiness({ configured: false, paused: false, browserOnline: true }),
-    { acceptsRequests: false, browserOnline: true });
+  assert.deepEqual(getServiceReadiness({ configured: true, paused: false, browserOnline: false }), { acceptsRequests: true, browserOnline: false });
+  assert.deepEqual(getServiceReadiness({ configured: true, paused: true, browserOnline: true }), { acceptsRequests: false, browserOnline: true });
+  assert.deepEqual(getServiceReadiness({ configured: false, paused: false, browserOnline: true }), { acceptsRequests: false, browserOnline: true });
 });

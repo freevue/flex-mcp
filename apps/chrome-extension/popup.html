@@ -1,19 +1,33 @@
 <!doctype html>
 <html lang="ko">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>flex MCP</title>
-  <link rel="stylesheet" href="popup.css">
-  <script type="module" src="apps/chrome-extension/src/popup.js"></script>
-</head>
-<body>
-  <header class="brand">
-    <img src="icons/logo.svg" width="32" height="32" alt="">
-    <span>flex MCP</span>
-    <button type="button" class="secondary" data-action="popup-add-agent" hidden>에이전트 추가</button>
-  </header>
-  <main id="popup" aria-live="polite"><p>연결 상태를 확인하는 중입니다.</p></main>
-  <p id="notice" role="status"></p>
-</body>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>갈피</title>
+    <link rel="stylesheet" href="popup.css" />
+    <script type="module" src="apps/chrome-extension/src/popup.js"></script>
+  </head>
+  <body>
+    <header class="brand">
+      <img src="icons/logo.svg" width="32" height="32" alt="" />
+      <span>갈피</span>
+      <button
+        type="button"
+        class="code-action"
+        data-action="popup-check-code"
+        aria-controls="code-popover"
+        aria-expanded="false"
+        hidden
+      >
+        코드 확인
+      </button>
+      <div id="code-popover" class="code-popover" role="status" hidden>
+        <code></code><span></span>
+      </div>
+    </header>
+    <main id="popup" aria-live="polite">
+      <p>연결 상태를 확인하는 중입니다.</p>
+    </main>
+    <p id="notice" role="status"></p>
+  </body>
 </html>

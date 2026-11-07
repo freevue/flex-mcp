@@ -1,8 +1,7 @@
 import assert from "node:assert/strict";
 import { setTimeout as delay } from "node:timers/promises";
 import { test } from "node:test";
-import { confirmBrowserBinding, connectBridge, deriveConnectionState, dispatchToFlexTab, findFlexTab,
-  parseBridgeRequest } from "../src/bridge/index.ts";
+import { confirmBrowserBinding, connectBridge, deriveConnectionState, dispatchToFlexTab, findFlexTab, parseBridgeRequest } from "../src/bridge/index.ts";
 import type { BridgeReply } from "../../../shared/index.ts";
 
 const request = { requestId: "request-example", query: { kind: "leave" } } as const;
@@ -12,9 +11,12 @@ const unavailable = failure("FLEX_TAB_UNAVAILABLE");
 
 test("요청은 날짜와 허용 필드만 받고 flex 탭을 임의로 바꾸지 않는다", () => {
   assert.deepEqual(parseBridgeRequest(request), { ok: true, value: request });
-  for (const invalid of [{ ...request, userId: "example" }, { ...request, query: { ...request.query, url: "https://example.invalid" } },
+  for (const invalid of [
+    { ...request, userId: "example" },
+    { ...request, query: { ...request.query, url: "https://example.invalid" } },
     { ...request, query: { kind: "work", range: { from: "2027-02-29", to: "2027-03-01" } } },
-    { ...request, query: { kind: "work", range: { from: "2027-01-01", to: "2027-02-01" } } }]) {
+    { ...request, query: { kind: "work", range: { from: "2027-01-01", to: "2027-02-01" } } }
+  ]) {
     assert.deepEqual(parseBridgeRequest(invalid), failure("INVALID_BRIDGE_MESSAGE"));
   }
   const other = { id: 2, url: "https://flex.team.example.invalid/" };
@@ -42,13 +44,19 @@ test("탭 문서가 교체되거나 신호가 중단되면 결과를 폐기한�
     execute: async () => {
       documentId = "second";
       return { ok: false, error: "FLEX_NO_RECORDS" } as const;
-    },
+    }
   };
-  assert.deepEqual(await dispatchToFlexTab(tab, request, signal.signal, runtime),
-    { requestId: request.requestId, error: "FLEX_TAB_UNAVAILABLE" });
-  assert.deepEqual(await dispatchToFlexTab(tab, request, signal.signal,
-    { ...runtime, execute: async () => { signal.abort(); return { ok: false, error: "FLEX_NO_RECORDS" }; } }),
-  { requestId: request.requestId, error: "FLEX_READ_FAILED" });
+  assert.deepEqual(await dispatchToFlexTab(tab, request, signal.signal, runtime), { requestId: request.requestId, error: "FLEX_TAB_UNAVAILABLE" });
+  assert.deepEqual(
+    await dispatchToFlexTab(tab, request, signal.signal, {
+      ...runtime,
+      execute: async () => {
+        signal.abort();
+        return { ok: false, error: "FLEX_NO_RECORDS" };
+      }
+    }),
+    { requestId: request.requestId, error: "FLEX_READ_FAILED" }
+  );
 });
 
 test("연결 확인과 상태 표시에서 계정 정보와 조회 결과를 분리한다", () => {
@@ -64,29 +72,41 @@ test("연결 확인과 상태 표시에서 계정 정보와 조회 결과를 분
 
 class FakeSocket extends EventTarget {
   sent: string[] = [];
-  send(value: string) { this.sent.push(value); }
-  close() { this.dispatchEvent(new Event("close")); }
-  receive(value: unknown) { this.dispatchEvent(new MessageEvent("message", { data: JSON.stringify(value) })); }
+  send(value: string) {
+    this.sent.push(value);
+  }
+  close() {
+    this.dispatchEvent(new Event("close"));
+  }
+  receive(value: unknown) {
+    this.dispatchEvent(new MessageEvent("message", { data: JSON.stringify(value) }));
+  }
 }
 
-test("중계는 잘못된 메시지를 읽지 않고 재연결 뒤 이전 조회를 버린다", async context => {
+test("중계는 잘못된 메시지를 읽지 않고 재연결 뒤 이전 조회를 버린다", async (context) => {
   const sockets: FakeSocket[] = [];
   const firstConnection = Promise.withResolvers<FakeSocket>();
   const connected = Promise.withResolvers<FakeSocket>();
   const pending = Promise.withResolvers<BridgeReply>();
   let querySignal: AbortSignal | undefined;
-  const control = connectBridge({
-    url: "https://example.invalid/",
-    getTicket: async () => "synthetic-ticket",
-    retryDelayMs: 1,
-    openSocket: () => {
-      const socket = new FakeSocket();
-      sockets.push(socket);
-      if (sockets.length === 1) firstConnection.resolve(socket);
-      if (sockets.length === 2) connected.resolve(socket);
-      return socket as unknown as WebSocket;
+  const control = connectBridge(
+    {
+      url: "https://example.invalid/",
+      getTicket: async () => "synthetic-ticket",
+      retryDelayMs: 1,
+      openSocket: () => {
+        const socket = new FakeSocket();
+        sockets.push(socket);
+        if (sockets.length === 1) firstConnection.resolve(socket);
+        if (sockets.length === 2) connected.resolve(socket);
+        return socket as unknown as WebSocket;
+      }
     },
-  }, (_query, signal) => { querySignal = signal; return pending.promise; });
+    (_query, signal) => {
+      querySignal = signal;
+      return pending.promise;
+    }
+  );
   context.after(() => control.close());
   const first = await firstConnection.promise;
   first.dispatchEvent(new Event("open"));
@@ -114,4 +134,10 @@ test("중계는 잘못된 메시지를 읽지 않고 재연결 뒤 이전 조회
   await delay(10);
   assert.equal(sockets.length, 2);
   assert.equal(control.state(), "stopped");
+});
+
+test("월 요약 요청은 기간과 계정 입력을 받지 않는다", () => {
+  const request = { requestId: "example-summary", query: { kind: "summary" } };
+  assert.deepEqual(parseBridgeRequest(request), { ok: true, value: request });
+  assert.deepEqual(parseBridgeRequest({ ...request, query: { ...request.query, account: "example" } }), { ok: false, error: "INVALID_BRIDGE_MESSAGE" });
 });

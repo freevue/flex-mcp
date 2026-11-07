@@ -5,4 +5,4 @@ export type PopupSnapshot =
   | { kind: "disconnected"; canReconnect: boolean; approvalCode: string | null; needsFlex?: true }
   | (Connected & ({ flex: "unavailable"; summary: null } | { flex: "synthetic" | "live"; summary: PopupWorkSummary }))
   | { kind: "error" };
-export type PopupCommand = "popup-state" | "popup-issue-code" | "popup-reconnect" | "popup-add-agent";
+export type PopupCommand = "popup-open" | "popup-state" | "popup-issue-code" | "popup-reconnect" | "popup-check-code";

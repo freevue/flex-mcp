@@ -1,3 +1,4 @@
+import { workSummaryTimeoutMs } from "../../../shared/index.ts";
 import type { BridgeReply, BridgeRequest, BrowserQueryFailure, Outcome } from "../../../shared/index.ts";
 import { connectBridge, createSyntheticReply } from "./bridge/index.ts";
 import type { BridgeControl } from "./bridge/index.ts";
@@ -41,12 +42,9 @@ export function startExtension(reader?: FlexReader): void {
       next = null;
       account = undefined;
     }
-    const online = control?.state() === "online";
-    const intent = command === "popup-issue-code" && !online ? "register"
-      : command === "popup-add-agent" && online ? "invite" : null;
+    const intent = (command === "popup-open" && !next) || (command === "popup-issue-code" && control?.state() !== "online") ? "register" : null;
     const pairing = await updatePairing(settings.origin, next, account, intent, liveReader?.identify);
-    const { approvalCode, invitationCode, inviteFailed } = pairing;
-    const invitation = { approvalCode: invitationCode, inviteFailed };
+    const approvalCode = pairing.invitationCode ? null : pairing.approvalCode;
     if (pairing.needsFlex) return { kind: "disconnected", canReconnect: Boolean(next), approvalCode, needsFlex: true };
     next = pairing.registration;
     account = pairing.account;
@@ -59,39 +57,60 @@ export function startExtension(reader?: FlexReader): void {
     if (next && !control) {
       const active = next;
       const activeAccount = account;
-      control = connectBridge({
-        url: active.origin,
-        retryDelayMs: 5_000,
-        openSocket: url => new WebSocket(url),
-        getTicket: signal => requestBridgeTicket(active, signal, () => {
-          if (signal.aborted || registration?.bindingId !== active.bindingId) return;
-          rejectedBinding = active.bindingId;
-          restoreBridge();
-        }),
-      }, async (request, signal) => {
-        if (settings.demo) return createSyntheticReply(request, active.bindingId);
-        if (!liveReader || !activeAccount) return { requestId: request.requestId, error: "FLEX_READ_FAILED" };
-        const reply = await liveReader.read(request, activeAccount, signal);
-        return "result" in reply ? { ...reply, source: "flex" } : reply;
-      });
+      control = connectBridge(
+        {
+          url: active.origin,
+          retryDelayMs: 5_000,
+          openSocket: (url) => new WebSocket(url),
+          getTicket: (signal) =>
+            requestBridgeTicket(active, signal, () => {
+              if (signal.aborted || registration?.bindingId !== active.bindingId) return;
+              rejectedBinding = active.bindingId;
+              restoreBridge();
+            })
+        },
+        async (request, signal) => {
+          if (settings.demo) return createSyntheticReply(request, active.bindingId, signal);
+          if (!liveReader || !activeAccount) return { requestId: request.requestId, error: "FLEX_READ_FAILED" };
+          if (request.query.kind === "summary") {
+            const bounded = AbortSignal.any([signal, AbortSignal.timeout(workSummaryTimeoutMs)]);
+            const summary = await liveReader.workSummary(activeAccount, bounded);
+            return summary && !bounded.aborted
+              ? { requestId: request.requestId, result: summary, source: "flex" }
+              : { requestId: request.requestId, error: "FLEX_READ_FAILED" };
+          }
+          const reply = await liveReader.read(request, activeAccount, signal);
+          return "result" in reply ? { ...reply, source: "flex" } : reply;
+        }
+      );
     }
     if (next || approvalCode) {
-      if (!await chrome.alarms.get(alarmName)) await chrome.alarms.create(alarmName, { periodInMinutes: 0.5 });
+      if (!(await chrome.alarms.get(alarmName))) await chrome.alarms.create(alarmName, { periodInMinutes: 0.5 });
     } else {
       await chrome.alarms.clear(alarmName);
     }
     if (!next || control?.state() !== "online") {
-      return { kind: "disconnected", canReconnect: Boolean(next), approvalCode,
-        ...(liveReader ? { needsFlex: true } : {}) };
+      return { kind: "disconnected", canReconnect: Boolean(next), approvalCode, ...(liveReader ? { needsFlex: true } : {}) };
     }
-    if (command === "restore") return { kind: "connected", flex: "unavailable", summary: null, ...invitation };
-    const summary = settings.demo ? await readDemoWorkSummary(next.bindingId, AbortSignal.timeout(3_000))
-      : liveReader && account ? await liveReader.workSummary(account, AbortSignal.timeout(20_000)).catch(() => null) : null;
+    if (command === "restore") return { kind: "connected", flex: "unavailable", summary: null, approvalCode: null, inviteFailed: false };
+    const summary = settings.demo
+      ? await readDemoWorkSummary(next.bindingId, AbortSignal.timeout(3_000))
+      : liveReader && account
+        ? await liveReader.workSummary(account, AbortSignal.timeout(workSummaryTimeoutMs)).catch(() => null)
+        : null;
     if (control?.state() !== "online") {
       return { kind: "disconnected", canReconnect: true, approvalCode };
     }
-    return summary ? { kind: "connected", flex: settings.demo ? "synthetic" : "live", summary, ...invitation }
-      : { kind: "connected", flex: "unavailable", summary: null, ...invitation };
+    if (!summary) return { kind: "connected", flex: "unavailable", summary: null, approvalCode: null, inviteFailed: false };
+    const invitation = command === "popup-check-code" ? await updatePairing(settings.origin, next, account, "invite", liveReader?.identify) : pairing;
+    if (control?.state() !== "online") return { kind: "disconnected", canReconnect: true, approvalCode: null };
+    return {
+      kind: "connected",
+      flex: settings.demo ? "synthetic" : "live",
+      summary,
+      approvalCode: invitation.invitationCode,
+      inviteFailed: invitation.inviteFailed
+    };
   }
 
   function enqueue(command: WorkerCommand): Promise<PopupSnapshot> {
@@ -106,10 +125,13 @@ export function startExtension(reader?: FlexReader): void {
 
   chrome.runtime.onInstalled.addListener(restoreBridge);
   chrome.runtime.onStartup.addListener(restoreBridge);
-  chrome.alarms.onAlarm.addListener(alarm => { if (alarm.name === alarmName) restoreBridge(); });
+  chrome.alarms.onAlarm.addListener((alarm) => {
+    if (alarm.name === alarmName) restoreBridge();
+  });
   chrome.runtime.onMessage.addListener((value: unknown, sender, sendResponse) => {
     if (sender.id !== chrome.runtime.id || sender.url !== chrome.runtime.getURL("popup.html")) return;
-    if (value !== "popup-state" && value !== "popup-issue-code" && value !== "popup-reconnect" && value !== "popup-add-agent") return;
+    if (value !== "popup-open" && value !== "popup-state" && value !== "popup-issue-code" && value !== "popup-reconnect" && value !== "popup-check-code")
+      return;
     void enqueue(value).then(sendResponse);
     return true;
   });

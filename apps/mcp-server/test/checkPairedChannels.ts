@@ -12,20 +12,19 @@ export async function checkPairedChannels(origin: string): Promise<void> {
   const deviceKeys = new Set<string>();
   const client = new Client({ name: "flex-channel-check", version: "1" });
   const additionalClient = new Client({ name: "flex-additional-client", version: "1" });
-  const post = (path: string, key?: string, requestOrigin = extension) => fetch(new URL(path, origin), {
-    method: "POST",
-    headers: { Origin: requestOrigin, ...(key ? { Authorization: `Bearer ${key}` } : {}) },
-    signal: AbortSignal.timeout(10_000),
-  });
-  const status = (connectionKey: string) =>
-    client.callTool({ name: "flex_get_socket_status", arguments: { connectionKey } });
-  const query = (connectionKey: string) =>
-    client.callTool({ name: "flex_get_schedule", arguments: { connectionKey } });
+  const post = (path: string, key?: string, requestOrigin = extension) =>
+    fetch(new URL(path, origin), {
+      method: "POST",
+      headers: { Origin: requestOrigin, ...(key ? { Authorization: `Bearer ${key}` } : {}) },
+      signal: AbortSignal.timeout(10_000)
+    });
+  const status = (connectionKey: string) => client.callTool({ name: "flex_get_socket_status", arguments: { connectionKey } });
+  const query = (connectionKey: string) => client.callTool({ name: "flex_get_schedule", arguments: { connectionKey } });
 
   async function pair(reportsFlexSource = false) {
     const started = await post("/bridge/pair/start");
     assert.equal(started.status, 201);
-    const { approvalCode, requestKey } = await started.json() as { approvalCode: string; requestKey: string };
+    const { approvalCode, requestKey } = (await started.json()) as { approvalCode: string; requestKey: string };
     const claim = async (proof: string) => (await post("/bridge/pair/claim", proof)).json();
     assert.deepEqual(await claim(requestKey), { status: "pending" });
     const approval = { name: "flex_approve_connection", arguments: { approvalCode } };
@@ -35,7 +34,7 @@ export async function checkPairedChannels(origin: string): Promise<void> {
     assert.equal((await client.callTool(approval)).isError, true);
     assert.equal((await status(connectionKey)).isError, true);
     assert.deepEqual(await claim(connectionKey), { status: "unavailable" });
-    const paired = await claim(requestKey) as { status: string; registration: { bindingId: string; deviceKey: string } };
+    const paired = (await claim(requestKey)) as { status: string; registration: { bindingId: string; deviceKey: string } };
     assert.equal(paired.status, "registered");
     const { bindingId, deviceKey } = paired.registration;
     deviceKeys.add(deviceKey);
@@ -44,7 +43,7 @@ export async function checkPairedChannels(origin: string): Promise<void> {
 
     const issued = await post("/bridge/ticket", deviceKey);
     assert.equal(issued.status, 200);
-    const { ticket } = await issued.json() as { ticket: string };
+    const { ticket } = (await issued.json()) as { ticket: string };
     const url = new URL("/bridge", origin);
     url.protocol = url.protocol === "https:" ? "wss:" : "ws:";
     const socket = new WebSocket(url, { origin: extension, handshakeTimeout: 8_000 });
@@ -53,10 +52,10 @@ export async function checkPairedChannels(origin: string): Promise<void> {
     const ready = once(socket, "message", { signal: AbortSignal.timeout(8_000) });
     socket.send(JSON.stringify({ type: "auth", ticket }));
     assert.equal(String((await ready)[0]), '{"type":"ready"}');
-    socket.on("message", data => {
+    socket.on("message", async (data) => {
       const parsed = parseBridgeRequest(JSON.parse(String(data)) as unknown);
       if (!parsed.ok) return;
-      const reply = createSyntheticReply(parsed.value, bindingId);
+      const reply = await createSyntheticReply(parsed.value, bindingId, AbortSignal.timeout(3_000));
       socket.send(JSON.stringify(reportsFlexSource && "result" in reply ? { ...reply, source: "flex" } : reply));
     });
     return { bindingId, connectionKey, deviceKey, reportsFlexSource };
@@ -66,15 +65,25 @@ export async function checkPairedChannels(origin: string): Promise<void> {
     assert.equal((await post("/bridge/pair/start", undefined, "https://other.invalid")).status, 403);
     await client.connect(new StreamableHTTPClientTransport(new URL("/mcp", origin)));
     const { tools } = await client.listTools();
-    assert.deepEqual(tools.map(tool => tool.name).sort(), [
-      "flex_approve_connection", "flex_get_annual_leave", "flex_get_schedule", "flex_get_socket_status", "flex_get_work_hours",
+    assert.deepEqual(tools.map((tool) => tool.name).sort(), [
+      "flex_approve_connection",
+      "flex_get_annual_leave",
+      "flex_get_schedule",
+      "flex_get_socket_status",
+      "flex_get_work_hours",
+      "flex_get_work_summary"
     ]);
     assert.equal((await client.callTool({ name: "flex_get_socket_status" })).isError, true);
+    const summary = (connectionKey?: string) => client.callTool({ name: "flex_get_work_summary", arguments: connectionKey ? { connectionKey } : {} });
+    assert.equal((await summary()).isError, true);
+    assert.deepEqual((await summary("a".repeat(43))).structuredContent, { code: "ACCESS_DENIED" });
     const first = await pair();
     const second = await pair(true);
     assert.notEqual(first.bindingId, second.bindingId);
-    assert.equal((await client.callTool({ name: "flex_get_socket_status",
-      arguments: { connectionKey: first.connectionKey, bindingId: second.bindingId } })).isError, true);
+    assert.equal(
+      (await client.callTool({ name: "flex_get_socket_status", arguments: { connectionKey: first.connectionKey, bindingId: second.bindingId } })).isError,
+      true
+    );
     for (const channel of [first, second]) {
       assert.deepEqual((await status(channel.connectionKey)).structuredContent, { status: "online" });
       const result = (await query(channel.connectionKey)).structuredContent;
@@ -82,12 +91,17 @@ export async function checkPairedChannels(origin: string): Promise<void> {
       assert.equal(result.synthetic, channel.reportsFlexSource ? undefined : true);
       assert.equal(Object.hasOwn(result, "source"), false);
       assert.ok(JSON.stringify(result).includes(channel.bindingId.slice(0, 8)));
+      const month = (await summary(channel.connectionKey)).structuredContent;
+      assert.ok(isRecord(month));
+      assert.equal(month.synthetic, channel.reportsFlexSource ? undefined : true);
+      assert.equal(typeof month.monthRecognizedMinutes, "number");
+      assert.equal(typeof month.monthAnnualLeaveScheduledRecognizedMinutes, "number");
     }
     assert.equal((await post("/bridge/pair/invite", first.connectionKey)).status, 401);
     await additionalClient.connect(new StreamableHTTPClientTransport(new URL("/mcp", origin)));
     const invitation = await post("/bridge/pair/invite", first.deviceKey);
     assert.equal(invitation.status, 201);
-    const { approvalCode, requestKey } = await invitation.json() as { approvalCode: string; requestKey: string };
+    const { approvalCode, requestKey } = (await invitation.json()) as { approvalCode: string; requestKey: string };
     const claimInvitation = async (key: string) => (await post("/bridge/pair/claim", key)).json();
     assert.deepEqual(await claimInvitation(requestKey), { status: "pending" });
     const approval = { name: "flex_approve_connection", arguments: { approvalCode } };
@@ -103,6 +117,7 @@ export async function checkPairedChannels(origin: string): Promise<void> {
     assert.equal((await post("/bridge/unpair", first.deviceKey)).status, 204);
     deviceKeys.delete(first.deviceKey);
     assert.deepEqual((await query(first.connectionKey)).structuredContent, { code: "ACCESS_DENIED" });
+    assert.deepEqual((await summary(first.connectionKey)).structuredContent, { code: "ACCESS_DENIED" });
     assert.deepEqual((await addedQuery()).structuredContent, { code: "ACCESS_DENIED" });
     assert.deepEqual((await status(second.connectionKey)).structuredContent, { status: "online" });
   } finally {

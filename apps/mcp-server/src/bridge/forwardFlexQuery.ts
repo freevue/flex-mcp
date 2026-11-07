@@ -1,29 +1,33 @@
 import { randomUUID } from "node:crypto";
-import { failure, isQuery } from "../../../../shared/index.ts";
-import type { FlexQuery, FlexResult, Outcome } from "../../../../shared/index.ts";
+import { failure, isBridgeQuery, workSummaryTimeoutMs } from "../../../../shared/index.ts";
+import type { BridgeQuery, BridgeResult, Outcome } from "../../../../shared/index.ts";
 import { resolveBrowserBinding } from "../access/resolveBrowserBinding.ts";
 import type { AuthorizedCaller } from "../access/types.ts";
 import type { RelayContext, RelayFailure } from "./types.ts";
 
-export async function forwardFlexQuery(caller: AuthorizedCaller, query: FlexQuery, context: RelayContext, markSynthetic = false):
-  Promise<Outcome<FlexResult & { synthetic?: true }, RelayFailure>> {
+export async function forwardFlexQuery(
+  caller: AuthorizedCaller,
+  query: BridgeQuery,
+  context: RelayContext,
+  markSynthetic = false
+): Promise<Outcome<BridgeResult & { synthetic?: true }, RelayFailure>> {
   const { access, registry, timeoutMs, maxPending } = context;
   const binding = resolveBrowserBinding(caller, access);
   if (!binding.ok) return binding;
-  if (!isQuery(query)) return failure("INVALID_BRIDGE_MESSAGE");
+  if (!isBridgeQuery(query)) return failure("INVALID_BRIDGE_MESSAGE");
   const connection = registry.active.get(binding.value.bindingId);
   if (!connection || connection.ownerId !== binding.value.ownerId || !connection.isOpen()) return failure("BROWSER_OFFLINE");
   if (registry.pending.size >= maxPending) return failure("QUERY_LIMIT_REACHED");
 
   const requestId = randomUUID();
-  const result = await new Promise<Outcome<FlexResult & { synthetic?: true }, RelayFailure>>(resolve => {
-    function finish(outcome: Outcome<FlexResult, RelayFailure>, source?: "flex") {
+  const result = await new Promise<Outcome<BridgeResult & { synthetic?: true }, RelayFailure>>((resolve) => {
+    function finish(outcome: Outcome<BridgeResult, RelayFailure>, source?: "flex") {
       if (!registry.pending.delete(requestId)) return;
       clearTimeout(timer);
-      resolve(outcome.ok && markSynthetic && source !== "flex"
-        ? { ok: true, value: { ...outcome.value, synthetic: true } } : outcome);
+      resolve(outcome.ok && markSynthetic && source !== "flex" ? { ok: true, value: { ...outcome.value, synthetic: true } } : outcome);
     }
-    const timer = setTimeout(() => finish(failure("QUERY_TIMEOUT")), timeoutMs);
+    const deadline = query.kind === "summary" ? workSummaryTimeoutMs : timeoutMs;
+    const timer = setTimeout(() => finish(failure("QUERY_TIMEOUT")), deadline);
     registry.pending.set(requestId, { caller, connection, query, finish });
     try {
       connection.send({ requestId, query });

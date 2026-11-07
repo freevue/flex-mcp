@@ -1,17 +1,14 @@
 {
   "manifest_version": 3,
-  "name": "flex MCP 브라우저 연결",
+  "name": "갈피",
   "version": "0.1.0",
-  "description": "flex MCP와 Chrome을 연결하기 위한 개발용 확장입니다.",
+  "description": "MCP로 Flex의 근무시간, 연차, 일정을 확인합니다.",
   "background": {
     "service_worker": "service-worker.js",
     "type": "module"
   },
   "minimum_chrome_version": "120",
-  "permissions": [
-    "storage",
-    "alarms"
-  ],
+  "permissions": ["storage", "alarms"],
   "action": {
     "default_popup": "popup.html",
     "default_icon": {
