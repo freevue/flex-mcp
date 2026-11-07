@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { once } from "node:events";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { StreamableHTTPClientTransport } from "@modelcontextprotocol/sdk/client/streamableHttp.js";
+import { CallToolResultSchema } from "@modelcontextprotocol/sdk/types.js";
 import { WebSocket } from "ws";
 import { isRecord } from "../../../shared/index.ts";
 import { createSyntheticReply, parseBridgeRequest } from "../../chrome-extension/src/bridge/index.ts";
@@ -20,6 +21,8 @@ export async function checkPairedChannels(origin: string): Promise<void> {
     });
   const status = (connectionKey: string) => client.callTool({ name: "flex_get_socket_status", arguments: { connectionKey } });
   const query = (connectionKey: string) => client.callTool({ name: "flex_get_schedule", arguments: { connectionKey } });
+  const summary = async (connectionKey?: string) =>
+    CallToolResultSchema.parse(await client.callTool({ name: "flex_get_work_summary", arguments: connectionKey ? { connectionKey } : {} }));
 
   async function pair(reportsFlexSource = false) {
     const started = await post("/bridge/pair/start");
@@ -40,6 +43,9 @@ export async function checkPairedChannels(origin: string): Promise<void> {
     deviceKeys.add(deviceKey);
     assert.deepEqual(await claim(requestKey), { status: "unavailable" });
     assert.deepEqual((await status(connectionKey)).structuredContent, { status: "offline" });
+    const offline = await summary(connectionKey);
+    assert.deepEqual(offline.structuredContent, { code: "BROWSER_OFFLINE" });
+    assert.equal(offline.content.length, 1, "FT-MCP-WORK-DISPLAY-03");
 
     const issued = await post("/bridge/ticket", deviceKey);
     assert.equal(issued.status, 200);
@@ -74,9 +80,10 @@ export async function checkPairedChannels(origin: string): Promise<void> {
       "flex_get_work_summary"
     ]);
     assert.equal((await client.callTool({ name: "flex_get_socket_status" })).isError, true);
-    const summary = (connectionKey?: string) => client.callTool({ name: "flex_get_work_summary", arguments: connectionKey ? { connectionKey } : {} });
     assert.equal((await summary()).isError, true);
-    assert.deepEqual((await summary("a".repeat(43))).structuredContent, { code: "ACCESS_DENIED" });
+    const denied = await summary("a".repeat(43));
+    assert.deepEqual(denied.structuredContent, { code: "ACCESS_DENIED" });
+    assert.equal(denied.content.length, 1, "FT-MCP-WORK-DISPLAY-03");
     const first = await pair();
     const second = await pair(true);
     assert.notEqual(first.bindingId, second.bindingId);
@@ -86,16 +93,25 @@ export async function checkPairedChannels(origin: string): Promise<void> {
     );
     for (const channel of [first, second]) {
       assert.deepEqual((await status(channel.connectionKey)).structuredContent, { status: "online" });
-      const result = (await query(channel.connectionKey)).structuredContent;
+      const schedule = await query(channel.connectionKey);
+      const result = schedule.structuredContent;
       assert.ok(isRecord(result));
+      assert.deepEqual(schedule.content, [{ type: "text", text: JSON.stringify(result) }], "FT-MCP-WORK-DISPLAY-04");
       assert.equal(result.synthetic, channel.reportsFlexSource ? undefined : true);
       assert.equal(Object.hasOwn(result, "source"), false);
       assert.ok(JSON.stringify(result).includes(channel.bindingId.slice(0, 8)));
-      const month = (await summary(channel.connectionKey)).structuredContent;
+      const response = await summary(channel.connectionKey);
+      const month = response.structuredContent;
       assert.ok(isRecord(month));
       assert.equal(month.synthetic, channel.reportsFlexSource ? undefined : true);
       assert.equal(typeof month.monthRecognizedMinutes, "number");
       assert.equal(typeof month.monthAnnualLeaveScheduledRecognizedMinutes, "number");
+      assert.deepEqual(response.content[0], { type: "text", text: JSON.stringify(month) }, "FT-MCP-WORK-DISPLAY-01");
+      assert.equal(response.content.length, 2, "FT-MCP-WORK-DISPLAY-01");
+      const markdown = response.content[1];
+      assert.ok(markdown?.type === "text" && typeof markdown.text === "string");
+      assert.match(markdown.text, /^### 오늘 실제 근무\n5시간 20분/m);
+      assert.equal(markdown.text.startsWith("예시 근무 데이터\n\n"), !channel.reportsFlexSource, "FT-MCP-WORK-DISPLAY-02");
     }
     assert.equal((await post("/bridge/pair/invite", first.connectionKey)).status, 401);
     await additionalClient.connect(new StreamableHTTPClientTransport(new URL("/mcp", origin)));
@@ -117,7 +133,9 @@ export async function checkPairedChannels(origin: string): Promise<void> {
     assert.equal((await post("/bridge/unpair", first.deviceKey)).status, 204);
     deviceKeys.delete(first.deviceKey);
     assert.deepEqual((await query(first.connectionKey)).structuredContent, { code: "ACCESS_DENIED" });
-    assert.deepEqual((await summary(first.connectionKey)).structuredContent, { code: "ACCESS_DENIED" });
+    const revoked = await summary(first.connectionKey);
+    assert.deepEqual(revoked.structuredContent, { code: "ACCESS_DENIED" });
+    assert.equal(revoked.content.length, 1, "FT-MCP-WORK-DISPLAY-03");
     assert.deepEqual((await addedQuery()).structuredContent, { code: "ACCESS_DENIED" });
     assert.deepEqual((await status(second.connectionKey)).structuredContent, { status: "online" });
   } finally {
