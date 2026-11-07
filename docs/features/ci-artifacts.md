@@ -22,11 +22,11 @@ pnpm exec playwright install chromium --no-shell
 
 ## Chrome 확장 릴리스
 
-릴리스할 커밋에 [Chrome 확장 워크플로](../../.github/workflows/chrome-extension.yml)가 있어야 합니다. 배포할 버전으로 `chrome-v*` 태그를 만든 뒤 태그를 푸시합니다.
+릴리스할 커밋에 [갈피 배포 워크플로](../../.github/workflows/galpi-release.yml)가 있어야 합니다. 확장 매니페스트와 패키지에 같은 버전을 넣습니다. 그 버전의 `galpi-v*` 태그를 푸시합니다.
 
 ```sh
-git tag -a chrome-v0.1.0 -m 'Chrome 확장 0.1.0'
-git push origin chrome-v0.1.0
+git tag -a galpi-v0.5.0 -m '갈피 v0.5.0'
+git push origin galpi-v0.5.0
 ```
 
 Actions는 확장 ZIP을 만들고 [공개 산출물 검사](../utilities/verify-public-artifact.md)로 파일 목록을 확인합니다. 검사를 통과하면 [GitHub Releases](https://github.com/freevue/flex-mcp/releases)에 `flex-chrome-extension.zip`을 첨부합니다. 팀원은 ZIP을 풀고 Chrome에서 `manifest.json`이 있는 폴더를 로드합니다.
@@ -38,4 +38,4 @@ ZIP은 운영 MCP에 연결하는 합성 검증용입니다. 공개 Releases에 
 | TC-F-CI-ARTIFACTS-01 | 서식이 맞지 않는 파일을 스테이지한 뒤 커밋합니다. | Prettier가 스테이지한 파일을 정리합니다.                                               |
 | TC-F-CI-ARTIFACTS-02 | `pnpm test:e2e`를 실행합니다.                     | 새 Chromium에서 코드를 받고 MCP에서 승인합니다. 팝업과 MCP에서 합성 결과를 확인합니다. |
 | TC-F-CI-ARTIFACTS-03 | `pnpm package:extension`을 실행합니다.            | 허용된 파일만 포함한 확장 ZIP을 만듭니다.                                              |
-| TC-F-CI-ARTIFACTS-04 | 릴리스할 `chrome-v*` 태그를 푸시합니다.           | 해당 GitHub Release에서 확장 ZIP을 다운로드할 수 있습니다.                             |
+| TC-F-CI-ARTIFACTS-04 | 릴리스할 `galpi-v*` 태그를 푸시합니다.            | 해당 GitHub Release에서 확장 ZIP을 다운로드할 수 있습니다.                             |

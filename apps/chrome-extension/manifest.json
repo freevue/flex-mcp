@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "갈피",
-  "version": "0.1.0",
+  "version": "0.5.0",
   "description": "MCP로 Flex의 근무시간, 연차, 일정을 확인합니다.",
   "background": {
     "service_worker": "service-worker.js",
