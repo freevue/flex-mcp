@@ -7,6 +7,7 @@ const server = [
   "createMcpServer",
   "createCallerMcpServer",
   "createPairedMcpServer",
+  "formatWorkSummaryMarkdown",
   "toolReplies",
   "access/authorizeMcpCaller",
   "access/index",
