@@ -2,28 +2,29 @@
 
 LLM Wiki는 확인한 프로젝트 지식을 정리하고 다시 찾는 방식입니다. 이 문서에서 필요한 정본으로 이동합니다. 정본은 해당 주제를 관리하는 문서입니다.
 
-| 계층 | 어디서 확인하는가 |
-| --- | --- |
-| 1. 원천 | [서버 코드](apps/mcp-server/src/), [서버 테스트](apps/mcp-server/test/), [확장 코드](apps/chrome-extension/src/), [확장 테스트](apps/chrome-extension/test/), [공통 코드](shared/), [자동 검사](.github/workflows/check.yml), [워크스페이스 설정](pnpm-workspace.yaml), [GitHub 투두](https://github.com/freevue/flex-mcp/issues?q=is%3Aissue+label%3Atodo)에서 구현과 검증 근거를 확인합니다. |
-| 2. 지식 | 아래 정본에서 실행법, 구조, 도구와 함수 계약을 확인합니다. |
-| 3. 규칙 | [AGENTS.md](AGENTS.md)는 에이전트 진입점입니다. [개발 규칙](.agent/rules/GEMINI.md), [투두 운영](WORKFLOW.md), [공개 저장소 보안 기준](SECURITY.md)에 작업 절차를 둡니다. |
+| 계층    | 어디서 확인하는가                                                                                                                                                                                                                                                                                                                                                                                                              |
+| ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 1. 원천 | [서버 코드](apps/mcp-server/src/), [서버 테스트](apps/mcp-server/test/), [확장 코드](apps/chrome-extension/src/), [확장 테스트](apps/chrome-extension/test/), [공통 코드](shared/), [Git 훅](.husky/), [확장 릴리스](.github/workflows/chrome-extension.yml), [워크스페이스 설정](pnpm-workspace.yaml), [GitHub 투두](https://github.com/freevue/flex-mcp/issues?q=is%3Aissue+label%3Atodo)에서 구현과 검증 근거를 확인합니다. |
+| 2. 지식 | 아래 정본에서 실행법, 구조, 도구와 함수 계약을 확인합니다.                                                                                                                                                                                                                                                                                                                                                                     |
+| 3. 규칙 | [AGENTS.md](AGENTS.md)는 에이전트 진입점입니다. [개발 규칙](.agent/rules/GEMINI.md), [투두 운영](WORKFLOW.md), [공개 저장소 보안 기준](SECURITY.md)에 작업 절차를 둡니다.                                                                                                                                                                                                                                                      |
 
-| 찾는 내용 | 정본 |
-| --- | --- |
-| 설치, 빌드, 패키지 | [README](README.md) |
-| 현재 동작과 원격 연결 설계 | [아키텍처](ARCHITECTURE.md) |
-| 첫 운영 범위, 실조회 조건, 보안과 배포 정책 | [서비스 정책](SERVICE_POLICY.md) |
-| 공유 MCP에서 Chrome 등록, 인증, 요청 전달 | [공유 연결 흐름](docs/features/shared-connection-flow.md) |
-| 두 채널로 설치와 재접속 확인 | [직접 검증](docs/features/shared-connection-check.md) |
-| 확장이 시작하는 등록과 MCP 승인 | [Chrome 등록 순서도](docs/features/browser-pairing.md) |
-| Chrome 팝업, MCP 승인과 재연결 | [화면 구성](docs/features/extension-ui-plan.md) · [디자인 기준](DESIGN.md) |
-| 화면과 공용 컴포넌트 | [연결](docs/screens/connection.md), [상태](docs/screens/status.md), [근무 요약](docs/screens/work-summary.md), [MCP 등록·승인 요청문](docs/screens/agent-approval.md) · [공용 컴포넌트](docs/components/README.md) |
-| 확장 팝업의 월 근무 요약, 놀수와 예정 연차 예상치 | [근무 요약 계산](docs/features/extension-work-summary.md) |
-| MCP 도구, 입력과 테스트 케이스 | [MCP 개발 문서](docs/mcp/README.md) · [서버 실행 안내](apps/mcp-server/README.md) |
-| MCP 서버의 함수와 매개변수 | [서버 함수 목록](docs/mcp/functions.md) |
-| Cloudflare Workers 배포 구조와 검증 | [배포 설계](docs/mcp/cloudflare-workers.md) · [배포 절차](docs/mcp/workers-release.md) |
-| 투두별 기능, 메시지 계약, 기능 테스트 케이스 | [기능 목록](docs/features/README.md) |
-| 함수별 구현 위치, 이름, 매개변수와 단위 테스트 케이스 | [유틸 계약](UTILITIES.md) |
+| 찾는 내용                                             | 정본                                                                                                                                                                                                               |
+| ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 설치, 빌드, 패키지                                    | [README](README.md)                                                                                                                                                                                                |
+| 현재 동작과 원격 연결 설계                            | [아키텍처](ARCHITECTURE.md)                                                                                                                                                                                        |
+| 첫 운영 범위, 실조회 조건, 보안과 배포 정책           | [서비스 정책](SERVICE_POLICY.md)                                                                                                                                                                                   |
+| 공유 MCP에서 Chrome 등록, 인증, 요청 전달             | [공유 연결 흐름](docs/features/shared-connection-flow.md)                                                                                                                                                          |
+| 두 채널로 설치와 재접속 확인                          | [직접 검증](docs/features/shared-connection-check.md)                                                                                                                                                              |
+| 확장이 시작하는 등록과 MCP 승인                       | [Chrome 등록 순서도](docs/features/browser-pairing.md)                                                                                                                                                             |
+| Chrome 팝업, MCP 승인과 재연결                        | [화면 구성](docs/features/extension-ui-plan.md) · [디자인 기준](DESIGN.md)                                                                                                                                         |
+| 화면과 공용 컴포넌트                                  | [연결](docs/screens/connection.md), [상태](docs/screens/status.md), [근무 요약](docs/screens/work-summary.md), [MCP 등록·승인 요청문](docs/screens/agent-approval.md) · [공용 컴포넌트](docs/components/README.md) |
+| 확장 팝업의 월 근무 요약, 놀수와 예정 연차 예상치     | [근무 요약 계산](docs/features/extension-work-summary.md)                                                                                                                                                          |
+| MCP 도구, 입력과 테스트 케이스                        | [MCP 개발 문서](docs/mcp/README.md) · [서버 실행 안내](apps/mcp-server/README.md)                                                                                                                                  |
+| MCP 서버의 함수와 매개변수                            | [서버 함수 목록](docs/mcp/functions.md)                                                                                                                                                                            |
+| Cloudflare Workers 배포 구조와 검증                   | [배포 설계](docs/mcp/cloudflare-workers.md) · [배포 절차](docs/mcp/workers-release.md)                                                                                                                             |
+| 커밋·푸시 전 검사와 확장 ZIP 배포                     | [Git 훅과 Chrome 확장 릴리스](docs/features/ci-artifacts.md)                                                                                                                                                       |
+| 투두별 기능, 메시지 계약, 기능 테스트 케이스          | [기능 목록](docs/features/README.md)                                                                                                                                                                               |
+| 함수별 구현 위치, 이름, 매개변수와 단위 테스트 케이스 | [유틸 계약](UTILITIES.md)                                                                                                                                                                                          |
 
 ## 읽고 갱신하기
 

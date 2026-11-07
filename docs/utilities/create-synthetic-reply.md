@@ -7,10 +7,14 @@
 구현 위치: `apps/chrome-extension/src/bridge/syntheticReply.ts`
 
 ```typescript
-declare function createSyntheticReply(request: BridgeRequest, bindingId: string): BridgeReply;
+declare function createSyntheticReply(
+  request: BridgeRequest,
+  bindingId: string,
+  signal: AbortSignal,
+): Promise<BridgeReply>;
 ```
 
-`request`는 인증한 서버의 읽기 요청입니다. `bindingId`는 확장에 등록한 ID입니다. 일정 제목에 앞부분을 씁니다.
+`request`는 인증한 서버의 읽기 요청입니다. `bindingId`는 확장에 등록한 ID입니다. 일정 제목에 앞부분을 씁니다. `signal`은 요약 조회를 중단할 때 사용합니다.
 
 `TC-U-CREATE-SYNTHETIC-REPLY-01`: Flex에 접속하지 않고 일정 결과에 등록 ID 앞부분만 표시합니다.
 

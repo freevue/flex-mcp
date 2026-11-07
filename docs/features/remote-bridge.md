@@ -9,27 +9,27 @@
 서버는 등록 ID로 활성 소켓을 찾습니다. 서버는 조회마다 고유한 `requestId`를 붙입니다. 확장은 요청의 형태를 검사합니다. 성공 응답에는 같은 `requestId`와 `result`만 넣습니다. 실패 응답에는 같은 `requestId`와 `error` 코드만 넣습니다. 오류 문구는 서버에서 만듭니다.
 
 ```json
-{"requestId":"example-request","query":{"kind":"leave"}}
+{ "requestId": "example-request", "query": { "kind": "leave" } }
 ```
 
 ```json
-{"requestId":"example-request","error":"FLEX_REAUTH_REQUIRED"}
+{ "requestId": "example-request", "error": "FLEX_REAUTH_REQUIRED" }
 ```
 
-`kind`는 `leave`, `schedule`, `work` 중 하나입니다. `leave`에는 기간을 넣지 않습니다. `schedule`과 `work`에는 `range.from`과 `range.to`를 넣습니다. 사번, URL, 실행 코드와 알 수 없는 필드는 거부합니다. 결과 필드는 [연차](annual-leave.md), [일정](schedule.md), [근무 시간](work-hours.md)의 계약을 따릅니다.
+`kind`는 `leave`, `schedule`, `work`, `summary` 중 하나입니다. `leave`와 `summary`에는 기간을 넣지 않습니다. `schedule`과 `work`에는 `range.from`과 `range.to`를 넣습니다. 사번, URL, 실행 코드와 알 수 없는 필드는 거부합니다. 결과 필드는 [연차](annual-leave.md), [일정](schedule.md), [근무 시간](work-hours.md)의 계약을 따릅니다.
 
-[월 근무 요약](../mcp/tools/flex-get-work-summary.md)은 여러 근무 범위를 읽어 결과를 계산합니다. 이식할 때 기존 `work` 메시지를 재사용합니다. 확장 메시지에 새 조회 종류나 사용자 ID를 추가하지 않습니다.
+[월 근무 요약](../mcp/tools/flex-get-work-summary.md)은 `summary` 요청에만 반환합니다. 확장은 확인한 계정에서 여러 근무 범위를 읽고 계산합니다. 서버는 분 단위로 정의된 필드만 받습니다. 기존 `work` 결과에는 상세 연차를 추가하지 않습니다.
 
-| 코드 | 반환 조건 |
-| --- | --- |
-| `BROWSER_OFFLINE` | 등록한 연결이 없거나 결과가 오기 전에 끊겼습니다. |
-| `FLEX_TAB_UNAVAILABLE` | 조회할 flex 탭이 없거나 조회 중 탭이 닫혔습니다. |
-| `FLEX_REAUTH_REQUIRED` | flex가 다시 로그인을 요구합니다. |
-| `FLEX_ACCOUNT_MISMATCH` | 탭의 현재 계정이 연결한 계정과 다릅니다. |
-| `FLEX_NO_RECORDS` | flex가 요청한 잔액이나 근무 기록이 없다고 명시합니다. |
-| `FLEX_READ_FAILED` | 조회가 실패했거나 필수 결과를 확인할 수 없습니다. |
-| `QUERY_TIMEOUT` | 연결은 유지됐지만 정한 시간 안에 결과가 오지 않았습니다. |
-| `INVALID_BRIDGE_MESSAGE` | 요청이나 응답이 정한 형태를 벗어났습니다. |
+| 코드                     | 반환 조건                                                |
+| ------------------------ | -------------------------------------------------------- |
+| `BROWSER_OFFLINE`        | 등록한 연결이 없거나 결과가 오기 전에 끊겼습니다.        |
+| `FLEX_TAB_UNAVAILABLE`   | 조회할 flex 탭이 없거나 조회 중 탭이 닫혔습니다.         |
+| `FLEX_REAUTH_REQUIRED`   | flex가 다시 로그인을 요구합니다.                         |
+| `FLEX_ACCOUNT_MISMATCH`  | 탭의 현재 계정이 연결한 계정과 다릅니다.                 |
+| `FLEX_NO_RECORDS`        | flex가 요청한 잔액이나 근무 기록이 없다고 명시합니다.    |
+| `FLEX_READ_FAILED`       | 조회가 실패했거나 필수 결과를 확인할 수 없습니다.        |
+| `QUERY_TIMEOUT`          | 연결은 유지됐지만 정한 시간 안에 결과가 오지 않았습니다. |
+| `INVALID_BRIDGE_MESSAGE` | 요청이나 응답이 정한 형태를 벗어났습니다.                |
 
 접근 거부는 브라우저 오류와 구분합니다. 서버는 권한 확인에 실패하면 확장으로 요청을 보내지 않습니다. 운영 중 권한이 해제되면 대기 중인 결과를 보내지 않습니다.
 
@@ -47,10 +47,10 @@ Node는 같은 주소에서 `/mcp`와 `/bridge`를 제공합니다. HTTPS와 WSS
 
 연결한 테스트는 로컬에서 확인했습니다. Chrome이나 원격 환경이 필요한 항목은 예정입니다.
 
-| TC | 확인 범위 | 준비와 실행 | 기대 결과 |
-| --- | --- | --- | --- |
-| TC-F-REMOTE-BRIDGE-01 | 합성 연결 · [로컬 테스트](../../apps/mcp-server/test/relay.test.ts) | 허용된 두 에이전트가 동시에 연차를 요청합니다. 나중 요청의 응답을 먼저 보냅니다. | 각 응답이 같은 요청 ID를 기다리는 에이전트에게만 돌아갑니다. |
-| TC-F-REMOTE-BRIDGE-02 | 합성 연결 · [로컬 테스트](../../apps/mcp-server/test/relay.test.ts) | 연결 끊김과 연결 유지 상태의 시간 초과를 각각 재현합니다. | `BROWSER_OFFLINE`과 `QUERY_TIMEOUT`을 구분합니다. 종료한 요청의 결과는 보내지 않습니다. |
-| TC-F-REMOTE-BRIDGE-03 | 합성 연결 · [로컬 테스트](../../apps/mcp-server/test/relay.test.ts) | 연결을 교체한 뒤 이전 연결의 응답과 중복 응답을 보냅니다. | 이전 연결의 응답을 버립니다. 유효한 응답은 한 번만 전달합니다. |
-| TC-F-REMOTE-BRIDGE-04 | 합성 연결 · [확장 테스트](../../apps/chrome-extension/test/bridge.test.ts), [서버 테스트](../../apps/mcp-server/test/relay.test.ts) | 임의 주소나 사번을 담은 요청과 다른 도구 형식의 응답을 보냅니다. | 형식이 틀린 메시지를 거부합니다. 잘못된 요청은 Chrome 조회를 시작하지 않습니다. |
-| TC-F-REMOTE-BRIDGE-05 | 원격 검증 | 허용한 두 에이전트가 같은 Chrome 프로필에 원격 연차 조회를 요청합니다. | 각 에이전트는 자신의 요청 결과만 받습니다. 확장은 재연결 뒤 예전 조회를 다시 실행하지 않습니다. |
+| TC                    | 확인 범위                                                                                                                           | 준비와 실행                                                                      | 기대 결과                                                                                       |
+| --------------------- | ----------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| TC-F-REMOTE-BRIDGE-01 | 합성 연결 · [로컬 테스트](../../apps/mcp-server/test/relay.test.ts)                                                                 | 허용된 두 에이전트가 동시에 연차를 요청합니다. 나중 요청의 응답을 먼저 보냅니다. | 각 응답이 같은 요청 ID를 기다리는 에이전트에게만 돌아갑니다.                                    |
+| TC-F-REMOTE-BRIDGE-02 | 합성 연결 · [로컬 테스트](../../apps/mcp-server/test/relay.test.ts)                                                                 | 연결 끊김과 연결 유지 상태의 시간 초과를 각각 재현합니다.                        | `BROWSER_OFFLINE`과 `QUERY_TIMEOUT`을 구분합니다. 종료한 요청의 결과는 보내지 않습니다.         |
+| TC-F-REMOTE-BRIDGE-03 | 합성 연결 · [로컬 테스트](../../apps/mcp-server/test/relay.test.ts)                                                                 | 연결을 교체한 뒤 이전 연결의 응답과 중복 응답을 보냅니다.                        | 이전 연결의 응답을 버립니다. 유효한 응답은 한 번만 전달합니다.                                  |
+| TC-F-REMOTE-BRIDGE-04 | 합성 연결 · [확장 테스트](../../apps/chrome-extension/test/bridge.test.ts), [서버 테스트](../../apps/mcp-server/test/relay.test.ts) | 임의 주소나 사번을 담은 요청과 다른 도구 형식의 응답을 보냅니다.                 | 형식이 틀린 메시지를 거부합니다. 잘못된 요청은 Chrome 조회를 시작하지 않습니다.                 |
+| TC-F-REMOTE-BRIDGE-05 | 원격 검증                                                                                                                           | 허용한 두 에이전트가 같은 Chrome 프로필에 원격 연차 조회를 요청합니다.           | 각 에이전트는 자신의 요청 결과만 받습니다. 확장은 재연결 뒤 예전 조회를 다시 실행하지 않습니다. |

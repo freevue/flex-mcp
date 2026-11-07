@@ -1,27 +1,41 @@
-# 자동 검사와 공개 산출물
+# 로컬 검사와 Chrome 확장 릴리스
 
-[투두 10](https://github.com/freevue/flex-mcp/issues/10) · [서비스 정책](../../SERVICE_POLICY.md) · [공개 저장소 보안 기준](../../SECURITY.md)
+[투두 10](https://github.com/freevue/flex-mcp/issues/10) · [확장 설치](extension-setup.md)
 
-CI는 저장소의 변경을 자동으로 검사합니다. PR과 기본 브랜치에서 같은 검사 명령을 실행합니다. 프로젝트가 지정한 Node.js와 pnpm 버전을 사용합니다. [README의 빌드 명령](../../README.md)을 따릅니다.
+## Git 훅
 
-## 검사 순서와 완료 기준
+Git 훅은 커밋과 푸시 전에 실행하는 명령입니다. 저장소 루트에서 Node.js 24와 [지정한 pnpm 버전](../../package.json)을 사용합니다.
 
-1. 저장소 루트에서 `pnpm install --frozen-lockfile`을 실행합니다.
-2. `pnpm check`와 `pnpm test`를 실행합니다. 테스트에는 합성 데이터만 넣습니다.
-3. 서버와 확장을 각각 빌드합니다. 서버 패키지와 확장 ZIP을 각각 만듭니다.
-4. `pnpm package:public`에서 [공개 산출물 검사](../utilities/verify-public-artifact.md)로 두 파일의 내용과 경로를 확인합니다.
+```sh
+pnpm install --frozen-lockfile
+pnpm exec playwright install chromium --no-shell
+```
 
-잠금 파일이 맞지 않거나 테스트가 실패하면 검사를 실패로 처리합니다. 금지 파일이나 링크가 섞여도 실패로 처리합니다. 압축 목록 검사와 별도로, 커밋 전에 공개 파일 내용도 확인합니다. 공개 CI에 실제 계정이나 운영 접근 정보를 넣지 않습니다. CI에서 실제 배포를 시작하지 않습니다. [GitHub Actions 보안 가이드](https://docs.github.com/en/actions/reference/security/secure-use)를 참고합니다.
+첫 명령이 Husky 훅을 설정합니다. 설정이 빠졌으면 저장소 루트에서 `pnpm run prepare`를 실행합니다. 두 번째 명령은 브라우저 검사용 Chromium을 설치합니다. Linux에서 Chromium의 시스템 라이브러리가 없으면 설치 명령에 `--with-deps`를 추가합니다.
 
-CI는 Node 패키지와 Chrome 확장 ZIP을 검사합니다. 로컬 Workers 통합 테스트와 [Wrangler 번들 모의 검사](../mcp/workers-release.md)도 실행합니다. Worker를 배포하지 않습니다.
+| 훅           | 실행 내용                                                                               |
+| ------------ | --------------------------------------------------------------------------------------- |
+| `pre-commit` | 커밋에 올린 파일만 Prettier로 정리합니다.                                               |
+| `pre-push`   | 타입 검사, 단위·통합 테스트와 브라우저 테스트를 실행합니다. 실패하면 푸시를 중단합니다. |
 
-## 테스트 케이스
+`pnpm test:e2e`는 새 Chromium 프로필과 로컬 MCP로 승인부터 조회까지 검사합니다. 합성 자료는 검증용 예시입니다. 이 테스트는 실제 계정이나 운영 MCP에 접속하지 않습니다.
 
-GitHub Actions에서 아래 항목을 확인합니다. 두 앱의 빌드와 산출물 검사는 로컬에서 먼저 확인했습니다. [로컬 패키징](../../scripts/packagePublicArtifacts.ts)과 [금지 파일 검사](../../scripts/verifyPublicArtifact.test.ts)를 참고합니다.
+## Chrome 확장 릴리스
 
-| TC | 확인 범위 | 준비와 실행 | 기대 결과 |
-| --- | --- | --- | --- |
-| TC-F-CI-ARTIFACTS-01 | CI | PR과 기본 브랜치에서 같은 잠금 파일과 버전으로 자동 검사를 실행합니다. | 설치, 타입 검사, 합성 테스트, 앱별 빌드와 패키징을 실행합니다. |
-| TC-F-CI-ARTIFACTS-02 | CI | 잠금 파일과 의존성 선언이 맞지 않는 합성 변경을 검사합니다. | 잠금 파일 설치 단계가 실패합니다. 이후 단계에서 산출물을 만들지 않습니다. |
-| TC-F-CI-ARTIFACTS-03 | CI | 두 앱을 빌드한 뒤 서버 패키지와 확장 ZIP을 각각 검사합니다. | 각 앱의 필수 파일을 확인합니다. 합성 금지 파일을 섞으면 검사가 실패합니다. |
-| TC-F-CI-ARTIFACTS-04 | CI | 합성 테스트 하나를 실패시키고 로그와 후속 동작을 확인합니다. | 검사를 실패로 처리합니다. 실제 계정에 접속하거나 운영 배포를 시작하지 않습니다. |
+릴리스할 커밋에 [Chrome 확장 워크플로](../../.github/workflows/chrome-extension.yml)가 있어야 합니다. 배포할 버전으로 `chrome-v*` 태그를 만든 뒤 태그를 푸시합니다.
+
+```sh
+git tag -a chrome-v0.1.0 -m 'Chrome 확장 0.1.0'
+git push origin chrome-v0.1.0
+```
+
+Actions는 확장 ZIP을 만들고 [공개 산출물 검사](../utilities/verify-public-artifact.md)로 파일 목록을 확인합니다. 검사를 통과하면 [GitHub Releases](https://github.com/freevue/flex-mcp/releases)에 `flex-chrome-extension.zip`을 첨부합니다. 팀원은 ZIP을 풀고 Chrome에서 `manifest.json`이 있는 폴더를 로드합니다.
+
+ZIP은 운영 MCP에 연결하는 합성 검증용입니다. 공개 Releases에 개인 설치본, 실제 Flex 조회 코드와 연결 키를 넣지 않습니다. 이 워크플로는 Chrome Web Store나 Worker를 배포하지 않습니다. PR과 `main` 푸시에서는 실행되지 않습니다.
+
+| TC                   | 실행                                              | 기대 결과                                                                              |
+| -------------------- | ------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| TC-F-CI-ARTIFACTS-01 | 서식이 맞지 않는 파일을 스테이지한 뒤 커밋합니다. | Prettier가 스테이지한 파일을 정리합니다.                                               |
+| TC-F-CI-ARTIFACTS-02 | `pnpm test:e2e`를 실행합니다.                     | 새 Chromium에서 코드를 받고 MCP에서 승인합니다. 팝업과 MCP에서 합성 결과를 확인합니다. |
+| TC-F-CI-ARTIFACTS-03 | `pnpm package:extension`을 실행합니다.            | 허용된 파일만 포함한 확장 ZIP을 만듭니다.                                              |
+| TC-F-CI-ARTIFACTS-04 | 릴리스할 `chrome-v*` 태그를 푸시합니다.           | 해당 GitHub Release에서 확장 ZIP을 다운로드할 수 있습니다.                             |

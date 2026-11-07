@@ -4,14 +4,14 @@
 
 MCP 도구는 클라이언트가 이름과 인자로 실행하는 함수입니다. 이 문서는 도구가 받는 인자, 반환 필드, 호출하는 함수와 테스트를 연결합니다.
 
-| 도구 | 공개 Node `stdio` | 원격 Node | 본인 PC MCP | Workers |
-| --- | --- | --- | --- | --- |
-| [`flex_get_annual_leave`](tools/flex-get-annual-leave.md) | 입력 검사 | 합성 조회 | 실계정 조회 | 개인 설치본 또는 합성 조회 |
-| [`flex_get_schedule`](tools/flex-get-schedule.md) | 입력 검사 | 합성 조회 | 실계정 조회 | 개인 설치본 또는 합성 조회 |
-| [`flex_get_work_hours`](tools/flex-get-work-hours.md) | 입력 검사 | 합성 조회 | 실계정 조회 | 개인 설치본 또는 합성 조회 |
-| [`flex_get_socket_status`](tools/flex-get-socket-status.md) | 입력 검사 | 본인 소켓 조회 | 제공하지 않음 | 로컬 검증 |
-| [`flex_approve_connection`](tools/flex-approve-connection.md) | 입력 검사 | 일회용 코드 승인 | 제공하지 않음 | 로컬 검증 |
-| [`flex_get_work_summary`](tools/flex-get-work-summary.md) | 제공하지 않음 | 제공하지 않음 | 실계정 근무, 놀수와 예정 연차 예상치 | 신규 연결 예정 |
+| 도구                                                          | 공개 Node `stdio` | 원격 Node                  | 본인 PC MCP                          | Workers                    |
+| ------------------------------------------------------------- | ----------------- | -------------------------- | ------------------------------------ | -------------------------- |
+| [`flex_get_annual_leave`](tools/flex-get-annual-leave.md)     | 입력 검사         | 합성 조회                  | 실계정 조회                          | 개인 설치본 또는 합성 조회 |
+| [`flex_get_schedule`](tools/flex-get-schedule.md)             | 입력 검사         | 합성 조회                  | 실계정 조회                          | 개인 설치본 또는 합성 조회 |
+| [`flex_get_work_hours`](tools/flex-get-work-hours.md)         | 입력 검사         | 합성 조회                  | 실계정 조회                          | 개인 설치본 또는 합성 조회 |
+| [`flex_get_socket_status`](tools/flex-get-socket-status.md)   | 입력 검사         | 본인 소켓 조회             | 제공하지 않음                        | 로컬 검증                  |
+| [`flex_approve_connection`](tools/flex-approve-connection.md) | 입력 검사         | 일회용 코드 승인           | 제공하지 않음                        | 로컬 검증                  |
+| [`flex_get_work_summary`](tools/flex-get-work-summary.md)     | 제공하지 않음     | 합성 및 연결한 개인 설치본 | 실계정 근무, 놀수와 예정 연차 예상치 | 연결한 확장에서 조회       |
 
 `stdio`는 로컬 프로세스의 표준 입출력입니다. 공개 `stdio`는 유효한 호출에도 연결 미구성 오류를 반환합니다. 본인 PC MCP는 별도 로컬 실행 파일입니다. 공개 Node 원격 서버는 합성 조회 성공 결과에 `synthetic: true`를 붙입니다. Workers는 [개인 설치본](../features/extension-setup.md)의 조회 결과도 중계합니다. 예시 결과에만 `synthetic: true`를 붙입니다. 원격 조회와 소켓 상태에는 승인에서 받은 `connectionKey`가 필요합니다. 합성 모드를 끈 공개 확장은 실제 결과를 반환하지 않습니다.
 

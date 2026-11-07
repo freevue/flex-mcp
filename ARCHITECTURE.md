@@ -6,7 +6,7 @@
 
 [MCP 서버](apps/mcp-server/src/index.ts)는 로컬 표준 입출력(`stdio`)으로 데이터 조회 세 개와 [Chrome 소켓 상태 조회](docs/features/socket-status.md), 연결 승인 도구를 노출합니다. 서버는 도구 입력을 검사합니다. 조회 연결이 없으므로 도구 호출에는 미연결 오류를 반환합니다.
 
-[Chrome 확장](apps/chrome-extension/manifest.json)은 별도로 빌드할 수 있습니다. 서비스 워커는 확장의 백그라운드 진입점입니다. 확장은 빌드에서 정한 서버에만 접속합니다. 팝업은 연결 코드 또는 연결 상태를 표시합니다. 두 연결을 확인하면 상태 화면에 이번 달 근무 요약을 표시합니다. 개인 설치본은 Flex에서 읽은 값으로 계산합니다. [근무 요약](docs/features/extension-work-summary.md)은 오늘 기준과 예정 연차를 반영한 예상치를 나눕니다. 합성 모드는 예시임을 표시합니다. 공개 확장은 Flex 탭에 접근하지 않습니다. 개인 설치본은 [설치와 실조회 절차](docs/features/extension-setup.md)를 따릅니다.
+[Chrome 확장](apps/chrome-extension/manifest.json)은 별도로 빌드할 수 있습니다. 서비스 워커는 확장의 백그라운드 진입점입니다. 확장은 빌드에서 정한 서버에만 접속합니다. 팝업은 연결 코드 또는 연결 상태를 표시합니다. 두 연결을 확인하면 상태 화면에 이번 달 근무 요약을 표시합니다. 개인 설치본은 Flex에서 읽은 값으로 계산합니다. [근무 요약](docs/features/extension-work-summary.md)은 오늘 실제 근무, 월 인정 근무와 놀수 전후 남은 시간을 표시합니다. [MCP 상세 요약](docs/mcp/tools/flex-get-work-summary.md)은 요청받았을 때 오늘 기준 값과 예정 연차를 반영한 값도 따로 반환합니다. 합성 모드는 예시임을 표시합니다. 공개 확장은 Flex 탭에 접근하지 않습니다. 개인 설치본은 [설치와 실조회 절차](docs/features/extension-setup.md)를 따릅니다.
 
 ## 로컬에서 검증한 범위
 
