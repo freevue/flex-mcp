@@ -1,3 +1,4 @@
+/** 분을 화면에 표시할 문구로 바꿉니다. @see wiki/unit/popup/formatWorkMinutes.md */
 export function formatWorkMinutes(minutes: number | null): string {
   if (minutes === null) return "계산 정보 없음";
   const hours = Math.floor(minutes / 60);
