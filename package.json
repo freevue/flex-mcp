@@ -19,12 +19,22 @@
     "flex:admin": "pnpm --filter @flex-mcp/server run admin",
     "flex:remote": "pnpm --filter @flex-mcp/server run remote",
     "check:worker": "tsc -p apps/mcp-server/tsconfig.worker.json",
-    "build:worker": "wrangler deploy --env production --dry-run --outdir .artifacts/worker-production"
+    "build:worker": "wrangler deploy --env production --dry-run --outdir .artifacts/worker-production",
+    "prepare": "husky",
+    "test:e2e": "node --test apps/mcp-server/test/browser.e2e.ts",
+    "package:extension": "pnpm build:extension && node scripts/packagePublicArtifacts.ts --extension-only"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "5.20261104.1",
     "@types/node": "^24.19.2",
+    "husky": "9.1.7",
+    "lint-staged": "17.6.0",
+    "playwright": "1.65.0",
+    "prettier": "3.9.10",
     "typescript": "~6.0.3",
     "wrangler": "4.158.0"
+  },
+  "lint-staged": {
+    "*": "prettier --write --ignore-unknown"
   }
 }

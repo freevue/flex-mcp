@@ -1,0 +1,38 @@
+name: Chrome 확장 ZIP 배포
+
+on:
+  push:
+    tags: ["chrome-v*"]
+
+permissions:
+  contents: write
+
+env:
+  HUSKY: "0"
+
+jobs:
+  package:
+    if: github.event.deleted == false
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version-file: .nvmrc
+          package-manager-cache: false
+      - uses: pnpm/action-setup@f53f5227a9e83886ab598c617f3c170fab62f0d3 # v6
+      - run: pnpm install --frozen-lockfile
+      - name: 팀 테스트용 확장 ZIP 생성
+        run: pnpm package:extension
+        env:
+          FLEX_EXTENSION_SERVER_URL: https://flex-mcp.freevue.dev
+          FLEX_EXTENSION_DEMO: "1"
+      - name: GitHub Release에 ZIP 게시
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" .artifacts/public-*/flex-chrome-extension.zip \
+            --verify-tag --title "Chrome 확장 $GITHUB_REF_NAME" \
+            --notes '팀 검증용 합성 빌드입니다. ZIP을 풀고 Chrome 확장 관리에서 폴더를 로드하세요.'
