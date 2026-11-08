@@ -1,10 +1,11 @@
 import { shiftDate } from "../../../../shared/shiftDate.ts";
-import { timezone } from "../../../../shared/index.ts";
+import { demoWorkStatus, timezone } from "../../../../shared/index.ts";
 import type { BridgeReply, BridgeRequest } from "../../../../shared/index.ts";
 import { createDemoWorkTotals, readDemoWorkSummary } from "../flex/demoWorkSummary.ts";
 
 export async function createSyntheticReply(request: BridgeRequest, bindingId: string, signal: AbortSignal): Promise<BridgeReply> {
   const { requestId, query } = request;
+  if (query.kind === "workStatus") return { requestId, result: demoWorkStatus };
   if (query.kind === "summary") {
     const summary = await readDemoWorkSummary(bindingId, signal);
     return summary ? { requestId, result: summary } : { requestId, error: "FLEX_READ_FAILED" };

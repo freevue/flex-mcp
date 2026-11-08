@@ -1,19 +1,11 @@
-import { workSummaryTimeoutMs } from "../../../shared/index.ts";
-import type { BridgeReply, BridgeRequest, BrowserQueryFailure, Outcome } from "../../../shared/index.ts";
-import { connectBridge, createSyntheticReply } from "./bridge/index.ts";
-import type { BridgeControl } from "./bridge/index.ts";
+import { demoWorkStatus, isWorkStatusResult, workSummaryTimeoutMs } from "../../../shared/index.ts";
+import { connectBridge, createSyntheticReply, readLiveReply } from "./bridge/index.ts";
+import type { BridgeControl, FlexReader } from "./bridge/index.ts";
 import { loadExtensionConfiguration } from "./extensionConfiguration.ts";
 import { readDemoWorkSummary } from "./flex/index.ts";
-import type { PopupWorkSummary } from "./flex/index.ts";
 import type { PopupCommand, PopupSnapshot } from "./popup/index.ts";
 import { createPairingSession, readAccount, readStoredRegistration, requestBridgeTicket } from "./registration/index.ts";
 import type { StoredRegistration } from "./registration/index.ts";
-
-type FlexReader = {
-  identify: () => Promise<Outcome<string, BrowserQueryFailure>>;
-  read: (request: BridgeRequest, account: string, signal: AbortSignal) => Promise<BridgeReply>;
-  workSummary: (account: string, signal: AbortSignal) => Promise<PopupWorkSummary | null>;
-};
 
 type WorkerCommand = PopupCommand | "restore";
 const alarmName = "flex-bridge-retry";
@@ -72,15 +64,7 @@ export function startExtension(reader?: FlexReader): void {
         async (request, signal) => {
           if (settings.demo) return createSyntheticReply(request, active.bindingId, signal);
           if (!liveReader || !activeAccount) return { requestId: request.requestId, error: "FLEX_READ_FAILED" };
-          if (request.query.kind === "summary") {
-            const bounded = AbortSignal.any([signal, AbortSignal.timeout(workSummaryTimeoutMs)]);
-            const summary = await liveReader.workSummary(activeAccount, bounded);
-            return summary && !bounded.aborted
-              ? { requestId: request.requestId, result: summary, source: "flex" }
-              : { requestId: request.requestId, error: "FLEX_READ_FAILED" };
-          }
-          const reply = await liveReader.read(request, activeAccount, signal);
-          return "result" in reply ? { ...reply, source: "flex" } : reply;
+          return readLiveReply(liveReader, request, activeAccount, signal);
         }
       );
     }
@@ -92,22 +76,27 @@ export function startExtension(reader?: FlexReader): void {
     if (!next || control?.state() !== "online") {
       return { kind: "disconnected", canReconnect: Boolean(next), approvalCode, ...(liveReader ? { needsFlex: true } : {}) };
     }
-    if (command === "restore") return { kind: "connected", flex: "unavailable", summary: null, approvalCode: null, inviteFailed: false };
-    const summary = settings.demo
-      ? await readDemoWorkSummary(next.bindingId, AbortSignal.timeout(3_000))
-      : liveReader && account
-        ? await liveReader.workSummary(account, AbortSignal.timeout(workSummaryTimeoutMs)).catch(() => null)
-        : null;
+    if (command === "restore") return { kind: "connected", flex: "unavailable", summary: null, workStatus: "unknown", approvalCode: null, inviteFailed: false };
+    const [summary, status] = await Promise.all([
+      settings.demo
+        ? readDemoWorkSummary(next.bindingId, AbortSignal.timeout(3_000))
+        : liveReader && account
+          ? liveReader.workSummary(account, AbortSignal.timeout(workSummaryTimeoutMs)).catch(() => null)
+          : null,
+      !settings.demo && account ? liveReader?.workStatus?.(account, AbortSignal.timeout(3_000)).catch(() => null) : null
+    ]);
+    const checkedStatus = status?.ok && isWorkStatusResult(status.value) ? status.value.status : "unknown";
     if (control?.state() !== "online") {
       return { kind: "disconnected", canReconnect: true, approvalCode };
     }
-    if (!summary) return { kind: "connected", flex: "unavailable", summary: null, approvalCode: null, inviteFailed: false };
+    if (!summary) return { kind: "connected", flex: "unavailable", summary: null, workStatus: "unknown", approvalCode: null, inviteFailed: false };
     const invitation = command === "popup-check-code" ? await updatePairing(settings.origin, next, account, "invite", liveReader?.identify) : pairing;
     if (control?.state() !== "online") return { kind: "disconnected", canReconnect: true, approvalCode: null };
     return {
       kind: "connected",
       flex: settings.demo ? "synthetic" : "live",
       summary,
+      workStatus: settings.demo ? demoWorkStatus.status : checkedStatus,
       approvalCode: invitation.invitationCode,
       inviteFailed: invitation.inviteFailed
     };

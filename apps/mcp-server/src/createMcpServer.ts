@@ -6,6 +6,7 @@ import type { AccessFailure } from "./access/index.ts";
 import type { RelayFailure } from "./bridge/index.ts";
 import { resolveRange, seoulDate, shiftDate } from "./dates.ts";
 import { formatWorkSummaryMarkdown } from "./formatWorkSummaryMarkdown.ts";
+import { readOnlyAnnotations as annotations, registerPairedReadTools } from "./registerPairedReadTools.ts";
 import { browserConnectionStates } from "./operations/index.ts";
 import type { BrowserConnectionStatus } from "./operations/index.ts";
 
@@ -16,7 +17,6 @@ type ToolHandlers = {
   approveConnection?: (code: string) => string | null;
   channelPairing?: true;
 };
-const annotations = { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: true };
 const rangeFields = {
   from: schema.iso.date().optional().describe("시작일(포함), YYYY-MM-DD"),
   to: schema.iso.date().optional().describe("종료일(포함), YYYY-MM-DD")
@@ -91,18 +91,7 @@ export function createMcpServer(handlers?: ToolHandlers, now = () => new Date(),
     (input) => reply(() => buildRange("work", input), input.connectionKey)
   );
 
-  if (handlers?.channelPairing) {
-    server.registerTool(
-      "flex_get_work_summary",
-      {
-        title: "이번 달 근무 요약",
-        description: "한국 시간 기준 오늘 실제 근무, 이번 달 실제·인정 근무, 사용·예정 연차와 놀수 전후의 남은 시간을 분 단위로 조회합니다.",
-        inputSchema: channelSchema,
-        annotations
-      },
-      ({ connectionKey }) => reply(() => ({ kind: "summary" }), connectionKey)
-    );
-  }
+  if (handlers?.channelPairing) registerPairedReadTools(server, connectionKeyField, (query, key) => reply(() => query, key));
 
   if (handlers && !handlers.connectionStatus) return server;
 

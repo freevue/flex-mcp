@@ -13,7 +13,7 @@ export async function dispatchToFlexTab(tab: FlexTab, request: BridgeRequest, si
   const { requestId, query } = request;
   const unavailable = { requestId, error: "FLEX_TAB_UNAVAILABLE" } as const;
   const aborted = { requestId, error: "FLEX_READ_FAILED" } as const;
-  if (signal.aborted || query.kind === "summary") return aborted;
+  if (signal.aborted || query.kind === "summary" || query.kind === "workStatus") return aborted;
   if (!isFlexUrl(tab.url)) return unavailable;
   const before = await runtime.getDocument(tab.id).catch(() => null);
   if (signal.aborted) return aborted;

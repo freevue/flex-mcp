@@ -1,6 +1,7 @@
+import type { WorkStatusResult } from "../../../../shared/index.ts";
 import type { PopupWorkSummary } from "../flex/workSummary.ts";
 
-type Connected = { kind: "connected"; approvalCode: string | null; inviteFailed: boolean };
+type Connected = { kind: "connected"; approvalCode: string | null; inviteFailed: boolean; workStatus: WorkStatusResult["status"] };
 export type PopupSnapshot =
   | { kind: "disconnected"; canReconnect: boolean; approvalCode: string | null; needsFlex?: true }
   | (Connected & ({ flex: "unavailable"; summary: null } | { flex: "synthetic" | "live"; summary: PopupWorkSummary }))

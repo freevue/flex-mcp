@@ -9,6 +9,7 @@ import {
   isScheduleEvent,
   isTime,
   isWorkSummary,
+  isWorkStatusResult,
   isWorkTotals,
   success,
   workFields
@@ -18,6 +19,7 @@ import type { BridgeError, BridgeQuery, BridgeReply, BridgeResult, Outcome } fro
 function isResult(value: unknown, query: BridgeQuery): value is BridgeResult {
   if (!isRecord(value)) return false;
   if (query.kind === "summary") return isWorkSummary(value);
+  if (query.kind === "workStatus") return isWorkStatusResult(value);
   if (query.kind === "leave") {
     return hasKeys(value, ["asOf", "remaining", "usable"]) && isTime(value.asOf) && isLeaveBalance(value.remaining) && isLeaveBalance(value.usable);
   }

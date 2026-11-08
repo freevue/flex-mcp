@@ -1,7 +1,9 @@
+import type { WorkStatusResult } from "./workStatus.ts";
+
 export const timezone = "Asia/Seoul";
 export type DateRange = { from: string; to: string };
 export type FlexQuery = { kind: "leave" } | { kind: "schedule" | "work"; range: DateRange };
-export type BridgeQuery = FlexQuery | { kind: "summary" };
+export type BridgeQuery = FlexQuery | { kind: "summary" } | { kind: "workStatus" };
 export const workSummaryTimeoutMs = 20_000;
 export type Outcome<Value, Failure> = { ok: true; value: Value } | { ok: false; error: Failure };
 
@@ -46,7 +48,7 @@ export const workSummaryNullableFields = [
   "projectedAdjustedRemainingMinutes"
 ] as const;
 export type WorkSummaryResult = Record<(typeof workSummaryRequiredFields)[number], number> & Record<(typeof workSummaryNullableFields)[number], number | null>;
-export type BridgeResult = FlexResult | WorkSummaryResult;
+export type BridgeResult = FlexResult | WorkSummaryResult | WorkStatusResult;
 export type FlexRequestFailure = "FLEX_REAUTH_REQUIRED" | "FLEX_READ_FAILED";
 export type FlexReadFailure = FlexRequestFailure | "FLEX_NO_RECORDS";
 export type BrowserQueryFailure = FlexReadFailure | "FLEX_TAB_UNAVAILABLE" | "FLEX_ACCOUNT_MISMATCH";

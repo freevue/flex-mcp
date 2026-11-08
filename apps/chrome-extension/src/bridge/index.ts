@@ -5,3 +5,4 @@ export * from "./confirmBrowserBinding.ts";
 export * from "./deriveConnectionState.ts";
 export * from "./connectBridge.ts";
 export * from "./syntheticReply.ts";
+export * from "./readLiveReply.ts";
