@@ -42,3 +42,7 @@ type: log
 ## [2026-11-08] spec | #31 | 갈피 개인정보 처리방침 게시
 
 - [처리방침 게시 정책](policy/galpi-privacy-page.md)에 정보 처리 설명과 게시 후 확인 기준을 기록합니다.
+
+## [2026-11-08] spec | #35 | 내 MCP 연결 해제
+
+- [내 MCP 연결 해제](feature/flex-disconnect-connection.md)에 현재 키 폐기와 마지막 Chrome 소켓 종료 조건을 기록합니다.
