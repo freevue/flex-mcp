@@ -56,6 +56,7 @@ MCP와 Flex가 연결되면 갈피 팝업에서 오늘 실제 근무, 이번 달
 | 남은 연차를 알려줘.                                                  | [`flex_get_annual_leave`](docs/mcp/tools/flex-get-annual-leave.md) |
 | 앞으로 7일 일정을 보여줘.                                            | [`flex_get_schedule`](docs/mcp/tools/flex-get-schedule.md)         |
 | 이번 달 날짜별 근무 시간을 보여줘.                                   | [`flex_get_work_hours`](docs/mcp/tools/flex-get-work-hours.md)     |
+| 지금 근무 기록이 켜져 있어?                                          | [`flex_get_work_status`](docs/mcp/tools/flex-get-work-status.md)   |
 | 오늘 근무, 이번 달 누적, 연차 인정분과 놀수 전후 남은 시간을 보여줘. | [`flex_get_work_summary`](docs/mcp/tools/flex-get-work-summary.md) |
 
 ## 연결이 끊기면

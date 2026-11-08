@@ -1,7 +1,7 @@
 ---
 name: galpi-work-dashboard
 type: policy
-issues: [22]
+issues: [22, 26]
 code: []
 ---
 
@@ -19,9 +19,10 @@ code: []
 | POL-GALPI-DASHBOARD-04 | 필요한 값이 없으면 계산 정보 없음으로 표시합니다. 정보가 없는 시간을 0분으로 계산하지 않습니다.                                                                                    | [#22](https://github.com/freevue/flex-mcp/issues/22) |
 | POL-GALPI-DASHBOARD-05 | 월 실제 누적, 사용·예정 연차, 오늘 기준과 예상 남은 시간은 승인한 연결 키로 MCP에서 조회합니다. 연결 키와 실제 조회 결과는 검증 기록에 남기지 않습니다.                            | [#22](https://github.com/freevue/flex-mcp/issues/22) |
 | POL-GALPI-DASHBOARD-06 | 두 연결이 활성일 때만 상단에 코드 확인을 표시합니다. 키보드로 열고 닫을 수 있게 합니다. 글자 크기를 높여도 근무 요약은 가로로 넘치지 않아야 합니다.                                | [#22](https://github.com/freevue/flex-mcp/issues/22) |
+| POL-GALPI-DASHBOARD-07 | 근무 상태는 오늘 실제 근무 제목 옆에 점과 문구로 표시합니다. 상태만 읽을 수 없으면 확인한 시간 값과 확인 불가를 함께 표시합니다.                                                   | [#26](https://github.com/freevue/flex-mcp/issues/26) |
 
 ## 적용 기능
 
 | 기능                                                     | 적용 규칙                 |
 | -------------------------------------------------------- | ------------------------- |
-| [갈피 근무 대시보드](../feature/galpi-work-dashboard.md) | POL-GALPI-DASHBOARD-01~06 |
+| [갈피 근무 대시보드](../feature/galpi-work-dashboard.md) | POL-GALPI-DASHBOARD-01~07 |
