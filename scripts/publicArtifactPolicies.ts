@@ -11,6 +11,7 @@ const server = [
   "registerPairedReadTools",
   "toolReplies",
   "access/authorizeMcpCaller",
+  "access/disconnectMcpConnection",
   "access/index",
   "access/resolveBrowserBinding",
   "access/revokeAccess",

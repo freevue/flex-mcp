@@ -1,8 +1,9 @@
 import type { AccessFailure } from "./access/index.ts";
 import type { RelayFailure } from "./bridge/index.ts";
 
-type ToolFailure = RelayFailure | AccessFailure | "CONNECTION_STATUS_FAILED";
+type ToolFailure = RelayFailure | AccessFailure | "CONNECTION_STATUS_FAILED" | "CONNECTION_DISCONNECT_FAILED";
 export const errors: Record<ToolFailure, string> = {
+  CONNECTION_DISCONNECT_FAILED: "MCP 연결을 해제하지 못했습니다.",
   CONNECTION_STATUS_FAILED: "Chrome 소켓 상태를 확인할 수 없습니다.",
   CALLER_UNVERIFIED: "호출자를 확인할 수 없습니다.",
   ACCESS_DENIED: "조회 권한이 없습니다.",
