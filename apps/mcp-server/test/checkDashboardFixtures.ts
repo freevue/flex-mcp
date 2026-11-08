@@ -43,7 +43,9 @@ export async function checkDashboardFixtures(popup: Page, popupUrl: string): Pro
   await popup.goto(`${popupUrl}?fixture=projected`);
   await popup.getByText("예시 근무 데이터", { exact: true }).waitFor();
   assert.deepEqual(await popup.locator(".work-month dd").allTextContents(), ["96시간", "90시간"], "FT-GALPI-DASHBOARD-01");
-  assert.deepEqual(await popup.locator(".work-remaining dd").allTextContents(), ["64시간", "48시간"], "UT-renderWorkSummary-01");
+  const remaining = popup.locator(".work-remaining");
+  assert.deepEqual(await remaining.locator("dt").allTextContents(), ["놀수 반영", "놀수 미반영"]);
+  assert.deepEqual(await remaining.locator("dd").allTextContents(), ["48시간", "64시간"], "UT-renderWorkSummary-01");
   const remainingBackground = await popup
     .locator(".work-remaining dl > div")
     .evaluateAll((items) => items.map((item) => getComputedStyle(item).backgroundColor));

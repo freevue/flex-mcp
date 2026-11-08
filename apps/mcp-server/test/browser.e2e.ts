@@ -79,7 +79,11 @@ test("FT-GALPI-DASHBOARD-01~03: Chromium에서 승인, 근무 비교, 연결 상
   await popup.getByRole("heading", { name: "오늘 실제 근무" }).waitFor();
   assert.deepEqual(await popup.locator(".work section h2").allTextContents(), ["오늘 실제 근무", "이번 달 인정 근무", "이번 달 남은 시간"]);
   assert.deepEqual(await popup.locator(".work-month dt").allTextContents(), ["연차 포함", "연차 미포함"]);
-  assert.deepEqual(await popup.locator(".work-remaining dt").allTextContents(), ["놀수 미반영", "놀수 반영"]);
+  const remaining = popup.locator(".work-remaining dt");
+  assert.deepEqual(await remaining.allTextContents(), ["놀수 반영", "놀수 미반영"], "팝업 놀수 표시 순서");
+  const left = await remaining.nth(0).boundingBox();
+  const right = await remaining.nth(1).boundingBox();
+  assert.ok(left && right && left.x < right.x, "놀수 반영이 화면 왼쪽에 있어야 합니다.");
   const status = await client.callTool({
     name: "flex_get_socket_status",
     arguments: connection

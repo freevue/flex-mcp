@@ -102,8 +102,8 @@ export function renderWorkSummary(summary: PopupWorkSummary, source: "synthetic"
   remaining.append(
     textElement("h2", "이번 달 남은 시간"),
     renderMinutePairs([
-      { label: "놀수 미반영", minutes: summary.projectedStandardRemainingMinutes },
-      { label: "놀수 반영", minutes: summary.projectedAdjustedRemainingMinutes }
+      { label: "놀수 반영", minutes: summary.projectedAdjustedRemainingMinutes },
+      { label: "놀수 미반영", minutes: summary.projectedStandardRemainingMinutes }
     ])
   );
   panel.append(today, month, remaining);

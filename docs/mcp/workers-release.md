@@ -37,6 +37,8 @@ Workers 설정의 배포 환경마다 도메인과 내부 바인딩을 선언합
 
 Git 연결의 루트 디렉터리는 저장소 루트입니다. 대상 Worker 이름은 `flex-mcp`입니다. 대시보드의 이름이 다르면 Wrangler의 `env.production.name`과 맞춥니다. 빌드 명령은 `pnpm check:worker`입니다. 배포 명령은 `pnpm exec wrangler deploy --env production`입니다. Cloudflare에서 현재 변경을 포함한 커밋을 빌드할 때 사용합니다. 이전 커밋은 Wrangler와 Worker 진입점이 없습니다.
 
+운영 브랜치는 `main`입니다. Cloudflare의 `Settings > Builds > Previews Base`에서 `Builds for Preview branches`를 끕니다. PR에는 Cloudflare Preview를 만들지 않습니다. 대신 `pnpm check:worker`와 `pnpm build:worker`로 확인합니다. [공통 릴리스 정책](../../wiki/policy/mcp-release.md)을 따릅니다.
+
 Worker에 별도 확장 ID, 에이전트 목록과 Flex 인증 값을 등록하지 않습니다. 배포 후 `/mcp`에서 초기화와 도구 목록을 확인합니다. Chrome 팝업에서 코드를 발급합니다. MCP 승인으로 받은 연결 키를 조회 도구의 인자로 보냅니다. [등록 순서](../features/browser-pairing.md)를 따릅니다.
 
 연결 키를 도입하기 전에 만든 등록이면 팝업에서 새 코드를 발급합니다. 이미 연결 키를 받은 채널은 이번 확장과 Worker를 업데이트해도 기존 키를 사용합니다. 다른 클라이언트를 연결하려면 팝업에서 `코드 확인`을 누릅니다.
