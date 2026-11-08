@@ -46,3 +46,7 @@ type: log
 ## [2026-11-08] spec | #35 | 내 MCP 연결 해제
 
 - [내 MCP 연결 해제](feature/flex-disconnect-connection.md)에 현재 키 폐기와 마지막 Chrome 소켓 종료 조건을 기록합니다.
+
+## [2026-11-08] spec | #33 | 갈피와 MCP 0.9.1 핫픽스
+
+- [공통 릴리스 정책](policy/mcp-release.md)에 0.9.1을 기록합니다.
