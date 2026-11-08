@@ -23,6 +23,7 @@ LLM Wiki는 확인한 프로젝트 지식을 정리하고 다시 찾는 방식�
 | MCP 서버의 함수와 매개변수                            | [서버 함수 목록](docs/mcp/functions.md)                                                                                                                                                                            |
 | Cloudflare Workers 배포 구조와 검증                   | [배포 설계](docs/mcp/cloudflare-workers.md) · [배포 절차](docs/mcp/workers-release.md)                                                                                                                             |
 | 커밋·푸시 전 검사와 확장 ZIP 배포                     | [Git 훅과 Chrome 확장 릴리스](docs/features/ci-artifacts.md)                                                                                                                                                       |
+| Chrome 웹 스토어 제출과 공개 처리방침                 | [갈피 스토어 제출 안내](docs/webstore/README.md)                                                                                                                                                                   |
 | 투두별 기능, 메시지 계약, 기능 테스트 케이스          | [기능 목록](docs/features/README.md)                                                                                                                                                                               |
 | 함수별 구현 위치, 이름, 매개변수와 단위 테스트 케이스 | [유틸 계약](UTILITIES.md)                                                                                                                                                                                          |
 
