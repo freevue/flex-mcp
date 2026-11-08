@@ -5,6 +5,7 @@ import type { BridgeQuery, BridgeResult, DateRange, FlexQuery, Outcome } from ".
 import type { AccessFailure } from "./access/index.ts";
 import type { RelayFailure } from "./bridge/index.ts";
 import { resolveRange, seoulDate, shiftDate } from "./dates.ts";
+import { formatWorkSummaryMarkdown } from "./formatWorkSummaryMarkdown.ts";
 import { browserConnectionStates } from "./operations/index.ts";
 import type { BrowserConnectionStatus } from "./operations/index.ts";
 
@@ -41,7 +42,10 @@ export function createMcpServer(handlers?: ToolHandlers, now = () => new Date(),
       const outcome = await handlers.query(query, connectionKey);
       if (!outcome.ok) return errorReply(errors[outcome.error], outcome.error);
       const result = synthetic ? { ...outcome.value, synthetic: true } : outcome.value;
-      return successReply(result);
+      const response = successReply(result);
+      const markdown = query.kind === "summary" ? formatWorkSummaryMarkdown(result) : undefined;
+      if (markdown !== undefined) response.content.push({ type: "text", text: markdown });
+      return response;
     } catch {
       return errorReply(errors.FLEX_READ_FAILED, "FLEX_READ_FAILED");
     }
