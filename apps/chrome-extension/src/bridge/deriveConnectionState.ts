@@ -15,7 +15,8 @@ const messages = {
   FLEX_REAUTH_REQUIRED: ["재로그인 필요", "같은 프로필의 flex 화면에서 직접 로그인하세요."],
   FLEX_ACCOUNT_MISMATCH: ["계정 불일치", "연결한 계정으로 전환하거나 연결을 해제하세요."],
   FLEX_READ_FAILED: ["조회 실패", "flex 탭에서 필요한 정보가 보이는지 확인하세요."],
-  FLEX_NO_RECORDS: ["조회 준비됨", "MCP 클라이언트에서 새 조회를 요청하세요."],
+  FLEX_SCOPE_UNAVAILABLE: ["조회 범위 미확인", "Flex에서 본인에게 적용되는 범위를 확인하세요."],
+  FLEX_NO_RECORDS: ["조회 준비됨", "MCP 클라이언트에서 새 조회를 요청하세요."]
 } as const;
 
 export type ConnectionState = { status: string; nextAction: string };

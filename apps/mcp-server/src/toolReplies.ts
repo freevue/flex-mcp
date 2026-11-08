@@ -10,6 +10,7 @@ export const errors: Record<ToolFailure, string> = {
   FLEX_TAB_UNAVAILABLE: "연결한 Chrome 프로필에서 flex를 여세요.",
   FLEX_REAUTH_REQUIRED: "같은 Chrome 프로필의 flex에서 다시 로그인하세요.",
   FLEX_ACCOUNT_MISMATCH: "연결한 flex 계정으로 전환하세요.",
+  FLEX_SCOPE_UNAVAILABLE: "본인에게 적용되는 휴일 그룹 또는 승인된 조회 범위를 확인할 수 없습니다.",
   FLEX_NO_RECORDS: "조회할 기록이 없습니다.",
   FLEX_READ_FAILED: "flex 조회를 완료할 수 없습니다.",
   QUERY_TIMEOUT: "정해진 시간 안에 조회 응답이 오지 않았습니다.",

@@ -1,10 +1,20 @@
 import { shiftDate } from "../../../../shared/shiftDate.ts";
 import { demoWorkStatus, timezone } from "../../../../shared/index.ts";
-import type { BridgeReply, BridgeRequest } from "../../../../shared/index.ts";
+import type { BridgeReply, BridgeRequest, CompanyHolidaysResult } from "../../../../shared/index.ts";
 import { createDemoWorkTotals, readDemoWorkSummary } from "../flex/demoWorkSummary.ts";
 
 export async function createSyntheticReply(request: BridgeRequest, bindingId: string, signal: AbortSignal): Promise<BridgeReply> {
   const { requestId, query } = request;
+  if (query.kind === "companyHolidays") {
+    const { range } = query;
+    const year = range.to.slice(0, 4);
+    const examples: CompanyHolidaysResult["holidays"] = [
+      { date: `${year}-01-01`, name: "예시 공휴일", type: "PUBLIC_HOLIDAY" },
+      { date: `${year}-01-02`, name: "예시 회사 휴일", type: "CUSTOM_HOLIDAY" }
+    ];
+    const holidays = examples.filter(({ date }) => date >= range.from && date <= range.to);
+    return { requestId, result: { ...range, timezone, holidays } };
+  }
   if (query.kind === "workStatus") return { requestId, result: demoWorkStatus };
   if (query.kind === "summary") {
     const summary = await readDemoWorkSummary(bindingId, signal);
