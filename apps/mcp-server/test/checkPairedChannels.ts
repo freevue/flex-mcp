@@ -6,7 +6,7 @@ import { CallToolResultSchema } from "@modelcontextprotocol/sdk/types.js";
 import { WebSocket } from "ws";
 import { isRecord } from "../../../shared/index.ts";
 import { createSyntheticReply, parseBridgeRequest } from "../../chrome-extension/src/bridge/index.ts";
-import { checkPairedWorkStatus, checkSummaryResponse } from "./checkWorkToolResults.ts";
+import { checkPairedHolidays, checkPairedWorkStatus, checkSummaryResponse } from "./checkWorkToolResults.ts";
 
 export async function checkPairedChannels(origin: string): Promise<void> {
   const extension = "chrome-extension://aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
@@ -79,6 +79,7 @@ export async function checkPairedChannels(origin: string): Promise<void> {
     assert.deepEqual(tools.map((tool) => tool.name).sort(), [
       "flex_approve_connection",
       "flex_get_annual_leave",
+      "flex_get_company_holidays",
       "flex_get_schedule",
       "flex_get_socket_status",
       "flex_get_work_hours",
@@ -93,6 +94,7 @@ export async function checkPairedChannels(origin: string): Promise<void> {
     const first = await pair();
     const second = await pair(true);
     assert.notEqual(first.bindingId, second.bindingId);
+    await checkPairedHolidays(client, first.connectionKey);
     await checkPairedWorkStatus(client, first.connectionKey, second.connectionKey);
     assert.equal(
       (await client.callTool({ name: "flex_get_socket_status", arguments: { connectionKey: first.connectionKey, bindingId: second.bindingId } })).isError,

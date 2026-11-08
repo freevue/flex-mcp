@@ -26,3 +26,31 @@ export async function checkPairedWorkStatus(client: Client, validKey: string, in
   assert.deepEqual((await query({ connectionKey: "a".repeat(43) })).structuredContent, { code: "ACCESS_DENIED" }, "FT-FLEX-WORK-STATUS-02");
   assert.equal((await query({ connectionKey: validKey, account: "other" })).isError, true, "UT-registerPairedReadTools-01");
 }
+
+export async function checkPairedHolidays(client: Client, connectionKey: string): Promise<void> {
+  const query = (from: string, to: string) => client.callTool({ name: "flex_get_company_holidays", arguments: { connectionKey, from, to } });
+  const result = await query("2027-01-01", "2027-01-02");
+  assert.deepEqual(
+    result.structuredContent,
+    {
+      from: "2027-01-01",
+      to: "2027-01-02",
+      timezone: "Asia/Seoul",
+      synthetic: true,
+      holidays: [
+        { date: "2027-01-01", name: "예시 공휴일", type: "PUBLIC_HOLIDAY" },
+        { date: "2027-01-02", name: "예시 회사 휴일", type: "CUSTOM_HOLIDAY" }
+      ]
+    },
+    "FT-FLEX-HOLIDAYS-01"
+  );
+  assert.deepEqual((await query("2027-01-03", "2027-01-03")).structuredContent, {
+    from: "2027-01-03",
+    to: "2027-01-03",
+    timezone: "Asia/Seoul",
+    holidays: [],
+    synthetic: true
+  });
+  assert.equal((await query("2027-01-02", "2027-01-01")).isError, true);
+  assert.equal((await query("2027-01-01", "2027-02-01")).isError, true);
+}
