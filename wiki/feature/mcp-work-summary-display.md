@@ -34,6 +34,8 @@ code:
 | [실조회 범위](../../docs/features/reading-boundary.md)          | 조회는 연결한 계정에 한정합니다. 표시용 Markdown에는 서버가 정한 문구와 검증한 시간만 넣습니다. |
 | [근무 요약 계산](../../docs/features/extension-work-summary.md) | 오늘 실제 근무, 연차 포함·미포함 합계와 놀수 전후 예상값을 구분합니다.                          |
 
+MCP Markdown의 놀수 순서는 미반영, 반영입니다. [Chrome 팝업](../../docs/screens/work-summary.md)에서만 놀수 반영을 왼쪽에, 미반영을 오른쪽에 표시합니다. 배포는 [공통 릴리스 정책](../policy/mcp-release.md)을 따릅니다.
+
 ## TC
 
 | ID                     | 조건                                                                          | 동작                           | 기대 결과                                                                                     |

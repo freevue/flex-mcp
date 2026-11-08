@@ -6,10 +6,12 @@
 
 <p align="center">Flex의 연차, 일정, 근무 시간을 Chrome과 MCP에서 확인합니다.</p>
 
+<p align="center">갈피 · MCP 소스 버전: 0.8.5</p>
+
 <p align="center">
   <a href="https://github.com/freevue/flex-mcp/releases/download/0.7.0/galpi.0.7.0.zip"><strong>갈피 0.7.0 ZIP 다운로드</strong></a>
   · <a href="https://github.com/freevue/flex-mcp/releases/tag/0.7.0">0.7.0 릴리스</a>
-  · <a href="https://github.com/freevue/flex-mcp/releases/latest">최신 릴리스</a>
+  · <a href="https://github.com/freevue/flex-mcp/releases/latest">최신 공개 릴리스</a>
 </p>
 
 공개 ZIP은 예시 데이터로 설치와 연결을 확인하는 팀 검증용입니다. 실제 Flex 기록을 조회하려면 [개인 설치본 안내](docs/features/extension-setup.md#개인-설치본에서-실제-flex-조회)를 따르세요.
@@ -18,7 +20,7 @@
 
 Chrome 120 이상이 필요합니다.
 
-1. 위에서 ZIP을 내려받고 압축을 푸세요. 파일 이름은 `galpi.0.7.0.zip`입니다.
+1. 공개 릴리스에서 ZIP을 내려받고 압축을 푸세요. 파일 이름은 `galpi.<버전>.zip`입니다.
 2. Chrome 주소창에서 `chrome://extensions`를 여세요.
 3. 오른쪽 위의 `개발자 모드`를 켜세요.
 4. `압축해제된 확장 프로그램을 로드합니다`를 누르세요.

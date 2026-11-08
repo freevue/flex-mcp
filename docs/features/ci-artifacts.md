@@ -22,11 +22,11 @@ pnpm exec playwright install chromium --no-shell
 
 ## Chrome 확장 릴리스
 
-릴리스할 커밋에 [갈피 배포 워크플로](../../.github/workflows/galpi-release.yml)가 있어야 합니다. 루트, Chrome 확장, MCP의 `package.json`과 확장 매니페스트에 같은 버전을 넣습니다. `0.7.0`처럼 숫자 버전만 적은 태그를 푸시합니다.
+릴리스할 커밋에 [갈피 배포 워크플로](../../.github/workflows/galpi-release.yml)가 있어야 합니다. MCP를 릴리스할 때 갈피도 같은 버전으로 올립니다. 루트, Chrome 확장, MCP의 `package.json`과 확장 매니페스트에 같은 버전을 넣습니다. 릴리스할 때 숫자 버전만 적은 태그를 푸시합니다. 아래는 `0.8.5`의 예시입니다.
 
 ```sh
-git tag -a 0.7.0 -m '갈피 0.7.0'
-git push origin 0.7.0
+git tag -a 0.8.5 -m '갈피 0.8.5'
+git push origin 0.8.5
 ```
 
 Actions는 확장 ZIP을 만들고 [공개 산출물 검사](../utilities/verify-public-artifact.md)로 파일 목록을 확인합니다. 검사를 통과하면 [GitHub Releases](https://github.com/freevue/flex-mcp/releases)에 ZIP을 첨부합니다. 팀원은 ZIP을 풀고 Chrome에서 `manifest.json`이 있는 폴더를 로드합니다.
