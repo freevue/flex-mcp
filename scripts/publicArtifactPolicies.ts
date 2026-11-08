@@ -1,6 +1,6 @@
 import type { PublicArtifactPolicy } from "./verifyPublicArtifact.ts";
 
-const shared = ["bridgeOrigin", "contracts", "index", "shiftDate", "validation"].map((name) => `shared/${name}.js`);
+const shared = ["bridgeOrigin", "companyHolidays", "contracts", "index", "shiftDate", "validation", "workStatus"].map((name) => `shared/${name}.js`);
 const server = [
   "index",
   "dates",
@@ -8,6 +8,7 @@ const server = [
   "createCallerMcpServer",
   "createPairedMcpServer",
   "formatWorkSummaryMarkdown",
+  "registerPairedReadTools",
   "toolReplies",
   "access/authorizeMcpCaller",
   "access/index",
@@ -59,6 +60,7 @@ const extension = [
   "bridge/findFlexTab",
   "bridge/index",
   "bridge/parseBridgeRequest",
+  "bridge/readLiveReply",
   "bridge/syntheticReply",
   "flex/demoWorkSummary",
   "flex/workSummary",
