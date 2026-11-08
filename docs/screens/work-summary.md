@@ -1,6 +1,6 @@
 # 갈피 근무 요약 화면
 
-[계산 정책](../features/extension-work-summary.md) · [근무 요약 컴포넌트](../components/work-summary.md) · [상세 MCP 도구](../mcp/tools/flex-get-work-summary.md)
+[bab Wiki 명세](../../wiki/feature/galpi-work-dashboard.md) · [계산 정책](../features/extension-work-summary.md) · [근무 요약 컴포넌트](../components/work-summary.md) · [상세 MCP 도구](../mcp/tools/flex-get-work-summary.md)
 
 연결 상태 바로 아래에 오늘 실제 근무를 표시합니다. 이번 달 인정 근무에는 연차 포함과 미포함 합계를 나란히 표시합니다. 포함 값은 앞으로 인정될 예정 연차만 더합니다. 이미 인정된 사용 연차는 두 값에 들어 있습니다.
 

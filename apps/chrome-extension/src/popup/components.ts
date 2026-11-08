@@ -2,6 +2,7 @@ import type { PopupWorkSummary } from "../flex/workSummary.ts";
 import { formatWorkMinutes } from "./formatWorkMinutes.ts";
 import type { PopupCommand, PopupSnapshot } from "./types.ts";
 
+/** 팝업 동작 버튼을 만듭니다. @see wiki/unit/popup/popupButton.md */
 export function popupButton(label: string, action: PopupCommand | "copy", secondary = false): HTMLButtonElement {
   const button = document.createElement("button");
   button.type = "button";
@@ -18,6 +19,7 @@ function textElement<Tag extends keyof HTMLElementTagNameMap>(tag: Tag, text: st
   return node;
 }
 
+/** 승인 대기 화면을 만듭니다. @see wiki/unit/popup/renderApprovalCode.md */
 export function renderApprovalCode(code: string): HTMLElement {
   const panel = document.createElement("section");
   panel.className = "approval";
@@ -30,6 +32,7 @@ export function renderApprovalCode(code: string): HTMLElement {
   return panel;
 }
 
+/** MCP에 연결되지 않은 팝업을 만듭니다. @see wiki/unit/popup/renderUnavailablePopup.md */
 export function renderUnavailablePopup(snapshot: Exclude<PopupSnapshot, { kind: "connected" }>): HTMLElement[] {
   if (snapshot.kind === "error") {
     return [textElement("h1", "연결 확인 실패", "error"), textElement("p", "팝업 상태를 읽지 못했습니다."), popupButton("다시 확인", "popup-open")];
@@ -43,6 +46,7 @@ export function renderUnavailablePopup(snapshot: Exclude<PopupSnapshot, { kind: 
   return nodes;
 }
 
+/** MCP와 Flex 상태를 표시합니다. @see wiki/unit/popup/renderConnectionRows.md */
 export function renderConnectionRows(flex: Extract<PopupSnapshot, { kind: "connected" }>["flex"]): HTMLDListElement {
   const list = document.createElement("dl");
   list.className = "connection-rows";
@@ -73,6 +77,7 @@ function renderMinutePairs(entries: readonly { label: string; minutes: number | 
   return list;
 }
 
+/** 오늘 근무와 월 근무 요약을 표시합니다. @see wiki/unit/popup/renderWorkSummary.md */
 export function renderWorkSummary(summary: PopupWorkSummary, source: "synthetic" | "live"): HTMLElement {
   const panel = document.createElement("section");
   panel.className = "work";
