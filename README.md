@@ -6,11 +6,11 @@
 
 <p align="center">Flex의 연차, 일정, 근무 시간을 Chrome과 MCP에서 확인합니다.</p>
 
-<p align="center">갈피 · MCP 소스 버전: 0.8.5</p>
+<p align="center">갈피 · MCP 소스 버전: 0.9.0</p>
 
 <p align="center">
-  <a href="https://github.com/freevue/flex-mcp/releases/download/0.8.5/galpi.0.8.5.zip"><strong>갈피 0.8.5 ZIP 다운로드</strong></a>
-  · <a href="https://github.com/freevue/flex-mcp/releases/tag/0.8.5">0.8.5 릴리스</a>
+  <a href="https://github.com/freevue/flex-mcp/releases/download/0.9.0/galpi.0.9.0.zip"><strong>갈피 0.9.0 ZIP 다운로드</strong></a>
+  · <a href="https://github.com/freevue/flex-mcp/releases/tag/0.9.0">0.9.0 릴리스</a>
   · <a href="https://github.com/freevue/flex-mcp/releases/latest">최신 공개 릴리스</a>
 </p>
 
@@ -51,13 +51,14 @@ MCP와 Flex가 연결되면 갈피 팝업에서 오늘 실제 근무, 이번 달
 
 세부 내역은 연결한 에이전트에 요청하세요.
 
-| 이렇게 물어보세요                                                    | MCP 도구                                                           |
-| -------------------------------------------------------------------- | ------------------------------------------------------------------ |
-| 남은 연차를 알려줘.                                                  | [`flex_get_annual_leave`](docs/mcp/tools/flex-get-annual-leave.md) |
-| 앞으로 7일 일정을 보여줘.                                            | [`flex_get_schedule`](docs/mcp/tools/flex-get-schedule.md)         |
-| 이번 달 날짜별 근무 시간을 보여줘.                                   | [`flex_get_work_hours`](docs/mcp/tools/flex-get-work-hours.md)     |
-| 지금 근무 기록이 켜져 있어?                                          | [`flex_get_work_status`](docs/mcp/tools/flex-get-work-status.md)   |
-| 오늘 근무, 이번 달 누적, 연차 인정분과 놀수 전후 남은 시간을 보여줘. | [`flex_get_work_summary`](docs/mcp/tools/flex-get-work-summary.md) |
+| 이렇게 물어보세요                                                    | MCP 도구                                                                                    |
+| -------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| 남은 연차를 알려줘.                                                  | [`flex_get_annual_leave`](docs/mcp/tools/flex-get-annual-leave.md)                          |
+| 앞으로 7일 일정을 보여줘.                                            | [`flex_get_schedule`](docs/mcp/tools/flex-get-schedule.md)                                  |
+| 이번 달 날짜별 근무 시간을 보여줘.                                   | [`flex_get_work_hours`](docs/mcp/tools/flex-get-work-hours.md)                              |
+| 지정한 기간의 회사 휴일을 보여줘.                                    | [`flex_get_company_holidays`](docs/mcp/tools/flex-get-company-holidays.md) (현재 합성 조회) |
+| 지금 근무 기록이 켜져 있어?                                          | [`flex_get_work_status`](docs/mcp/tools/flex-get-work-status.md)                            |
+| 오늘 근무, 이번 달 누적, 연차 인정분과 놀수 전후 남은 시간을 보여줘. | [`flex_get_work_summary`](docs/mcp/tools/flex-get-work-summary.md)                          |
 
 ## 연결이 끊기면
 

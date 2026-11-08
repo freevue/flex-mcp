@@ -20,6 +20,7 @@ code:
 | ----------------------------------------------------------------- | --------------------------------------------------- |
 | [registerPairedReadTools](../unit/mcp/registerPairedReadTools.md) | 연결 키를 받는 근무 상태 도구를 등록합니다.         |
 | [readLiveReply](../unit/bridge/readLiveReply.md)                  | 승인된 확장에서 현재 근무 상태를 읽어 응답합니다.   |
+| [isCompanyHolidays](../unit/shared/isCompanyHolidays.md)          | 같은 연결에서 휴일 응답을 검사합니다.               |
 | [isWorkStatusResult](../unit/shared/isWorkStatusResult.md)        | 요청에 대응하는 상태 응답의 모양과 값을 검사합니다. |
 
 ## 흐름

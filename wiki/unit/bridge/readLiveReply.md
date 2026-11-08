@@ -2,7 +2,7 @@
 name: readLiveReply
 type: unit
 module: bridge
-issues: [26]
+issues: [26, 25]
 code: [apps/chrome-extension/src/bridge/readLiveReply.ts]
 ---
 
@@ -35,6 +35,8 @@ export async function readLiveReply(reader: FlexReader, request: BridgeRequest, 
 3. 요약 요청이면 20초 제한과 취소 신호를 적용합니다. 요약이 없거나 제한 시간이 지났으면 읽기 실패를 반환합니다.
 4. 다른 요청이면 기존 Flex 조회로 보냅니다. 성공한 응답에 실조회 출처를 표시합니다.
 
+5. 휴일 요청에는 선택 어댑터를 사용합니다. 없으면 조회 불가를 반환하고 성공 결과는 필드와 기간을 검사합니다.
+
 ## 사용법
 
 ```typescript
@@ -43,9 +45,10 @@ await readLiveReply(reader, request, approvedAccount, signal);
 
 ## 사용처
 
-| 위치                                                | 용도                                                 |
-| --------------------------------------------------- | ---------------------------------------------------- |
-| [본인 근무 상태](../../feature/flex-work-status.md) | 승인된 채널로 읽은 상태 또는 접근 오류를 돌려줍니다. |
+| 위치                                                   | 용도                                                 |
+| ------------------------------------------------------ | ---------------------------------------------------- |
+| [본인 근무 상태](../../feature/flex-work-status.md)    | 승인된 채널로 읽은 상태 또는 접근 오류를 돌려줍니다. |
+| [내 회사 휴일](../../feature/flex-company-holidays.md) | 승인된 조회의 공통 연결 경계를 사용합니다.           |
 
 ## TC
 

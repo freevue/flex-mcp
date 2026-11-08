@@ -2,7 +2,7 @@
 name: isWorkStatusResult
 type: unit
 module: shared
-issues: [26]
+issues: [26, 25]
 code: [shared/workStatus.ts]
 ---
 
@@ -38,9 +38,10 @@ isWorkStatusResult({ status: "working" });
 
 ## 사용처
 
-| 위치                                                | 용도                                       |
-| --------------------------------------------------- | ------------------------------------------ |
-| [본인 근무 상태](../../feature/flex-work-status.md) | 브리지 응답과 상태 읽기 결과를 검증합니다. |
+| 위치                                                   | 용도                                       |
+| ------------------------------------------------------ | ------------------------------------------ |
+| [본인 근무 상태](../../feature/flex-work-status.md)    | 브리지 응답과 상태 읽기 결과를 검증합니다. |
+| [내 회사 휴일](../../feature/flex-company-holidays.md) | 승인된 조회의 공통 연결 경계를 사용합니다. |
 
 ## TC
 

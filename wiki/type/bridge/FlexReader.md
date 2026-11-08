@@ -2,7 +2,7 @@
 name: FlexReader
 type: type
 module: bridge
-issues: [26]
+issues: [26, 25]
 code: [apps/chrome-extension/src/bridge/readLiveReply.ts]
 ---
 
@@ -24,6 +24,11 @@ export type FlexReader = {
     account: string,
     signal: AbortSignal,
   ) => Promise<PopupWorkSummary | null>;
+  companyHolidays?: (
+    range: DateRange,
+    account: string,
+    signal: AbortSignal,
+  ) => Promise<Outcome<CompanyHolidaysResult, BrowserQueryFailure>>;
   workStatus?: (
     account: string,
     signal: AbortSignal,
@@ -33,12 +38,13 @@ export type FlexReader = {
 
 ## 필드
 
-| 필드        | 타입                                                                                                | 필수   | 의미                                                          |
-| ----------- | --------------------------------------------------------------------------------------------------- | ------ | ------------------------------------------------------------- |
-| identify    | `() => Promise<Outcome<string, BrowserQueryFailure>>`                                               | 예     | 현재 로그인한 Flex 계정을 확인합니다.                         |
-| read        | `(request: BridgeRequest, account: string, signal: AbortSignal) => Promise<BridgeReply>`            | 예     | 승인한 계정의 기존 Flex 쿼리를 처리합니다.                    |
-| workSummary | `(account: string, signal: AbortSignal) => Promise<PopupWorkSummary \| null>`                       | 예     | 승인한 계정의 근무 요약을 읽습니다. null은 조회 불가입니다.   |
-| workStatus  | `(account: string, signal: AbortSignal) => Promise<Outcome<WorkStatusResult, BrowserQueryFailure>>` | 아니오 | 승인한 계정의 현재 상태를 읽습니다. 생략하면 확인 불가입니다. |
+| 필드            | 타입                                                                                                                       | 필수   | 의미                                                          |
+| --------------- | -------------------------------------------------------------------------------------------------------------------------- | ------ | ------------------------------------------------------------- |
+| identify        | `() => Promise<Outcome<string, BrowserQueryFailure>>`                                                                      | 예     | 현재 로그인한 Flex 계정을 확인합니다.                         |
+| read            | `(request: BridgeRequest, account: string, signal: AbortSignal) => Promise<BridgeReply>`                                   | 예     | 승인한 계정의 기존 Flex 쿼리를 처리합니다.                    |
+| workSummary     | `(account: string, signal: AbortSignal) => Promise<PopupWorkSummary \| null>`                                              | 예     | 승인한 계정의 근무 요약을 읽습니다. null은 조회 불가입니다.   |
+| companyHolidays | `(range: DateRange, account: string, signal: AbortSignal) => Promise<Outcome<CompanyHolidaysResult, BrowserQueryFailure>>` | 아니오 | 회사가 허용한 조회와 본인 그룹을 확인한 뒤 휴일을 읽습니다.   |
+| workStatus      | `(account: string, signal: AbortSignal) => Promise<Outcome<WorkStatusResult, BrowserQueryFailure>>`                        | 아니오 | 승인한 계정의 현재 상태를 읽습니다. 생략하면 확인 불가입니다. |
 
 ## 사용처
 

@@ -30,3 +30,11 @@ type: log
 
 - [본인 근무 상태](feature/flex-work-status.md)와 응답 타입, 등록 및 읽기 유닛을 추가합니다.
 - [갈피 근무 대시보드](feature/galpi-work-dashboard.md)와 [팝업 표시 유닛](unit/popup/renderWorkSummary.md)에 시안과 상태별 TC를 반영합니다.
+
+## [2026-11-08] spec | #25 | 내 회사 휴일
+
+- [내 회사 휴일](feature/flex-company-holidays.md)의 조회 범위와 응답 검사를 추가합니다.
+
+## [2026-11-08] spec | #25 | 갈피와 MCP 0.9.0 릴리스
+
+- [공통 릴리스 정책](policy/mcp-release.md)에 0.9.0을 기록합니다.
