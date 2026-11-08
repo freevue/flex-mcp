@@ -9,8 +9,8 @@
 <p align="center">갈피 · MCP 소스 버전: 0.8.5</p>
 
 <p align="center">
-  <a href="https://github.com/freevue/flex-mcp/releases/download/0.7.0/galpi.0.7.0.zip"><strong>갈피 0.7.0 ZIP 다운로드</strong></a>
-  · <a href="https://github.com/freevue/flex-mcp/releases/tag/0.7.0">0.7.0 릴리스</a>
+  <a href="https://github.com/freevue/flex-mcp/releases/download/0.8.5/galpi.0.8.5.zip"><strong>갈피 0.8.5 ZIP 다운로드</strong></a>
+  · <a href="https://github.com/freevue/flex-mcp/releases/tag/0.8.5">0.8.5 릴리스</a>
   · <a href="https://github.com/freevue/flex-mcp/releases/latest">최신 공개 릴리스</a>
 </p>
 
