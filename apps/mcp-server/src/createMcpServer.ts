@@ -21,7 +21,7 @@ const rangeFields = {
   from: schema.iso.date().optional().describe("시작일(포함), YYYY-MM-DD"),
   to: schema.iso.date().optional().describe("종료일(포함), YYYY-MM-DD")
 };
-const connectionKeyField = schema
+export const connectionKeyField = schema
   .string()
   .regex(/^[A-Za-z0-9_-]{43}$/)
   .describe("연결 승인 때 받은 비공개 연결 키");

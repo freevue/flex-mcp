@@ -6,6 +6,7 @@ import { CallToolResultSchema } from "@modelcontextprotocol/sdk/types.js";
 import { WebSocket } from "ws";
 import { isRecord } from "../../../shared/index.ts";
 import { createSyntheticReply, parseBridgeRequest } from "../../chrome-extension/src/bridge/index.ts";
+import { checkMcpDisconnection } from "./checkMcpDisconnection.ts";
 import { checkPairedHolidays, checkPairedWorkStatus, checkSummaryResponse } from "./checkWorkToolResults.ts";
 
 export async function checkPairedChannels(origin: string): Promise<void> {
@@ -69,7 +70,7 @@ export async function checkPairedChannels(origin: string): Promise<void> {
       const reply = await createSyntheticReply(parsed.value, bindingId, AbortSignal.timeout(3_000));
       socket.send(JSON.stringify(reportsFlexSource && "result" in reply ? { ...reply, source: "flex" } : reply));
     });
-    return { bindingId, connectionKey, deviceKey, reportsFlexSource };
+    return { bindingId, connectionKey, deviceKey, reportsFlexSource, socket };
   }
 
   try {
@@ -78,6 +79,7 @@ export async function checkPairedChannels(origin: string): Promise<void> {
     const { tools } = await client.listTools();
     assert.deepEqual(tools.map((tool) => tool.name).sort(), [
       "flex_approve_connection",
+      "flex_disconnect_connection",
       "flex_get_annual_leave",
       "flex_get_company_holidays",
       "flex_get_schedule",
@@ -128,14 +130,14 @@ export async function checkPairedChannels(origin: string): Promise<void> {
     assert.deepEqual(await claimInvitation(requestKey), { status: "linked" });
     assert.deepEqual(await claimInvitation(requestKey), { status: "unavailable" });
     assert.deepEqual((await status(first.connectionKey)).structuredContent, { status: "online" });
-    assert.equal((await post("/bridge/unpair", first.deviceKey)).status, 204);
-    deviceKeys.delete(first.deviceKey);
-    assert.deepEqual((await query(first.connectionKey)).structuredContent, { code: "ACCESS_DENIED" });
+    await checkMcpDisconnection(client, first, invited.connectionKey, second, post, deviceKeys);
     const revoked = await summary(first.connectionKey);
     assert.deepEqual(revoked.structuredContent, { code: "ACCESS_DENIED" });
     assert.equal(revoked.content.length, 1, "FT-MCP-WORK-DISPLAY-03");
-    assert.deepEqual((await addedQuery()).structuredContent, { code: "ACCESS_DENIED" });
     assert.deepEqual((await status(second.connectionKey)).structuredContent, { status: "online" });
+    assert.equal((await post("/bridge/unpair", second.deviceKey)).status, 204);
+    deviceKeys.delete(second.deviceKey);
+    assert.deepEqual((await query(second.connectionKey)).structuredContent, { code: "ACCESS_DENIED" });
   } finally {
     for (const socket of sockets) socket.terminate();
     await client.close();

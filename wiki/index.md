@@ -22,6 +22,7 @@ type: index
 | [갈피 근무 대시보드](feature/galpi-work-dashboard.md)     | 팝업 표시 순서와 MCP 상세 조회를 설명합니다.               |
 | [내 회사 휴일](feature/flex-company-holidays.md)          | 본인에게 적용되는 휴일을 읽습니다.                         |
 | [본인 근무 상태](feature/flex-work-status.md)             | 승인한 연결에서 현재 기록 상태를 읽습니다.                 |
+| [내 MCP 연결 해제](feature/flex-disconnect-connection.md) | 사용한 키를 폐기하고 마지막 연결의 소켓을 닫습니다.        |
 | [MCP 근무 요약 표시](feature/mcp-work-summary-display.md) | 근무 요약 응답의 JSON과 화면 표시용 Markdown을 정의합니다. |
 
 ## 유닛
@@ -36,6 +37,7 @@ type: index
 | [formatWorkMinutes](unit/popup/formatWorkMinutes.md)               | 분 단위의 근무 시간을 화면 문구로 바꿉니다.           |
 | [formatWorkSummaryMarkdown](unit/mcp/formatWorkSummaryMarkdown.md) | 검증한 근무 수치로 Markdown을 만듭니다.               |
 
+| [disconnectMcpConnection](unit/mcp/disconnectMcpConnection.md) | MCP 키와 마지막 Chrome 등록을 해제합니다. |
 | [registerPairedReadTools](unit/mcp/registerPairedReadTools.md) | 연결 키가 필요한 근무 읽기 도구를 등록합니다. |
 | [readLiveReply](unit/bridge/readLiveReply.md) | 승인된 Flex 조회 결과를 응답으로 바꿉니다. |
 | [isCompanyHolidays](unit/shared/isCompanyHolidays.md) | 기간과 휴일 응답을 검증합니다. |
