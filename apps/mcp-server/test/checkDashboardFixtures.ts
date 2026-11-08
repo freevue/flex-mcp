@@ -34,6 +34,7 @@ export async function checkDashboardFixtures(popup: Page, popupUrl: string): Pro
         kind: "connected",
         flex: unavailable ? "unavailable" : "synthetic",
         summary: unavailable ? null : values,
+        workStatus: mode === "#bad-status" ? "wrong" : mode.slice(1) || "working",
         approvalCode: null,
         inviteFailed: false
       };
@@ -56,6 +57,26 @@ export async function checkDashboardFixtures(popup: Page, popupUrl: string): Pro
   assert.deepEqual(await popup.locator(".work-month dd").allTextContents(), ["계산 정보 없음", "90시간"], "UT-renderWorkSummary-02");
   assert.deepEqual(await popup.locator(".work-remaining dd").allTextContents(), ["계산 정보 없음", "계산 정보 없음"]);
 
+  for (const [state, label] of Object.entries({
+    working: "근무 중",
+    on_break: "휴게 중",
+    idle: "기록 중 아님",
+    unknown: "확인 불가",
+    "bad-status": "확인 불가"
+  })) {
+    await popup.goto(`${popupUrl}?fixture=status-${state}#${state}`);
+    const status = popup.locator(".work-today .work-status");
+    await status.waitFor();
+    assert.equal(await status.textContent(), label, "UT-renderWorkSummary-03");
+    assert.equal(await popup.locator(".work-today strong").textContent(), "5시간 20분", "FT-GALPI-DASHBOARD-05");
+    const fits = await status.evaluate((badge) => {
+      document.documentElement.style.fontSize = "22px";
+      const card = badge.closest(".work-today");
+      return Boolean(card && card.scrollWidth === card.clientWidth && badge.getBoundingClientRect().right <= card.getBoundingClientRect().right);
+    });
+    assert.equal(fits, true, "FT-GALPI-DASHBOARD-05");
+  }
+
   await popup.goto(`${popupUrl}?fixture=unavailable#unavailable`);
   const retry = popup.getByRole("button", { name: "다시 확인" });
   await retry.waitFor();
@@ -63,6 +84,7 @@ export async function checkDashboardFixtures(popup: Page, popupUrl: string): Pro
   assert.equal(await retry.getAttribute("data-action"), "popup-state", "UT-popupButton-01");
   assert.equal(await popup.getByRole("heading", { name: "오늘 실제 근무" }).count(), 0, "FT-GALPI-DASHBOARD-02");
   assert.equal(await popup.getByRole("button", { name: "코드 확인" }).isVisible(), false);
+  assert.equal(await popup.locator(".work-status").count(), 0, "FT-GALPI-DASHBOARD-02");
 
   await popup.goto(`${popupUrl}?fixture=error#error`);
   await popup.getByRole("heading", { name: "연결 확인 실패" }).waitFor();

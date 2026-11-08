@@ -89,13 +89,13 @@ test("한국 자정으로 기간을 나누고 합성 자료로 월 요약을 계
   });
   const summary = await readDemoWorkSummary("0b47a3c6-cddf-43b8-85f9-fdc8ef531661", new AbortController().signal, new Date("2026-11-18T00:00:00Z"));
   assert.deepEqual(summary, calculateWorkSummary(input));
-  const snapshot = { kind: "connected", flex: "synthetic", summary, approvalCode: "ABCD-1234-5678", inviteFailed: false };
+  const snapshot = { kind: "connected", flex: "synthetic", summary, workStatus: "working", approvalCode: "ABCD-1234-5678", inviteFailed: false };
   assert.deepEqual(readPopupSnapshot(snapshot), snapshot);
   assert.equal(readPopupSnapshot({ ...snapshot, summary: { ...summary, account: "example" } }), null);
   assert.equal(readPopupSnapshot({ ...snapshot, summary: { ...summary, monthRecognizedMinutes: -1 } }), null);
   assert.equal(readPopupSnapshot({ ...snapshot, requestKey: "private" }), null);
   assert.equal(readPopupSnapshot({ ...snapshot, flex: "unavailable" }), null);
-  const unavailable = { ...snapshot, flex: "unavailable", summary: null };
+  const unavailable = { ...snapshot, flex: "unavailable", summary: null, workStatus: "unknown" };
   assert.equal(readPopupSnapshot(unavailable), null);
   assert.deepEqual(readPopupSnapshot({ ...unavailable, approvalCode: null }), { ...unavailable, approvalCode: null });
   assert.equal(readPopupSnapshot({ kind: "disconnected", canReconnect: false, approvalCode: null, requestKey: "private" }), null);
