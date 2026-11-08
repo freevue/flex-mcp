@@ -1,3 +1,4 @@
+import type { WorkStatusResult } from "../../../../shared/index.ts";
 import type { PopupWorkSummary } from "../flex/workSummary.ts";
 import { formatWorkMinutes } from "./formatWorkMinutes.ts";
 import type { PopupCommand, PopupSnapshot } from "./types.ts";
@@ -77,13 +78,25 @@ function renderMinutePairs(entries: readonly { label: string; minutes: number | 
   return list;
 }
 
+const workStatusLabels = {
+  working: "근무 중",
+  on_break: "휴게 중",
+  idle: "기록 중 아님",
+  unknown: "확인 불가"
+} satisfies Record<WorkStatusResult["status"], string>;
+
 /** 오늘 근무와 월 근무 요약을 표시합니다. @see wiki/unit/popup/renderWorkSummary.md */
-export function renderWorkSummary(summary: PopupWorkSummary, source: "synthetic" | "live"): HTMLElement {
+export function renderWorkSummary(summary: PopupWorkSummary, source: "synthetic" | "live", workStatus: WorkStatusResult["status"]): HTMLElement {
   const panel = document.createElement("section");
   panel.className = "work";
   const today = document.createElement("section");
   today.className = "work-today";
-  today.append(textElement("h2", "오늘 실제 근무"), textElement("strong", formatWorkMinutes(summary.todayActualMinutes)));
+  const heading = document.createElement("div");
+  heading.className = "work-today-heading";
+  const status = textElement("span", workStatusLabels[workStatus], "signal work-status");
+  status.dataset.state = workStatus;
+  heading.append(textElement("h2", "오늘 실제 근무"), status);
+  today.append(heading, textElement("strong", formatWorkMinutes(summary.todayActualMinutes)));
   if (source === "synthetic") today.append(textElement("p", "예시 근무 데이터", "metadata"));
 
   const month = document.createElement("section");

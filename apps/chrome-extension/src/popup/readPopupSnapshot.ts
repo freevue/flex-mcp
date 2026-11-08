@@ -1,4 +1,4 @@
-import { hasKeys, isRecord, isWorkSummary } from "../../../../shared/index.ts";
+import { hasKeys, isRecord, isWorkStatusResult, isWorkSummary } from "../../../../shared/index.ts";
 import type { PopupSnapshot } from "./types.ts";
 
 function isApprovalCode(value: unknown): value is string | null {
@@ -24,11 +24,16 @@ export function readPopupSnapshot(value: unknown): PopupSnapshot | null {
   }
   if (
     value.kind === "connected" &&
-    hasKeys(value, ["kind", "flex", "summary", "approvalCode", "inviteFailed"]) &&
+    hasKeys(value, ["kind", "flex", "summary", "workStatus", "approvalCode", "inviteFailed"]) &&
     isApprovalCode(value.approvalCode) &&
     typeof value.inviteFailed === "boolean"
   ) {
-    const invitation = { approvalCode: value.approvalCode, inviteFailed: value.inviteFailed };
+    const status = { status: value.workStatus };
+    const invitation = {
+      approvalCode: value.approvalCode,
+      inviteFailed: value.inviteFailed,
+      workStatus: isWorkStatusResult(status) ? status.status : ("unknown" as const)
+    };
     if (value.flex === "unavailable" && value.summary === null && value.approvalCode === null) {
       return { kind: "connected", flex: value.flex, summary: null, ...invitation };
     }

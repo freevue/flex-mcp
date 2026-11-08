@@ -42,7 +42,8 @@ export function isQuery(value: unknown): value is FlexQuery {
 }
 
 export function isBridgeQuery(value: unknown): value is BridgeQuery {
-  return isQuery(value) || (isRecord(value) && value.kind === "summary" && hasKeys(value, ["kind"]));
+  if (isRecord(value) && value.kind === "companyHolidays") return hasKeys(value, ["kind", "range"]) && isDateRange(value.range);
+  return isQuery(value) || (isRecord(value) && (value.kind === "summary" || value.kind === "workStatus") && hasKeys(value, ["kind"]));
 }
 
 export function isWorkSummary(value: unknown): value is WorkSummaryResult {

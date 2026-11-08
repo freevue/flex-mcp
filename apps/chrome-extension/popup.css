@@ -195,6 +195,27 @@ button:disabled {
   border-radius: 10px;
   background: var(--approval-tint);
 }
+.work-today-heading {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 2px 8px;
+}
+.work-status {
+  margin-inline-start: auto;
+  color: var(--quiet);
+  font-size: 0.85rem;
+}
+.work-status[data-state="working"] {
+  color: var(--success);
+}
+.work-status[data-state="on_break"] {
+  color: var(--warning);
+}
+.work-status[data-state="unknown"] {
+  color: var(--danger);
+}
 .work-today h2 {
   color: var(--muted);
   font-size: 0.9rem;

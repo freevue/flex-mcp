@@ -6,6 +6,7 @@ import { CallToolResultSchema } from "@modelcontextprotocol/sdk/types.js";
 import { WebSocket } from "ws";
 import { isRecord } from "../../../shared/index.ts";
 import { createSyntheticReply, parseBridgeRequest } from "../../chrome-extension/src/bridge/index.ts";
+import { checkPairedHolidays, checkPairedWorkStatus, checkSummaryResponse } from "./checkWorkToolResults.ts";
 
 export async function checkPairedChannels(origin: string): Promise<void> {
   const extension = "chrome-extension://aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
@@ -61,6 +62,10 @@ export async function checkPairedChannels(origin: string): Promise<void> {
     socket.on("message", async (data) => {
       const parsed = parseBridgeRequest(JSON.parse(String(data)) as unknown);
       if (!parsed.ok) return;
+      if (reportsFlexSource && parsed.value.query.kind === "workStatus") {
+        socket.send(JSON.stringify({ requestId: parsed.value.requestId, result: { status: "working", details: "extra" }, source: "flex" }));
+        return;
+      }
       const reply = await createSyntheticReply(parsed.value, bindingId, AbortSignal.timeout(3_000));
       socket.send(JSON.stringify(reportsFlexSource && "result" in reply ? { ...reply, source: "flex" } : reply));
     });
@@ -74,9 +79,11 @@ export async function checkPairedChannels(origin: string): Promise<void> {
     assert.deepEqual(tools.map((tool) => tool.name).sort(), [
       "flex_approve_connection",
       "flex_get_annual_leave",
+      "flex_get_company_holidays",
       "flex_get_schedule",
       "flex_get_socket_status",
       "flex_get_work_hours",
+      "flex_get_work_status",
       "flex_get_work_summary"
     ]);
     assert.equal((await client.callTool({ name: "flex_get_socket_status" })).isError, true);
@@ -87,6 +94,8 @@ export async function checkPairedChannels(origin: string): Promise<void> {
     const first = await pair();
     const second = await pair(true);
     assert.notEqual(first.bindingId, second.bindingId);
+    await checkPairedHolidays(client, first.connectionKey);
+    await checkPairedWorkStatus(client, first.connectionKey, second.connectionKey);
     assert.equal(
       (await client.callTool({ name: "flex_get_socket_status", arguments: { connectionKey: first.connectionKey, bindingId: second.bindingId } })).isError,
       true
@@ -100,18 +109,7 @@ export async function checkPairedChannels(origin: string): Promise<void> {
       assert.equal(result.synthetic, channel.reportsFlexSource ? undefined : true);
       assert.equal(Object.hasOwn(result, "source"), false);
       assert.ok(JSON.stringify(result).includes(channel.bindingId.slice(0, 8)));
-      const response = await summary(channel.connectionKey);
-      const month = response.structuredContent;
-      assert.ok(isRecord(month));
-      assert.equal(month.synthetic, channel.reportsFlexSource ? undefined : true);
-      assert.equal(typeof month.monthRecognizedMinutes, "number");
-      assert.equal(typeof month.monthAnnualLeaveScheduledRecognizedMinutes, "number");
-      assert.deepEqual(response.content[0], { type: "text", text: JSON.stringify(month) }, "FT-MCP-WORK-DISPLAY-01");
-      assert.equal(response.content.length, 2, "FT-MCP-WORK-DISPLAY-01");
-      const markdown = response.content[1];
-      assert.ok(markdown?.type === "text" && typeof markdown.text === "string");
-      assert.match(markdown.text, /^### 오늘 실제 근무\n5시간 20분/m);
-      assert.equal(markdown.text.startsWith("예시 근무 데이터\n\n"), !channel.reportsFlexSource, "FT-MCP-WORK-DISPLAY-02");
+      checkSummaryResponse(await summary(channel.connectionKey), channel.reportsFlexSource);
     }
     assert.equal((await post("/bridge/pair/invite", first.connectionKey)).status, 401);
     await additionalClient.connect(new StreamableHTTPClientTransport(new URL("/mcp", origin)));

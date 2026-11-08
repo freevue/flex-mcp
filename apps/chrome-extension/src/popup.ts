@@ -40,7 +40,7 @@ function setSnapshot(next: PopupSnapshot): void {
   title.className = "visually-hidden";
   view.replaceChildren(title, renderConnectionRows(next.flex));
   if (next.flex !== "unavailable") {
-    view.append(renderWorkSummary(next.summary, next.flex));
+    view.append(renderWorkSummary(next.summary, next.flex, next.workStatus));
   } else {
     const description = document.createElement("p");
     description.textContent = "등록한 계정의 Flex 탭을 연 뒤 다시 확인하세요.";

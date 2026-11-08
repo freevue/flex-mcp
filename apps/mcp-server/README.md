@@ -8,14 +8,16 @@ MCP 초기화 응답의 서버 버전은 이 패키지의 `package.json` 버전�
 
 ## 도구
 
-| 도구                                                                         | 입력과 동작                                                                                                 |
-| ---------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
-| [`flex_get_annual_leave`](../../docs/mcp/tools/flex-get-annual-leave.md)     | 연결 키에 해당하는 채널의 연차 잔여량과 사용 가능량을 읽습니다.                                             |
-| [`flex_get_schedule`](../../docs/mcp/tools/flex-get-schedule.md)             | 날짜 두 개를 선택할 수 있습니다. 기본값은 한국 시간 오늘부터 7일입니다.                                     |
-| [`flex_get_work_hours`](../../docs/mcp/tools/flex-get-work-hours.md)         | 날짜 두 개를 선택할 수 있습니다. 기본값은 이번 달 1일부터 오늘까지입니다.                                   |
-| [`flex_get_socket_status`](../../docs/mcp/tools/flex-get-socket-status.md)   | 연결 키에 해당하는 Chrome 등록과 소켓만 확인합니다.                                                         |
-| [`flex_approve_connection`](../../docs/mcp/tools/flex-approve-connection.md) | 팝업의 `approvalCode`를 받아 연결 키를 반환합니다.                                                          |
-| [`flex_get_work_summary`](../../docs/mcp/tools/flex-get-work-summary.md)     | 원격 연결 키로 이번 달 근무·연차 상세와 놀수 전후 남은 시간을 읽습니다. 본인 PC MCP는 인자 없이 호출합니다. |
+| 도구                                                                             | 입력과 동작                                                                                                 |
+| -------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| [`flex_get_annual_leave`](../../docs/mcp/tools/flex-get-annual-leave.md)         | 연결 키에 해당하는 채널의 연차 잔여량과 사용 가능량을 읽습니다.                                             |
+| [`flex_get_schedule`](../../docs/mcp/tools/flex-get-schedule.md)                 | 날짜 두 개를 선택할 수 있습니다. 기본값은 한국 시간 오늘부터 7일입니다.                                     |
+| [`flex_get_work_hours`](../../docs/mcp/tools/flex-get-work-hours.md)             | 날짜 두 개를 선택할 수 있습니다. 기본값은 이번 달 1일부터 오늘까지입니다.                                   |
+| [`flex_get_socket_status`](../../docs/mcp/tools/flex-get-socket-status.md)       | 연결 키에 해당하는 Chrome 등록과 소켓만 확인합니다.                                                         |
+| [`flex_approve_connection`](../../docs/mcp/tools/flex-approve-connection.md)     | 팝업의 `approvalCode`를 받아 연결 키를 반환합니다.                                                          |
+| [`flex_get_company_holidays`](../../docs/mcp/tools/flex-get-company-holidays.md) | 기간별 회사 휴일을 조회합니다. 현재 합성 연결에서 검증할 수 있습니다.                                       |
+| [`flex_get_work_status`](../../docs/mcp/tools/flex-get-work-status.md)           | 승인한 원격 연결에서 본인의 현재 기록 상태를 읽습니다.                                                      |
+| [`flex_get_work_summary`](../../docs/mcp/tools/flex-get-work-summary.md)         | 원격 연결 키로 이번 달 근무·연차 상세와 놀수 전후 남은 시간을 읽습니다. 본인 PC MCP는 인자 없이 호출합니다. |
 
 원격 조회와 소켓 상태 도구에는 승인에서 받은 `connectionKey`를 넣습니다. 기간을 직접 지정할 때는 `from`과 `to`를 함께 보냅니다. 두 날짜를 포함해 최대 31일입니다. 날짜는 한국 시간(`Asia/Seoul`)입니다. 각 도구의 문서에서 필드, 오류와 테스트 케이스를 확인합니다.
 

@@ -25,3 +25,16 @@ type: log
 
 - [갈피 근무 대시보드](feature/galpi-work-dashboard.md)의 남은 시간 순서를 0.8.5 화면에 맞췄습니다.
 - 팝업의 놀수 반영은 왼쪽, 미반영은 오른쪽입니다. MCP Markdown의 순서는 유지합니다.
+
+## [2026-11-08] spec | #26 | 본인 근무 상태
+
+- [본인 근무 상태](feature/flex-work-status.md)와 응답 타입, 등록 및 읽기 유닛을 추가합니다.
+- [갈피 근무 대시보드](feature/galpi-work-dashboard.md)와 [팝업 표시 유닛](unit/popup/renderWorkSummary.md)에 시안과 상태별 TC를 반영합니다.
+
+## [2026-11-08] spec | #25 | 내 회사 휴일
+
+- [내 회사 휴일](feature/flex-company-holidays.md)의 조회 범위와 응답 검사를 추가합니다.
+
+## [2026-11-08] spec | #25 | 갈피와 MCP 0.9.0 릴리스
+
+- [공통 릴리스 정책](policy/mcp-release.md)에 0.9.0을 기록합니다.

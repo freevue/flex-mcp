@@ -100,6 +100,9 @@ test("FT-GALPI-DASHBOARD-01~03: Chromium에서 승인, 근무 비교, 연결 상
   assert.ok(isRecord(details) && details.synthetic === true && details.todayActualMinutes === 320);
   assert.equal(details.monthAnnualLeaveScheduledRecognizedMinutes, 0);
   assert.equal(await popup.locator(".work-today strong").textContent(), "5시간 20분");
+  const workStatus = await client.callTool({ name: "flex_get_work_status", arguments: connection });
+  assert.deepEqual(workStatus.structuredContent, { status: "working", synthetic: true }, "FT-FLEX-WORK-STATUS-01");
+  assert.equal(await popup.locator(".work-status").textContent(), "근무 중", "FT-FLEX-WORK-STATUS-01");
   const codeButton = popup.getByRole("button", { name: "코드 확인" });
   await codeButton.focus();
   await popup.keyboard.press("Enter");

@@ -2,7 +2,7 @@
 name: renderWorkSummary
 type: unit
 module: popup
-issues: [22]
+issues: [22, 26]
 code: [apps/chrome-extension/src/popup/components.ts]
 ---
 
@@ -14,13 +14,14 @@ code: [apps/chrome-extension/src/popup/components.ts]
 
 <!-- prettier-ignore -->
 ```typescript
-export function renderWorkSummary(summary: PopupWorkSummary, source: "synthetic" | "live"): HTMLElement
+export function renderWorkSummary(summary: PopupWorkSummary, source: "synthetic" | "live", workStatus: WorkStatusResult["status"]): HTMLElement
 ```
 
-| 매개변수 | 타입                    | 기본값 | 의미                                                                                                   |
-| -------- | ----------------------- | ------ | ------------------------------------------------------------------------------------------------------ |
-| summary  | `PopupWorkSummary`      | 없음   | 확장에서 검사한 근무 요약입니다. 시간은 분 단위이며, 계산에 필요한 정보가 없으면 비교 값은 null입니다. |
-| source   | `"synthetic" \| "live"` | 없음   | 예시 데이터 또는 실제 Flex 자료를 구분합니다.                                                          |
+| 매개변수   | 타입                         | 기본값 | 의미                                                                                                   |
+| ---------- | ---------------------------- | ------ | ------------------------------------------------------------------------------------------------------ |
+| summary    | `PopupWorkSummary`           | 없음   | 확장에서 검사한 근무 요약입니다. 시간은 분 단위이며, 계산에 필요한 정보가 없으면 비교 값은 null입니다. |
+| source     | `"synthetic" \| "live"`      | 없음   | 예시 데이터 또는 실제 Flex 자료를 구분합니다.                                                          |
+| workStatus | `WorkStatusResult["status"]` | 없음   | 근무 중, 휴게 중, 기록 중 아님 또는 확인 불가의 상태 값입니다.                                         |
 
 | 반환        | 의미                                               |
 | ----------- | -------------------------------------------------- |
@@ -28,7 +29,7 @@ export function renderWorkSummary(summary: PopupWorkSummary, source: "synthetic"
 
 ## 내부 로직
 
-1. 오늘 실제 근무와 시간 값을 만듭니다. 합성 모드에만 예시 근무 데이터 문구를 추가합니다.
+1. 오늘 실제 근무와 시간 값을 만듭니다. 제목 오른쪽에 작은 점과 상태 문구를 표시합니다. working은 근무 중, on_break는 휴게 중, idle은 기록 중 아님, unknown은 확인 불가입니다. 합성 모드에만 예시 근무 데이터 문구를 추가합니다.
 2. 이번 달 인정 근무에서 연차 포함, 연차 미포함 순으로 표시합니다. 포함에만 예정 연차 인정분을 더합니다. 예정 연차 인정분이 없으면 포함 값은 null입니다.
 3. 이번 달 남은 시간은 왼쪽에 놀수 반영 예상값, 오른쪽에 놀수 미반영 예상값을 표시합니다.
 4. 각 시간은 `formatWorkMinutes`로 표시합니다. 세 영역을 같은 순서로 묶어 반환합니다.
@@ -36,7 +37,7 @@ export function renderWorkSummary(summary: PopupWorkSummary, source: "synthetic"
 ## 사용법
 
 ```typescript
-const panel = renderWorkSummary(summary, "synthetic");
+const panel = renderWorkSummary(summary, "synthetic", "working");
 ```
 
 ## 사용처
@@ -51,3 +52,4 @@ const panel = renderWorkSummary(summary, "synthetic");
 | ----------------------- | ------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
 | UT-renderWorkSummary-01 | 오늘 320분, 월 인정 5,400분, 예정 인정 360분, 예상 남은 시간 3,840분과 2,880분입니다. | 오늘 5시간 20분, 월 96시간과 90시간, 남은 시간은 왼쪽 48시간과 오른쪽 64시간입니다. |
 | UT-renderWorkSummary-02 | 예정 연차 인정분과 두 예상 남은 시간이 `null`입니다.                                  | 연차 포함과 남은 시간은 계산 정보 없음입니다. 연차 미포함은 월 인정 누적입니다.     |
+| UT-renderWorkSummary-03 | working, on_break, idle, unknown을 순서대로 렌더링합니다.                             | 제목 옆 상태 문구가 입력과 일치합니다. 확인 불가에서도 시간 값이 표시됩니다.        |
