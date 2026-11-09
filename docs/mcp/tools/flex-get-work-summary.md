@@ -15,7 +15,8 @@
 | `month`                                                                  | `string`                                           | 본인 PC MCP에서만 제공합니다. 한국 시간의 `YYYY-MM`입니다.                                      |
 | `nolsuDates`                                                             | `string[] \| null`                                 | 본인 PC MCP에서만 제공합니다. 월 설정이 없으면 `null`입니다.                                    |
 | `nolsuTargetMinutes`                                                     | `number \| null`                                   | 본인 PC MCP에서만 제공합니다. 월 목표에 포함된 놀수 시간의 합입니다.                            |
-| `todayActualMinutes`, `monthActualMinutes`                               | `number`                                           | 오늘 실제 근무와 이번 달 1일부터 오늘까지의 실제 근무입니다.                                    |
+| `todayActualMinutes`                                                     | `number \| null`                                   | 팝업과 같은 오늘 실제 근무입니다. 진행 시간을 확인할 수 없으면 `null`입니다.                    |
+| `monthActualMinutes`                                                     | `number`                                           | 이번 달 1일부터 오늘까지 Flex가 집계한 실제 근무입니다.                                         |
 | `monthRecognizedMinutes`                                                 | `number`                                           | 이번 달 1일부터 오늘까지 Flex가 인정한 전체 시간입니다.                                         |
 | `monthRecognizedWithoutAnnualLeaveMinutes`                               | `number \| null`                                   | 인정 누적에서 연차 인정분만 뺀 시간입니다.                                                      |
 | `monthAnnualLeaveUsedMinutes`                                            | `number \| null`                                   | 이번 달 1일부터 오늘까지 사용한 연차입니다.                                                     |

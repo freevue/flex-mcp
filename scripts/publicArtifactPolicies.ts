@@ -65,6 +65,7 @@ const extension = [
   "bridge/syntheticReply",
   "flex/demoWorkSummary",
   "flex/workSummary",
+  "flex/resolveTodayActualMinutes",
   "flex/index",
   "flex/parseAnnualLeave",
   "flex/readAnnualLeave",

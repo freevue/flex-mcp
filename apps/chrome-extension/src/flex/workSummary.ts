@@ -22,7 +22,7 @@ export function getWorkSummaryRanges(now: Date) {
 }
 
 export type WorkSummaryInput = {
-  todayActualMinutes: number;
+  todayActualMinutes: number | null;
   monthActualMinutes: number;
   monthRecognizedMinutes: number;
   monthAnnualLeaveUsedMinutes: number | null;
