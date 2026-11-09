@@ -37,6 +37,8 @@ type: index
 | [formatWorkMinutes](unit/popup/formatWorkMinutes.md)               | 분 단위의 근무 시간을 화면 문구로 바꿉니다.           |
 | [formatWorkSummaryMarkdown](unit/mcp/formatWorkSummaryMarkdown.md) | 검증한 근무 수치로 Markdown을 만듭니다.               |
 
+| [resolveTodayActualMinutes](unit/flex/resolveTodayActualMinutes.md) | 오늘 실제 근무에 진행 시간을 더합니다. |
+| [countRemainingWorkdays](unit/flex/countRemainingWorkdays.md) | 놀수를 뺀 남은 근무일을 셉니다. |
 | [disconnectMcpConnection](unit/mcp/disconnectMcpConnection.md) | MCP 키와 마지막 Chrome 등록을 해제합니다. |
 | [registerPairedReadTools](unit/mcp/registerPairedReadTools.md) | 연결 키가 필요한 근무 읽기 도구를 등록합니다. |
 | [readLiveReply](unit/bridge/readLiveReply.md) | 승인된 Flex 조회 결과를 응답으로 바꿉니다. |
@@ -47,6 +49,7 @@ type: index
 
 | 페이지                                                        | 설명                                         |
 | ------------------------------------------------------------- | -------------------------------------------- |
+| [ActiveWorkSnapshot](type/flex/ActiveWorkSnapshot.md)         | 오늘의 진행 기록과 휴게 시각입니다.          |
 | [CompanyHolidaysResult](type/shared/CompanyHolidaysResult.md) | 기간과 본인 휴일의 목록입니다.               |
 | [FlexReader](type/bridge/FlexReader.md)                       | 승인된 Chrome 프로필의 Flex 읽기 계약입니다. |
 | [WorkStatusResult](type/shared/WorkStatusResult.md)           | 근무 기록의 현재 상태입니다.                 |

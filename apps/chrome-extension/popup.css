@@ -195,12 +195,22 @@ button:disabled {
   border-radius: 10px;
   background: var(--approval-tint);
 }
-.work-today-heading {
+.work-today-heading,
+.work-today-value,
+.work-remaining-heading {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
   gap: 2px 8px;
+}
+.work-today-value {
+  align-items: baseline;
+}
+.work-recommended,
+.work-remaining-days {
+  margin-inline-start: auto;
+  font-variant-numeric: tabular-nums;
 }
 .work-status {
   margin-inline-start: auto;

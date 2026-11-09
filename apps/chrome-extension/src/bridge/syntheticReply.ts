@@ -18,7 +18,9 @@ export async function createSyntheticReply(request: BridgeRequest, bindingId: st
   if (query.kind === "workStatus") return { requestId, result: demoWorkStatus };
   if (query.kind === "summary") {
     const summary = await readDemoWorkSummary(bindingId, signal);
-    return summary ? { requestId, result: summary } : { requestId, error: "FLEX_READ_FAILED" };
+    if (!summary) return { requestId, error: "FLEX_READ_FAILED" };
+    const { planning, ...result } = summary;
+    return { requestId, result };
   }
   if (query.kind === "leave") {
     const balance = { days: 1, totalMinutes: 480, breakdown: { days: 1, hours: 0, minutes: 0 } };

@@ -1,5 +1,10 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
+import { Client } from "@modelcontextprotocol/sdk/client/index.js";
+import { InMemoryTransport } from "@modelcontextprotocol/sdk/inMemory.js";
+import { success } from "../../../shared/index.ts";
+import { parseBridgeReply } from "../src/bridge/parseBridgeReply.ts";
+import { createMcpServer } from "../src/createMcpServer.ts";
 import type { WorkSummaryResult } from "../../../shared/index.ts";
 import { formatWorkSummaryMarkdown } from "../src/formatWorkSummaryMarkdown.ts";
 
@@ -64,4 +69,36 @@ test("UT-formatWorkSummaryMarkdown-04: 안전한 정수 범위를 넘은 합계�
   const markdown = formatWorkSummaryMarkdown({ ...summary, monthRecognizedMinutes: Number.MAX_SAFE_INTEGER });
   assert.ok(markdown);
   assert.match(markdown, /- 연차 포함: 계산 정보 없음/);
+});
+
+test("FT-MCP-ACTIVE-WORK-01: 다시 조회한 오늘 근무 분과 확인 불가를 JSON과 Markdown에서 구분한다", async (context) => {
+  let todayActualMinutes: number | null = 10;
+  const server = createMcpServer({
+    channelPairing: true,
+    query: async (query) => {
+      const parsed = parseBridgeReply({ requestId: "active-work-example", result: { ...summary, todayActualMinutes } }, query);
+      assert.ok(parsed.ok && "result" in parsed.value);
+      return success(parsed.value.result);
+    }
+  });
+  const client = new Client({ name: "active-work-fixture", version: "1" });
+  const [clientTransport, serverTransport] = InMemoryTransport.createLinkedPair();
+  context.after(async () => {
+    await client.close();
+    await server.close();
+  });
+  await server.connect(serverTransport);
+  await client.connect(clientTransport);
+  for (const [minutes, label] of [
+    [10, "0시간 10분"],
+    [11, "0시간 11분"],
+    [null, "계산 정보 없음"]
+  ] as const) {
+    todayActualMinutes = minutes;
+    const response = await client.callTool({ name: "flex_get_work_summary", arguments: { connectionKey: "a".repeat(43) } });
+    assert.equal(response.isError, undefined);
+    assert.deepEqual(response.structuredContent, { ...summary, todayActualMinutes: minutes });
+    const markdown = (response.content as { type: string; text?: string }[])[1];
+    assert.equal(markdown.text?.split("\n")[1], label);
+  }
 });

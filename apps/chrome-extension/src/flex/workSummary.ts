@@ -22,7 +22,7 @@ export function getWorkSummaryRanges(now: Date) {
 }
 
 export type WorkSummaryInput = {
-  todayActualMinutes: number;
+  todayActualMinutes: number | null;
   monthActualMinutes: number;
   monthRecognizedMinutes: number;
   monthAnnualLeaveUsedMinutes: number | null;
@@ -31,14 +31,19 @@ export type WorkSummaryInput = {
   monthAnnualLeaveScheduledRecognizedMinutes: number | null;
   monthRequiredMinutes: number | null;
   restTargetMinutes: number | null;
+  activeWorkMinutes?: number | null;
+  remainingWorkdays?: number | null;
 };
 
-export type PopupWorkSummary = WorkSummaryResult;
+export type PopupWorkSummary = WorkSummaryResult & {
+  planning: { remainingWorkdays: number; recommendedDailyMinutes: number | null } | null;
+};
 
 export function calculateWorkSummary(input: WorkSummaryInput): PopupWorkSummary {
-  const { monthRequiredMinutes, restTargetMinutes, ...totals } = input;
-  const { monthRecognizedMinutes, monthAnnualLeaveRecognizedMinutes: annualLeaveCredit } = totals;
-  const verifiedCredit = annualLeaveCredit !== null && annualLeaveCredit <= monthRecognizedMinutes ? annualLeaveCredit : null;
+  const { monthRequiredMinutes, restTargetMinutes, activeWorkMinutes = 0, remainingWorkdays = null, ...totals } = input;
+  const { monthAnnualLeaveRecognizedMinutes: annualLeaveCredit } = totals;
+  const monthRecognizedMinutes = totals.monthRecognizedMinutes + (activeWorkMinutes ?? 0);
+  const verifiedCredit = annualLeaveCredit !== null && annualLeaveCredit <= totals.monthRecognizedMinutes ? annualLeaveCredit : null;
   const standardRemainingMinutes = monthRequiredMinutes === null ? null : Math.max(0, monthRequiredMinutes - monthRecognizedMinutes);
   const adjustedRemainingMinutes =
     monthRequiredMinutes === null || restTargetMinutes === null
@@ -51,15 +56,26 @@ export function calculateWorkSummary(input: WorkSummaryInput): PopupWorkSummary 
       : null;
   const afterScheduledLeave = (remaining: number | null) =>
     remaining === null || verifiedScheduledCredit === null ? null : Math.max(0, remaining - verifiedScheduledCredit);
+  const projectedAdjustedRemainingMinutes = afterScheduledLeave(adjustedRemainingMinutes);
+  const recommendedDailyMinutes =
+    activeWorkMinutes === null || projectedAdjustedRemainingMinutes === null || remainingWorkdays === null
+      ? null
+      : projectedAdjustedRemainingMinutes === 0
+        ? 0
+        : remainingWorkdays > 0
+          ? Math.ceil(projectedAdjustedRemainingMinutes / remainingWorkdays)
+          : null;
   return {
     ...totals,
+    monthRecognizedMinutes,
     monthAnnualLeaveRecognizedMinutes: verifiedCredit,
     monthAnnualLeaveScheduledRecognizedMinutes: verifiedScheduledCredit,
     monthRecognizedWithoutAnnualLeaveMinutes: verifiedCredit === null ? null : monthRecognizedMinutes - verifiedCredit,
     standardRemainingMinutes,
     adjustedRemainingMinutes,
     projectedStandardRemainingMinutes: afterScheduledLeave(standardRemainingMinutes),
-    projectedAdjustedRemainingMinutes: afterScheduledLeave(adjustedRemainingMinutes)
+    projectedAdjustedRemainingMinutes,
+    planning: remainingWorkdays === null ? null : { remainingWorkdays, recommendedDailyMinutes }
   };
 }
 

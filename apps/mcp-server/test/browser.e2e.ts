@@ -98,6 +98,7 @@ test("FT-GALPI-DASHBOARD-01~03: Chromium에서 승인, 근무 비교, 연결 상
   assert.equal(summary.isError, undefined);
   const details = summary.structuredContent;
   assert.ok(isRecord(details) && details.synthetic === true && details.todayActualMinutes === 320);
+  assert.equal(Object.hasOwn(details, "planning"), false);
   assert.equal(details.monthAnnualLeaveScheduledRecognizedMinutes, 0);
   assert.equal(await popup.locator(".work-today strong").textContent(), "5시간 20분");
   const workStatus = await client.callTool({ name: "flex_get_work_status", arguments: connection });

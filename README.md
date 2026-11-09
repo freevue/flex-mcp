@@ -6,11 +6,11 @@
 
 <p align="center">Flex의 연차, 일정, 근무 시간을 Chrome과 MCP에서 확인합니다.</p>
 
-<p align="center">갈피 · MCP 소스 버전: 0.9.1</p>
+<p align="center">갈피 · MCP 소스 버전: 0.9.2</p>
 
 <p align="center">
-  <a href="https://github.com/freevue/flex-mcp/releases/download/0.9.1/galpi.0.9.1.zip"><strong>갈피 0.9.1 ZIP 다운로드</strong></a>
-  · <a href="https://github.com/freevue/flex-mcp/releases/tag/0.9.1">0.9.1 릴리스</a>
+  <a href="https://github.com/freevue/flex-mcp/releases/download/0.9.2/galpi.0.9.2.zip"><strong>갈피 0.9.2 ZIP 다운로드</strong></a>
+  · <a href="https://github.com/freevue/flex-mcp/releases/tag/0.9.2">0.9.2 릴리스</a>
   · <a href="https://github.com/freevue/flex-mcp/releases/latest">최신 공개 릴리스</a>
 </p>
 

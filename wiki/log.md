@@ -50,3 +50,13 @@ type: log
 ## [2026-11-08] spec | #33 | 갈피와 MCP 0.9.1 핫픽스
 
 - [공통 릴리스 정책](policy/mcp-release.md)에 0.9.1을 기록합니다.
+
+## [2026-11-09] spec | #39 | 진행 중인 오늘 근무 시간
+
+- [갈피 근무 대시보드](feature/galpi-work-dashboard.md)와 [MCP 근무 요약](feature/mcp-work-summary-display.md)에 진행 시간과 확인 불가를 반영합니다.
+- [계산 유닛](unit/flex/resolveTodayActualMinutes.md)과 [진행 기록 타입](type/flex/ActiveWorkSnapshot.md)을 추가합니다.
+
+## [2026-11-09] spec | #41 | 갈피 월 근무 실시간 반영과 0.9.2
+
+- [근무 대시보드](feature/galpi-work-dashboard.md)에 월 인정과 남은 시간의 진행분 반영, 근무일수와 하루 권장 시간을 기록합니다.
+- [공통 릴리스 정책](policy/mcp-release.md)의 버전을 0.9.2로 올립니다.

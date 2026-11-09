@@ -96,7 +96,14 @@ export function renderWorkSummary(summary: PopupWorkSummary, source: "synthetic"
   const status = textElement("span", workStatusLabels[workStatus], "signal work-status");
   status.dataset.state = workStatus;
   heading.append(textElement("h2", "오늘 실제 근무"), status);
-  today.append(heading, textElement("strong", formatWorkMinutes(summary.todayActualMinutes)));
+  const todayValue = document.createElement("div");
+  todayValue.className = "work-today-value";
+  const recommended = summary.planning?.recommendedDailyMinutes;
+  todayValue.append(
+    textElement("strong", formatWorkMinutes(summary.todayActualMinutes)),
+    textElement("span", `하루 권장 ${recommended == null ? "확인 불가" : formatWorkMinutes(recommended)}`, "metadata work-recommended")
+  );
+  today.append(heading, todayValue);
   if (source === "synthetic") today.append(textElement("p", "예시 근무 데이터", "metadata"));
 
   const month = document.createElement("section");
@@ -112,8 +119,14 @@ export function renderWorkSummary(summary: PopupWorkSummary, source: "synthetic"
 
   const remaining = document.createElement("section");
   remaining.className = "work-remaining";
-  remaining.append(
+  const remainingHeading = document.createElement("div");
+  remainingHeading.className = "work-remaining-heading";
+  remainingHeading.append(
     textElement("h2", "이번 달 남은 시간"),
+    textElement("span", `남은 근무일 ${summary.planning ? `${summary.planning.remainingWorkdays}일` : "확인 불가"}`, "metadata work-remaining-days")
+  );
+  remaining.append(
+    remainingHeading,
     renderMinutePairs([
       { label: "놀수 반영", minutes: summary.projectedAdjustedRemainingMinutes },
       { label: "놀수 미반영", minutes: summary.projectedStandardRemainingMinutes }

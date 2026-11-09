@@ -36,8 +36,9 @@ export const workFields = ["actualMinutes", "recognizedMinutes", "requiredAgreed
 export type WorkTotals = Record<(typeof workFields)[number], number>;
 export type WorkHoursResult = RangedResult & WorkTotals;
 export type FlexResult = AnnualLeaveResult | ScheduleResult | WorkHoursResult;
-export const workSummaryRequiredFields = ["todayActualMinutes", "monthActualMinutes", "monthRecognizedMinutes"] as const;
+export const workSummaryRequiredFields = ["monthActualMinutes", "monthRecognizedMinutes"] as const;
 export const workSummaryNullableFields = [
+  "todayActualMinutes",
   "monthAnnualLeaveUsedMinutes",
   "monthAnnualLeaveRecognizedMinutes",
   "monthAnnualLeaveScheduledMinutes",

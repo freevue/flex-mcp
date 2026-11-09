@@ -15,8 +15,9 @@
 | `month`                                                                  | `string`                                           | 본인 PC MCP에서만 제공합니다. 한국 시간의 `YYYY-MM`입니다.                                      |
 | `nolsuDates`                                                             | `string[] \| null`                                 | 본인 PC MCP에서만 제공합니다. 월 설정이 없으면 `null`입니다.                                    |
 | `nolsuTargetMinutes`                                                     | `number \| null`                                   | 본인 PC MCP에서만 제공합니다. 월 목표에 포함된 놀수 시간의 합입니다.                            |
-| `todayActualMinutes`, `monthActualMinutes`                               | `number`                                           | 오늘 실제 근무와 이번 달 1일부터 오늘까지의 실제 근무입니다.                                    |
-| `monthRecognizedMinutes`                                                 | `number`                                           | 이번 달 1일부터 오늘까지 Flex가 인정한 전체 시간입니다.                                         |
+| `todayActualMinutes`                                                     | `number \| null`                                   | 팝업과 같은 오늘 실제 근무입니다. 진행 시간을 확인할 수 없으면 `null`입니다.                    |
+| `monthActualMinutes`                                                     | `number`                                           | 이번 달 1일부터 오늘까지 Flex가 집계한 실제 근무입니다.                                         |
+| `monthRecognizedMinutes`                                                 | `number`                                           | Flex 확정 인정 시간입니다. 원격에서는 확인한 오늘 진행 근무를 더합니다.                         |
 | `monthRecognizedWithoutAnnualLeaveMinutes`                               | `number \| null`                                   | 인정 누적에서 연차 인정분만 뺀 시간입니다.                                                      |
 | `monthAnnualLeaveUsedMinutes`                                            | `number \| null`                                   | 이번 달 1일부터 오늘까지 사용한 연차입니다.                                                     |
 | `monthAnnualLeaveRecognizedMinutes`                                      | `number \| null`                                   | 사용 연차 중 인정 합계에 포함된 시간입니다.                                                     |
@@ -27,6 +28,8 @@
 | `adjustmentStatus`                                                       | `"not_configured" \| "unverified" \| "calculated"` | 본인 PC MCP에서만 제공합니다. 월 설정, 차감 근거와 계산 상태를 구분합니다.                      |
 
 합성 확장의 원격 결과에는 `synthetic: true`가 붙습니다. 원격 호출은 기존 등록과 소켓을 확인한 뒤 브라우저에 요약만 요청합니다. 요청 한도는 20초입니다. 조회 원본과 로그인 정보는 전송하지 않습니다.
+
+원격 요약의 남은 시간은 팝업과 같이 현재 진행 근무를 반영합니다. 진행 기록을 확인할 수 없으면 월 값은 확정 집계를 사용합니다. 남은 근무일수와 하루 권장 시간은 팝업에만 표시합니다.
 
 ## 화면 표시용 Markdown
 
