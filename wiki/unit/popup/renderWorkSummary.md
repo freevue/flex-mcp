@@ -2,7 +2,7 @@
 name: renderWorkSummary
 type: unit
 module: popup
-issues: [22, 26]
+issues: [22, 26, 41]
 code: [apps/chrome-extension/src/popup/components.ts]
 ---
 
@@ -29,9 +29,9 @@ export function renderWorkSummary(summary: PopupWorkSummary, source: "synthetic"
 
 ## 내부 로직
 
-1. 오늘 실제 근무와 시간 값을 만듭니다. 제목 오른쪽에 작은 점과 상태 문구를 표시합니다. working은 근무 중, on_break는 휴게 중, idle은 기록 중 아님, unknown은 확인 불가입니다. 합성 모드에만 예시 근무 데이터 문구를 추가합니다.
+1. 오늘 실제 근무와 시간 값을 만듭니다. 제목 오른쪽에 작은 점과 상태 문구를 표시합니다. working은 근무 중, on_break는 휴게 중, idle은 기록 중 아님, unknown은 확인 불가입니다. 오늘 시간 오른쪽에 `planning.recommendedDailyMinutes`를 작게 표시합니다. 값이 없으면 하루 권장 확인 불가라고 표시합니다. 합성 모드에만 예시 근무 데이터 문구를 추가합니다.
 2. 이번 달 인정 근무에서 연차 포함, 연차 미포함 순으로 표시합니다. 포함에만 예정 연차 인정분을 더합니다. 예정 연차 인정분이 없으면 포함 값은 null입니다.
-3. 이번 달 남은 시간은 왼쪽에 놀수 반영 예상값, 오른쪽에 놀수 미반영 예상값을 표시합니다.
+3. 이번 달 남은 시간은 왼쪽에 놀수 반영 예상값, 오른쪽에 놀수 미반영 예상값을 표시합니다. 제목 오른쪽에 `planning.remainingWorkdays`를 일 단위로 작게 표시합니다. 값이 없으면 남은 근무일 확인 불가라고 표시합니다.
 4. 각 시간은 `formatWorkMinutes`로 표시합니다. 세 영역을 같은 순서로 묶어 반환합니다.
 
 ## 사용법

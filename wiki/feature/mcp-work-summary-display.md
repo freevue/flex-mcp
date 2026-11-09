@@ -1,7 +1,7 @@
 ---
 name: mcp-work-summary-display
 type: feature
-issues: [22, 39]
+issues: [22, 39, 41]
 code:
   [
     apps/mcp-server/src/createMcpServer.ts,
@@ -27,7 +27,7 @@ code:
 4. 근무 요약이 검증을 통과하면, 두 번째 `content` 항목에 `type: "text"`인 Markdown을 넣습니다. 검증할 수 없으면 기존 결과만 반환합니다.
 5. 다른 도구는 기존 응답을 그대로 반환합니다. Chrome과 Worker 사이의 메시지, 연결 키와 재연결 방식은 바뀌지 않습니다.
 
-원격 요약의 오늘 실제 근무는 팝업과 같은 값을 사용합니다. 호출할 때마다 현재 진행 시간을 읽습니다. 확인할 수 없으면 JSON의 `todayActualMinutes`는 `null`이며 Markdown에는 계산 정보 없음으로 표시합니다. 월 누적과 기존 응답 순서는 그대로 유지합니다.
+원격 요약의 오늘 실제 근무, 월 인정 근무와 남은 시간은 팝업과 같은 값을 사용합니다. 호출할 때마다 현재 진행 시간을 읽습니다. 확인할 수 없으면 JSON의 `todayActualMinutes`는 `null`이며 Markdown에는 계산 정보 없음으로 표시합니다. 이때 월 값은 확정 집계를 사용합니다. 근무일수와 하루 권장 시간은 팝업에만 표시합니다.
 
 ## 관련 정책
 

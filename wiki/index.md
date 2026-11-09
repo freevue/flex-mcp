@@ -38,6 +38,7 @@ type: index
 | [formatWorkSummaryMarkdown](unit/mcp/formatWorkSummaryMarkdown.md) | 검증한 근무 수치로 Markdown을 만듭니다.               |
 
 | [resolveTodayActualMinutes](unit/flex/resolveTodayActualMinutes.md) | 오늘 실제 근무에 진행 시간을 더합니다. |
+| [countRemainingWorkdays](unit/flex/countRemainingWorkdays.md) | 놀수를 뺀 남은 근무일을 셉니다. |
 | [disconnectMcpConnection](unit/mcp/disconnectMcpConnection.md) | MCP 키와 마지막 Chrome 등록을 해제합니다. |
 | [registerPairedReadTools](unit/mcp/registerPairedReadTools.md) | 연결 키가 필요한 근무 읽기 도구를 등록합니다. |
 | [readLiveReply](unit/bridge/readLiveReply.md) | 승인된 Flex 조회 결과를 응답으로 바꿉니다. |
