@@ -1,7 +1,7 @@
 ---
 name: mcp-work-summary-display
 type: feature
-issues: [22]
+issues: [22, 39]
 code:
   [
     apps/mcp-server/src/createMcpServer.ts,
@@ -27,6 +27,8 @@ code:
 4. 근무 요약이 검증을 통과하면, 두 번째 `content` 항목에 `type: "text"`인 Markdown을 넣습니다. 검증할 수 없으면 기존 결과만 반환합니다.
 5. 다른 도구는 기존 응답을 그대로 반환합니다. Chrome과 Worker 사이의 메시지, 연결 키와 재연결 방식은 바뀌지 않습니다.
 
+원격 요약의 오늘 실제 근무는 팝업과 같은 값을 사용합니다. 호출할 때마다 현재 진행 시간을 읽습니다. 확인할 수 없으면 JSON의 `todayActualMinutes`는 `null`이며 Markdown에는 계산 정보 없음으로 표시합니다. 월 누적과 기존 응답 순서는 그대로 유지합니다.
+
 ## 관련 정책
 
 | 정책                                                            | 규칙                                                                                            |
@@ -44,5 +46,6 @@ MCP Markdown의 놀수 순서는 미반영, 반영입니다. [Chrome 팝업](../
 | FT-MCP-WORK-DISPLAY-02 | 합성 응답과 실제 출처를 표시한 모의 응답을 준비합니다.                        | 두 연결에서 요약을 조회합니다. | 합성 응답의 Markdown에만 예시임을 표시합니다.                                                 |
 | FT-MCP-WORK-DISPLAY-03 | 연결이 오프라인이거나 키를 누락했습니다. 또는 키가 미등록이거나 해제됐습니다. | 요약을 조회합니다.             | 기존 오류 응답에 두 번째 텍스트가 없습니다.                                                   |
 | FT-MCP-WORK-DISPLAY-04 | 같은 승인 키를 사용합니다.                                                    | 일정과 요약을 각각 조회합니다. | 일정 응답은 기존 텍스트 한 항목과 JSON만 반환합니다.                                          |
+| FT-MCP-ACTIVE-WORK-01  | 연결한 확장의 오늘 시간이 진행 중이거나 확인할 수 없습니다.                   | 근무 요약을 다시 요청합니다.   | JSON과 Markdown이 현재 분 또는 확인 불가를 팝업과 같은 값으로 표시합니다.                     |
 
 기능 TC는 [채널 통합 검사](../../apps/mcp-server/test/checkPairedChannels.ts)를 사용합니다. 이 검사는 Node와 로컬 Worker에서 같은 계약을 확인합니다.
