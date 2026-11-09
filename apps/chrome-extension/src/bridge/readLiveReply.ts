@@ -25,7 +25,9 @@ export async function readLiveReply(reader: FlexReader, request: BridgeRequest, 
   if (query.kind === "summary") {
     const bounded = AbortSignal.any([signal, AbortSignal.timeout(workSummaryTimeoutMs)]);
     const summary = await reader.workSummary(account, bounded);
-    return summary && !bounded.aborted ? { requestId, result: summary, source: "flex" } : failed;
+    if (!summary || bounded.aborted) return failed;
+    const { planning, ...result } = summary;
+    return { requestId, result, source: "flex" };
   }
   if (query.kind === "companyHolidays") {
     if (!reader.companyHolidays) return { requestId, error: "FLEX_SCOPE_UNAVAILABLE" };

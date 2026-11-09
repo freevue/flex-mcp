@@ -66,6 +66,7 @@ const extension = [
   "flex/demoWorkSummary",
   "flex/workSummary",
   "flex/resolveTodayActualMinutes",
+  "flex/countRemainingWorkdays",
   "flex/index",
   "flex/parseAnnualLeave",
   "flex/readAnnualLeave",

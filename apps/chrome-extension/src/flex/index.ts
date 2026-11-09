@@ -9,3 +9,4 @@ export * from "./runFlexQuery.ts";
 export * from "./workSummary.ts";
 export * from "./demoWorkSummary.ts";
 export * from "./resolveTodayActualMinutes.ts";
+export * from "./countRemainingWorkdays.ts";
