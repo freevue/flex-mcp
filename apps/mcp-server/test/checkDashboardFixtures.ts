@@ -22,14 +22,29 @@ export async function checkDashboardFixtures(popup: Page, popupUrl: string): Pro
     const { chrome } = globalThis as typeof globalThis & {
       chrome: { runtime: { sendMessage: () => Promise<unknown> } };
     };
+    let refreshes = 0;
     chrome.runtime.sendMessage = async () => {
       const mode = window.location.hash;
       if (mode === "#error") return { kind: "error" };
+      if (mode === "#counting-work") {
+        const current = refreshes++;
+        return {
+          kind: "connected",
+          flex: "live",
+          summary: { ...summary, todayActualMinutes: Math.min(10 + current, 11) },
+          workStatus: current < 2 ? "working" : "on_break",
+          approvalCode: null,
+          inviteFailed: false
+        };
+      }
       const missing = mode === "#missing";
       const unavailable = mode === "#unavailable";
-      const values = missing
-        ? { ...summary, monthAnnualLeaveScheduledRecognizedMinutes: null, projectedStandardRemainingMinutes: null, projectedAdjustedRemainingMinutes: null }
-        : summary;
+      const values =
+        mode === "#missing-today"
+          ? { ...summary, todayActualMinutes: null }
+          : missing
+            ? { ...summary, monthAnnualLeaveScheduledRecognizedMinutes: null, projectedStandardRemainingMinutes: null, projectedAdjustedRemainingMinutes: null }
+            : summary;
       return {
         kind: "connected",
         flex: unavailable ? "unavailable" : "synthetic",
@@ -77,6 +92,11 @@ export async function checkDashboardFixtures(popup: Page, popupUrl: string): Pro
     assert.equal(fits, true, "FT-GALPI-DASHBOARD-05");
   }
 
+  await popup.goto(`${popupUrl}?fixture=missing-today#missing-today`);
+  await popup.getByText("계산 정보 없음", { exact: true }).waitFor();
+  assert.equal(await popup.locator(".work-today strong").textContent(), "계산 정보 없음", "FT-GALPI-ACTIVE-WORK-02");
+  assert.deepEqual(await popup.locator(".work-month dd").allTextContents(), ["96시간", "90시간"]);
+
   await popup.goto(`${popupUrl}?fixture=unavailable#unavailable`);
   const retry = popup.getByRole("button", { name: "다시 확인" });
   await retry.waitFor();
@@ -89,4 +109,13 @@ export async function checkDashboardFixtures(popup: Page, popupUrl: string): Pro
   await popup.goto(`${popupUrl}?fixture=error#error`);
   await popup.getByRole("heading", { name: "연결 확인 실패" }).waitFor();
   assert.equal(await retry.isVisible(), true, "UT-renderUnavailablePopup-01");
+
+  await popup.clock.install();
+  await popup.goto(`${popupUrl}?fixture=counting-work#counting-work`);
+  await popup.getByText("0시간 10분", { exact: true }).waitFor();
+  await popup.clock.runFor(15_000);
+  await popup.getByText("0시간 11분", { exact: true }).waitFor();
+  await popup.clock.runFor(15_000);
+  await popup.getByText("휴게 중", { exact: true }).waitFor();
+  assert.equal(await popup.locator(".work-today strong").textContent(), "0시간 11분", "FT-GALPI-ACTIVE-WORK-01");
 }
