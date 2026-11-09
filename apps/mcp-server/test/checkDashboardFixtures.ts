@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import type { Page } from "playwright";
 import type { WorkSummaryResult } from "../../../shared/index.ts";
 
-const sample: WorkSummaryResult = {
+const sample: WorkSummaryResult & { planning: { remainingWorkdays: number; recommendedDailyMinutes: number } } = {
   todayActualMinutes: 320,
   monthActualMinutes: 5_040,
   monthRecognizedMinutes: 5_400,
@@ -14,7 +14,8 @@ const sample: WorkSummaryResult = {
   standardRemainingMinutes: 4_200,
   adjustedRemainingMinutes: 3_240,
   projectedStandardRemainingMinutes: 3_840,
-  projectedAdjustedRemainingMinutes: 2_880
+  projectedAdjustedRemainingMinutes: 2_880,
+  planning: { remainingWorkdays: 6, recommendedDailyMinutes: 480 }
 };
 
 export async function checkDashboardFixtures(popup: Page, popupUrl: string): Promise<void> {
@@ -28,10 +29,18 @@ export async function checkDashboardFixtures(popup: Page, popupUrl: string): Pro
       if (mode === "#error") return { kind: "error" };
       if (mode === "#counting-work") {
         const current = refreshes++;
+        const progress = Math.min(current, 1);
         return {
           kind: "connected",
           flex: "live",
-          summary: { ...summary, todayActualMinutes: Math.min(10 + current, 11) },
+          summary: {
+            ...summary,
+            todayActualMinutes: 10 + progress,
+            monthRecognizedMinutes: 5_400 + progress,
+            projectedAdjustedRemainingMinutes: 2_881 - progress,
+            projectedStandardRemainingMinutes: 3_841 - progress,
+            planning: { remainingWorkdays: 6, recommendedDailyMinutes: 481 - progress }
+          },
           workStatus: current < 2 ? "working" : "on_break",
           approvalCode: null,
           inviteFailed: false
@@ -43,7 +52,13 @@ export async function checkDashboardFixtures(popup: Page, popupUrl: string): Pro
         mode === "#missing-today"
           ? { ...summary, todayActualMinutes: null }
           : missing
-            ? { ...summary, monthAnnualLeaveScheduledRecognizedMinutes: null, projectedStandardRemainingMinutes: null, projectedAdjustedRemainingMinutes: null }
+            ? {
+                ...summary,
+                planning: null,
+                monthAnnualLeaveScheduledRecognizedMinutes: null,
+                projectedStandardRemainingMinutes: null,
+                projectedAdjustedRemainingMinutes: null
+              }
             : summary;
       return {
         kind: "connected",
@@ -62,6 +77,8 @@ export async function checkDashboardFixtures(popup: Page, popupUrl: string): Pro
   const remaining = popup.locator(".work-remaining");
   assert.deepEqual(await remaining.locator("dt").allTextContents(), ["놀수 반영", "놀수 미반영"]);
   assert.deepEqual(await remaining.locator("dd").allTextContents(), ["48시간", "64시간"], "UT-renderWorkSummary-01");
+  assert.equal(await remaining.locator(".work-remaining-days").textContent(), "남은 근무일 6일", "FT-GALPI-WORK-PLANNING-01");
+  assert.equal(await popup.locator(".work-recommended").textContent(), "하루 권장 8시간");
   const remainingBackground = await popup
     .locator(".work-remaining dl > div")
     .evaluateAll((items) => items.map((item) => getComputedStyle(item).backgroundColor));
@@ -71,6 +88,7 @@ export async function checkDashboardFixtures(popup: Page, popupUrl: string): Pro
   await popup.getByText("계산 정보 없음", { exact: true }).first().waitFor();
   assert.deepEqual(await popup.locator(".work-month dd").allTextContents(), ["계산 정보 없음", "90시간"], "UT-renderWorkSummary-02");
   assert.deepEqual(await popup.locator(".work-remaining dd").allTextContents(), ["계산 정보 없음", "계산 정보 없음"]);
+  assert.equal(await popup.locator(".work-remaining-days").textContent(), "남은 근무일 확인 불가");
 
   for (const [state, label] of Object.entries({
     working: "근무 중",
@@ -115,6 +133,9 @@ export async function checkDashboardFixtures(popup: Page, popupUrl: string): Pro
   await popup.getByText("0시간 10분", { exact: true }).waitFor();
   await popup.clock.runFor(15_000);
   await popup.getByText("0시간 11분", { exact: true }).waitFor();
+  assert.deepEqual(await popup.locator(".work-month dd").allTextContents(), ["96시간 1분", "90시간 1분"]);
+  assert.deepEqual(await popup.locator(".work-remaining dd").allTextContents(), ["48시간", "64시간"]);
+  assert.equal(await popup.locator(".work-recommended").textContent(), "하루 권장 8시간");
   await popup.clock.runFor(15_000);
   await popup.getByText("휴게 중", { exact: true }).waitFor();
   assert.equal(await popup.locator(".work-today strong").textContent(), "0시간 11분", "FT-GALPI-ACTIVE-WORK-01");

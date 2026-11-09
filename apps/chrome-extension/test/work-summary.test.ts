@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { calculateRestTargetMinutes, calculateWorkSummary, getWorkSummaryRanges, readDemoWorkSummary } from "../src/flex/index.ts";
+import { calculateRestTargetMinutes, calculateWorkSummary, countRemainingWorkdays, getWorkSummaryRanges, readDemoWorkSummary } from "../src/flex/index.ts";
 import { formatWorkMinutes, readPopupSnapshot } from "../src/popup/index.ts";
 
 const input = {
@@ -28,12 +28,40 @@ test("월 목표에서 실제 근무 대신 인정 근무를 빼고 휴무 차�
     standardRemainingMinutes: 4_200,
     adjustedRemainingMinutes: 3_240,
     projectedStandardRemainingMinutes: 4_200,
-    projectedAdjustedRemainingMinutes: 3_240
+    projectedAdjustedRemainingMinutes: 3_240,
+    planning: null
   });
   assert.equal(calculateWorkSummary({ ...input, restTargetMinutes: 0 }).adjustedRemainingMinutes, 4_200);
   assert.equal(calculateWorkSummary({ ...input, restTargetMinutes: null }).adjustedRemainingMinutes, null);
   assert.equal(calculateWorkSummary({ ...input, monthRequiredMinutes: null }).standardRemainingMinutes, null);
   assert.equal(calculateWorkSummary({ ...input, monthRecognizedMinutes: 9_800 }).standardRemainingMinutes, 0);
+});
+
+test("진행 근무는 인정 시간과 남은 시간에 한 번씩 반영하고 하루 권장 시간은 분으로 올림한다", () => {
+  const base = { ...input, monthAnnualLeaveScheduledMinutes: 240, monthAnnualLeaveScheduledRecognizedMinutes: 180, remainingWorkdays: 7 };
+  const live = calculateWorkSummary({ ...base, activeWorkMinutes: 61 });
+  assert.equal(live.monthRecognizedMinutes, 5_461);
+  assert.equal(live.projectedStandardRemainingMinutes, 3_959);
+  assert.equal(live.projectedAdjustedRemainingMinutes, 2_999);
+  assert.deepEqual(live.planning, { remainingWorkdays: 7, recommendedDailyMinutes: 429 });
+  const unknown = calculateWorkSummary({ ...base, activeWorkMinutes: null });
+  assert.equal(unknown.monthRecognizedMinutes, 5_400);
+  assert.equal(unknown.planning?.recommendedDailyMinutes, null);
+  assert.equal(calculateWorkSummary({ ...base, remainingWorkdays: 0 }).planning?.recommendedDailyMinutes, null);
+  assert.equal(calculateWorkSummary({ ...base, monthRequiredMinutes: 0, remainingWorkdays: 0 }).planning?.recommendedDailyMinutes, 0);
+});
+
+test("UT-countRemainingWorkdays-01~02: 오늘과 말일을 포함하고 놀수와 소정 시간이 없는 날을 뺀다", () => {
+  const range = { from: "2027-01-28", to: "2027-01-31" };
+  const targets = new Map([
+    ["2027-01-28", 480],
+    ["2027-01-29", 480],
+    ["2027-01-30", 0],
+    ["2027-01-31", 240]
+  ]);
+  assert.equal(countRemainingWorkdays(range, targets, ["2027-01-29", "2027-01-30"]), 2);
+  targets.delete("2027-01-31");
+  assert.equal(countRemainingWorkdays(range, targets, ["2027-01-29"]), null);
 });
 
 test("UT-formatWorkMinutes-01~03: 시간과 분, 0분과 계산 정보 없음을 구분한다", () => {
@@ -88,11 +116,12 @@ test("한국 자정으로 기간을 나누고 합성 자료로 월 요약을 계
     fullMonth: { from: "2028-02-01", to: "2028-02-29" }
   });
   const summary = await readDemoWorkSummary("0b47a3c6-cddf-43b8-85f9-fdc8ef531661", new AbortController().signal, new Date("2026-11-18T00:00:00Z"));
-  assert.deepEqual(summary, calculateWorkSummary(input));
+  assert.deepEqual(summary, calculateWorkSummary({ ...input, remainingWorkdays: 7 }));
   const snapshot = { kind: "connected", flex: "synthetic", summary, workStatus: "working", approvalCode: "ABCD-1234-5678", inviteFailed: false };
   assert.deepEqual(readPopupSnapshot(snapshot), snapshot);
   assert.equal(readPopupSnapshot({ ...snapshot, summary: { ...summary, account: "example" } }), null);
   assert.equal(readPopupSnapshot({ ...snapshot, summary: { ...summary, monthRecognizedMinutes: -1 } }), null);
+  assert.equal(readPopupSnapshot({ ...snapshot, summary: { ...summary, planning: { remainingWorkdays: 32, recommendedDailyMinutes: 30 } } }), null);
   assert.equal(readPopupSnapshot({ ...snapshot, requestKey: "private" }), null);
   assert.equal(readPopupSnapshot({ ...snapshot, flex: "unavailable" }), null);
   const unavailable = { ...snapshot, flex: "unavailable", summary: null, workStatus: "unknown" };
